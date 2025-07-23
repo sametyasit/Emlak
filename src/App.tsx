@@ -14,6 +14,9 @@ import AddPropertyPage from './pages/AddPropertyPage';
 import EditPropertiesPage from './pages/EditPropertiesPage';
 import ManageUsersPage from './pages/ManageUsersPage';
 import ReportsPage from './pages/ReportsPage';
+import SystemSettingsPage from './pages/SystemSettingsPage';
+import ManageNotificationsPage from './pages/ManageNotificationsPage';
+import MessagesPage from './pages/MessagesPage';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -75,15 +78,39 @@ const App: React.FC = () => {
               </ProtectedRoute>
             } 
           />
-          <Route 
-            path="/admin/reports" 
-            element={
-              <ProtectedRoute requireAdmin>
-                <ReportsPage />
-              </ProtectedRoute>
-            } 
-          />
-        </Routes>
+                           <Route 
+                   path="/admin/reports" 
+                   element={
+                     <ProtectedRoute requireAdmin>
+                       <ReportsPage />
+                     </ProtectedRoute>
+                   } 
+                 />
+                 <Route 
+                   path="/admin/settings" 
+                   element={
+                     <ProtectedRoute requireAdmin>
+                       <SystemSettingsPage />
+                     </ProtectedRoute>
+                   } 
+                 />
+                 <Route 
+                   path="/admin/notifications" 
+                   element={
+                     <ProtectedRoute requireAdmin>
+                       <ManageNotificationsPage />
+                     </ProtectedRoute>
+                   } 
+                 />
+                 <Route 
+                   path="/admin/messages" 
+                   element={
+                     <ProtectedRoute requireAdmin>
+                       <MessagesPage />
+                     </ProtectedRoute>
+                   } 
+                 />
+               </Routes>
       </MainContent>
       <Footer />
     </AppContainer>
