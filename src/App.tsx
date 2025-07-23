@@ -10,6 +10,10 @@ import UserDashboard from './pages/UserDashboard';
 import PropertyList from './pages/PropertyList';
 import PropertyDetail from './pages/PropertyDetail';
 import ProtectedRoute from './components/ProtectedRoute';
+import AddPropertyPage from './pages/AddPropertyPage';
+import EditPropertiesPage from './pages/EditPropertiesPage';
+import ManageUsersPage from './pages/ManageUsersPage';
+import ReportsPage from './pages/ReportsPage';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -44,6 +48,38 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <UserDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/add-property" 
+            element={
+              <ProtectedRoute requireAdmin>
+                <AddPropertyPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/edit-properties" 
+            element={
+              <ProtectedRoute requireAdmin>
+                <EditPropertiesPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/manage-users" 
+            element={
+              <ProtectedRoute requireAdmin>
+                <ManageUsersPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/reports" 
+            element={
+              <ProtectedRoute requireAdmin>
+                <ReportsPage />
               </ProtectedRoute>
             } 
           />
