@@ -279,9 +279,18 @@ const AdminDashboard: React.FC = () => {
           <ActionButton onClick={() => navigate('/admin/edit-properties')}>📝 İlanları Düzenle</ActionButton>
           <ActionButton onClick={() => navigate('/admin/manage-users')}>👥 Kullanıcıları Yönet</ActionButton>
           <ActionButton onClick={() => navigate('/admin/reports')}>📊 Raporları Görüntüle</ActionButton>
-          <ActionButton onClick={() => alert('Sistem ayarları yakında!')}>⚙️ Sistem Ayarları</ActionButton>
-          <ActionButton onClick={() => alert('Bildirim yönetimi yakında!')}>🔔 Bildirimleri Yönet</ActionButton>
-          <ActionButton onClick={() => alert('Mesajlar yakında!')}>💬 Mesajları Görüntüle</ActionButton>
+                                     <ActionButton onClick={() => {
+            console.log('Sistem ayarları butonuna tıklandı');
+            navigate('/admin/settings');
+          }}>⚙️ Sistem Ayarları</ActionButton>
+          <ActionButton onClick={() => {
+            console.log('Bildirimleri yönet butonuna tıklandı');
+            navigate('/admin/notifications');
+          }}>🔔 Bildirimleri Yönet</ActionButton>
+          <ActionButton onClick={() => {
+            console.log('Mesajları görüntüle butonuna tıklandı');
+            navigate('/admin/messages');
+          }}>💬 Mesajları Görüntüle</ActionButton>
           <ActionButton onClick={() => navigate('/admin/reports')}>📈 Analitik Raporlar</ActionButton>
         </ActionsGrid>
       </ActionsSection>
