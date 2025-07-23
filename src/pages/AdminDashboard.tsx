@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -156,6 +157,7 @@ const ActionButton = styled.button`
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Bar chart verisi
   const barChartData = {
@@ -273,14 +275,14 @@ const AdminDashboard: React.FC = () => {
       <ActionsSection>
         <ActionsTitle>⚡ Hızlı Yönetim İşlemleri</ActionsTitle>
         <ActionsGrid>
-          <ActionButton>➕ Yeni İlan Ekle</ActionButton>
-          <ActionButton>📝 İlanları Düzenle</ActionButton>
-          <ActionButton>👥 Kullanıcıları Yönet</ActionButton>
-          <ActionButton>📊 Raporları Görüntüle</ActionButton>
-          <ActionButton>⚙️ Sistem Ayarları</ActionButton>
-          <ActionButton>🔔 Bildirimleri Yönet</ActionButton>
-          <ActionButton>💬 Mesajları Görüntüle</ActionButton>
-          <ActionButton>📈 Analitik Raporlar</ActionButton>
+          <ActionButton onClick={() => navigate('/admin/add-property')}>➕ Yeni İlan Ekle</ActionButton>
+          <ActionButton onClick={() => navigate('/admin/edit-properties')}>📝 İlanları Düzenle</ActionButton>
+          <ActionButton onClick={() => navigate('/admin/manage-users')}>👥 Kullanıcıları Yönet</ActionButton>
+          <ActionButton onClick={() => navigate('/admin/reports')}>📊 Raporları Görüntüle</ActionButton>
+          <ActionButton onClick={() => alert('Sistem ayarları yakında!')}>⚙️ Sistem Ayarları</ActionButton>
+          <ActionButton onClick={() => alert('Bildirim yönetimi yakında!')}>🔔 Bildirimleri Yönet</ActionButton>
+          <ActionButton onClick={() => alert('Mesajlar yakında!')}>💬 Mesajları Görüntüle</ActionButton>
+          <ActionButton onClick={() => navigate('/admin/reports')}>📈 Analitik Raporlar</ActionButton>
         </ActionsGrid>
       </ActionsSection>
     </Container>
