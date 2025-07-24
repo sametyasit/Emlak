@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { allProperties } from '../data/properties';
 
 const Container = styled.div`
   max-width: 1200px;
@@ -76,74 +78,22 @@ const PropertyDetails = styled.div`
 `;
 
 const PropertyList: React.FC = () => {
-  const properties = [
-    {
-      id: 1,
-      title: 'Modern Daire',
-      location: 'Kadıköy, İstanbul',
-      price: '2.500.000 TL',
-      rooms: '3+1',
-      area: '120m²',
-      type: 'Satılık'
-    },
-    {
-      id: 2,
-      title: 'Lüks Villa',
-      location: 'Beşiktaş, İstanbul',
-      price: '8.500.000 TL',
-      rooms: '5+2',
-      area: '280m²',
-      type: 'Satılık'
-    },
-    {
-      id: 3,
-      title: 'Güzel Kiralık Daire',
-      location: 'Şişli, İstanbul',
-      price: '15.000 TL/ay',
-      rooms: '2+1',
-      area: '85m²',
-      type: 'Kiralık'
-    },
-    {
-      id: 4,
-      title: 'Bahçeli Müstakil Ev',
-      location: 'Çankaya, Ankara',
-      price: '3.200.000 TL',
-      rooms: '4+1',
-      area: '180m²',
-      type: 'Satılık'
-    },
-    {
-      id: 5,
-      title: 'Deniz Manzaralı Daire',
-      location: 'Konak, İzmir',
-      price: '22.000 TL/ay',
-      rooms: '3+1',
-      area: '140m²',
-      type: 'Kiralık'
-    },
-    {
-      id: 6,
-      title: 'Yeni Yapı Daire',
-      location: 'Nilüfer, Bursa',
-      price: '1.800.000 TL',
-      rooms: '2+1',
-      area: '95m²',
-      type: 'Satılık'
-    }
-  ];
+  const navigate = useNavigate();
+  const properties = allProperties;
 
   return (
     <Container>
       <Title>🏠 Emlak İlanları</Title>
       <PropertyGrid>
         {properties.map((property) => (
-          <PropertyCard key={property.id}>
-            <PropertyImage>🏠</PropertyImage>
+          <PropertyCard key={property.id} onClick={() => navigate(`/property/${property.id}`)} style={{cursor: 'pointer'}}>
+            <PropertyImage style={{backgroundImage: `url(${property.image})`, backgroundSize: 'cover', backgroundPosition: 'center', color: 'transparent'}}>
+              <span role="img" aria-label="ev">🏠</span>
+            </PropertyImage>
             <PropertyContent>
               <PropertyTitle>{property.title}</PropertyTitle>
               <PropertyLocation>📍 {property.location}</PropertyLocation>
-              <PropertyPrice>{property.price}</PropertyPrice>
+              <PropertyPrice>{typeof property.price === 'number' ? property.price.toLocaleString('tr-TR') + ' TL' : property.price}</PropertyPrice>
               <PropertyDetails>
                 <span>🛏️ {property.rooms}</span>
                 <span>📐 {property.area}</span>
