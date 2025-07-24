@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   max-width: 1200px;
@@ -35,16 +36,17 @@ const DashboardGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
-const DashboardCard = styled.div`
+const DashboardCard = styled.div<{ clickable?: boolean }>`
   background: white;
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  cursor: ${props => props.clickable ? 'pointer' : 'default'};
   
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    transform: ${props => props.clickable ? 'translateY(-5px)' : 'none'};
+    box-shadow: ${props => props.clickable ? '0 10px 30px rgba(0, 0, 0, 0.15)' : '0 4px 6px rgba(0, 0, 0, 0.1)'};
   }
 `;
 
@@ -110,6 +112,7 @@ const ActionButton = styled.button`
 
 const UserDashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <Container>
@@ -121,7 +124,7 @@ const UserDashboard: React.FC = () => {
       </WelcomeSection>
 
       <DashboardGrid>
-        <DashboardCard>
+        <DashboardCard clickable onClick={() => navigate('/favorites')}>
           <CardIcon>🔍</CardIcon>
           <CardTitle>Favori İlanlar</CardTitle>
           <CardContent>
@@ -129,7 +132,7 @@ const UserDashboard: React.FC = () => {
           </CardContent>
         </DashboardCard>
 
-        <DashboardCard>
+        <DashboardCard clickable onClick={() => navigate('/appointments')}>
           <CardIcon>📋</CardIcon>
           <CardTitle>Randevularım</CardTitle>
           <CardContent>
@@ -137,7 +140,7 @@ const UserDashboard: React.FC = () => {
           </CardContent>
         </DashboardCard>
 
-        <DashboardCard>
+        <DashboardCard clickable onClick={() => navigate('/messages')}>
           <CardIcon>💬</CardIcon>
           <CardTitle>Mesajlarım</CardTitle>
           <CardContent>
@@ -145,7 +148,7 @@ const UserDashboard: React.FC = () => {
           </CardContent>
         </DashboardCard>
 
-        <DashboardCard>
+        <DashboardCard clickable onClick={() => navigate('/stats')}>
           <CardIcon>📊</CardIcon>
           <CardTitle>İstatistiklerim</CardTitle>
           <CardContent>
@@ -153,7 +156,7 @@ const UserDashboard: React.FC = () => {
           </CardContent>
         </DashboardCard>
 
-        <DashboardCard>
+        <DashboardCard clickable onClick={() => navigate('/settings')}>
           <CardIcon>⚙️</CardIcon>
           <CardTitle>Hesap Ayarları</CardTitle>
           <CardContent>
@@ -161,7 +164,7 @@ const UserDashboard: React.FC = () => {
           </CardContent>
         </DashboardCard>
 
-        <DashboardCard>
+        <DashboardCard clickable onClick={() => navigate('/support')}>
           <CardIcon>📞</CardIcon>
           <CardTitle>Destek</CardTitle>
           <CardContent>
@@ -173,12 +176,12 @@ const UserDashboard: React.FC = () => {
       <QuickActions>
         <QuickActionsTitle>Hızlı İşlemler</QuickActionsTitle>
         <ActionsGrid>
-          <ActionButton>🏠 Yeni İlan Ara</ActionButton>
-          <ActionButton>❤️ Favorilerim</ActionButton>
-          <ActionButton>📅 Randevu Al</ActionButton>
-          <ActionButton>💬 Danışmanla Görüş</ActionButton>
-          <ActionButton>📱 Bildirim Ayarları</ActionButton>
-          <ActionButton>🔔 Bildirimlerim</ActionButton>
+          <ActionButton onClick={() => navigate('/properties')}>🏠 Yeni İlan Ara</ActionButton>
+          <ActionButton onClick={() => navigate('/favorites')}>❤️ Favorilerim</ActionButton>
+          <ActionButton onClick={() => navigate('/appointments')}>📅 Randevu Al</ActionButton>
+          <ActionButton onClick={() => navigate('/messages')}>💬 Danışmanla Görüş</ActionButton>
+          <ActionButton onClick={() => navigate('/settings/notifications')}>📱 Bildirim Ayarları</ActionButton>
+          <ActionButton onClick={() => navigate('/notifications')}>🔔 Bildirimlerim</ActionButton>
         </ActionsGrid>
       </QuickActions>
     </Container>
