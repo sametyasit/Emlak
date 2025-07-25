@@ -26,7 +26,7 @@ const pulse = keyframes`
 `;
 
 const HeroSection = styled.section`
-  background: linear-gradient(135deg, var(--gradient-primary) 0%, var(--gradient-secondary) 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   padding: 8rem 0 6rem;
   text-align: center;
@@ -43,9 +43,7 @@ const HeroSection = styled.section`
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
-      radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    background: radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
     pointer-events: none;
   }
   
@@ -56,8 +54,8 @@ const HeroSection = styled.section`
     right: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
-    animation: ${float} 12s ease-in-out infinite;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.02) 0%, transparent 80%);
+    animation: ${float} 20s ease-in-out infinite;
   }
 `;
 
@@ -116,11 +114,9 @@ const HeroSubtitle = styled.p`
 const SearchSection = styled.div`
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-radius: 30px;
+  border-radius: 20px;
   padding: 3rem;
-  box-shadow: 
-    0 25px 50px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   max-width: 1000px;
   margin: 0 auto;
   position: relative;
@@ -133,9 +129,9 @@ const SearchSection = styled.div`
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
-    border-radius: 30px 30px 0 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px 20px 0 0;
   }
 `;
 
@@ -209,42 +205,25 @@ const SearchInput = styled.input`
 `;
 
 const SearchButton = styled.button`
-  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   padding: 1.2rem 2.5rem;
-  border-radius: 15px;
+  border-radius: 12px;
   font-size: 1.1rem;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
+  transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
   
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.6s;
-  }
-  
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
-    
-    &::before {
-      left: 100%;
-    }
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
   }
   
   &:active {
-    transform: translateY(-1px);
+    transform: translateY(0);
   }
 `;
 
@@ -260,9 +239,7 @@ const FeaturesSection = styled.section`
     left: 0;
     right: 0;
     height: 100%;
-    background: 
-      radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
-      radial-gradient(circle at 80% 70%, rgba(255, 107, 107, 0.08) 0%, transparent 50%);
+    background: radial-gradient(circle at 30% 20%, rgba(102, 126, 234, 0.03) 0%, transparent 70%);
     pointer-events: none;
   }
 `;
@@ -310,12 +287,12 @@ const FeaturesGrid = styled.div`
 
 const FeatureCard = styled.div`
   background: var(--card-bg);
-  border-radius: 25px;
-  padding: 3rem 2.5rem;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   border: 1px solid var(--border-color);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
   animation: ${fadeInUp} 0.8s ease-out;
@@ -326,44 +303,27 @@ const FeatureCard = styled.div`
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+    height: 3px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
     transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    transition: transform 0.3s ease;
   }
   
   &:hover {
-    transform: translateY(-15px) scale(1.02);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
     background: var(--card-hover);
     
     &::before {
       transform: scaleX(1);
     }
-    
-    &::after {
-      opacity: 1;
-    }
   }
 `;
 
 const FeatureIcon = styled.div`
-  font-size: 3.5rem;
-  margin-bottom: 2rem;
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
   position: relative;
-  animation: ${pulse} 3s ease-in-out infinite;
   
   &::before {
     content: '';
@@ -371,11 +331,11 @@ const FeatureIcon = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100px;
-    height: 100px;
-    background: linear-gradient(135deg, var(--gradient-secondary), var(--gradient-primary));
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 50%;
-    opacity: 0.1;
+    opacity: 0.06;
     z-index: -1;
   }
 `;
@@ -395,7 +355,7 @@ const FeatureDescription = styled.p`
 
 const StatsSection = styled.section`
   padding: 6rem 0;
-  background: linear-gradient(135deg, var(--gradient-secondary) 0%, var(--gradient-primary) 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   position: relative;
   
@@ -406,9 +366,7 @@ const StatsSection = styled.section`
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
-      radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    background: radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
     pointer-events: none;
   }
 `;
@@ -450,24 +408,23 @@ const StatItem = styled.div`
 
 const CTAButton = styled(Link)`
   display: inline-block;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
-  padding: 1.2rem 3rem;
-  border-radius: 15px;
+  padding: 1rem 2.5rem;
+  border-radius: 12px;
   text-decoration: none;
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: 600;
+  font-size: 1rem;
   margin-top: 3rem;
   transition: all 0.3s ease;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   text-transform: uppercase;
   letter-spacing: 1px;
   
   &:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   }
 `;
 
