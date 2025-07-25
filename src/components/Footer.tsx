@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 const FooterContainer = styled.footer`
   background: var(--bg-secondary);
@@ -68,7 +69,7 @@ const FooterLinks = styled.div`
   gap: 0.8rem;
 `;
 
-const FooterLink = styled.a`
+const FooterLink = styled(Link)`
   color: var(--text-secondary);
   text-decoration: none;
   transition: all 0.3s ease;
@@ -224,29 +225,29 @@ const Footer: React.FC = () => {
           <FooterSection>
             <h3>Hızlı Linkler</h3>
             <FooterLinks>
-              <FooterLink href="/">Ana Sayfa</FooterLink>
-              <FooterLink href="/properties">Emlaklar</FooterLink>
-              <FooterLink href="/about">Hakkımızda</FooterLink>
-              <FooterLink href="/contact">İletişim</FooterLink>
-              <FooterLink href="/blog">Blog</FooterLink>
-              <FooterLink href="/news">Haberler</FooterLink>
-              <FooterLink href="/faq">SSS</FooterLink>
-              <FooterLink href="/careers">Kariyer</FooterLink>
+              <FooterLink to="/">Ana Sayfa</FooterLink>
+              <FooterLink to="/properties">Emlaklar</FooterLink>
+              <FooterLink to="/about">Hakkımızda</FooterLink>
+              <FooterLink to="/contact">İletişim</FooterLink>
+              <FooterLink to="/blog">Blog</FooterLink>
+              <FooterLink to="/news">Haberler</FooterLink>
+              <FooterLink to="/faq">SSS</FooterLink>
+              <FooterLink to="/careers">Kariyer</FooterLink>
             </FooterLinks>
           </FooterSection>
           
           <FooterSection>
             <h3>Hizmetler</h3>
             <FooterLinks>
-              <FooterLink href="/buy">Satın Al</FooterLink>
-              <FooterLink href="/rent">Kirala</FooterLink>
-              <FooterLink href="/sell">Sat</FooterLink>
-              <FooterLink href="/valuation">Değerleme</FooterLink>
-              <FooterLink href="/consultation">Danışmanlık</FooterLink>
-              <FooterLink href="/mortgage">Kredi Hesaplama</FooterLink>
-              <FooterLink href="/insurance">Sigorta</FooterLink>
-              <FooterLink href="/legal">Hukuki Danışmanlık</FooterLink>
-              <FooterLink href="/renovation">Tadilat</FooterLink>
+              <FooterLink to="/buy">Satın Al</FooterLink>
+              <FooterLink to="/rent">Kirala</FooterLink>
+              <FooterLink to="/sell">Sat</FooterLink>
+              <FooterLink to="/valuation">Değerleme</FooterLink>
+              <FooterLink to="/consultation">Danışmanlık</FooterLink>
+              <FooterLink to="/mortgage">Kredi Hesaplama</FooterLink>
+              <FooterLink to="/insurance">Sigorta</FooterLink>
+              <FooterLink to="/legal">Hukuki Danışmanlık</FooterLink>
+              <FooterLink to="/renovation">Tadilat</FooterLink>
             </FooterLinks>
           </FooterSection>
           
