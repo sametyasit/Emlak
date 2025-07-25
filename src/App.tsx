@@ -17,6 +17,12 @@ import ReportsPage from './pages/ReportsPage';
 import SystemSettingsPage from './pages/SystemSettingsPage';
 import ManageNotificationsPage from './pages/ManageNotificationsPage';
 import MessagesPage from './pages/MessagesPage';
+import FavoritesPage from './pages/FavoritesPage';
+import AppointmentsPage from './pages/AppointmentsPage';
+import StatsPage from './pages/StatsPage';
+import SettingsPage from './pages/SettingsPage';
+import SupportPage from './pages/SupportPage';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -30,10 +36,11 @@ const MainContent = styled.main`
 
 const App: React.FC = () => {
   return (
-    <AppContainer>
-      <Header />
-      <MainContent>
-        <Routes>
+    <ThemeProvider>
+      <AppContainer>
+        <Header />
+        <MainContent>
+          <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/properties" element={<PropertyList />} />
@@ -110,10 +117,59 @@ const App: React.FC = () => {
                      </ProtectedRoute>
                    } 
                  />
-               </Routes>
-      </MainContent>
+                 <Route 
+                   path="/favorites" 
+                   element={
+                     <ProtectedRoute>
+                       <FavoritesPage />
+                     </ProtectedRoute>
+                   } 
+                 />
+                 <Route 
+                   path="/appointments" 
+                   element={
+                     <ProtectedRoute>
+                       <AppointmentsPage />
+                     </ProtectedRoute>
+                   } 
+                 />
+                 <Route 
+                   path="/messages" 
+                   element={
+                     <ProtectedRoute>
+                       <MessagesPage />
+                     </ProtectedRoute>
+                   } 
+                 />
+                 <Route 
+                   path="/stats" 
+                   element={
+                     <ProtectedRoute>
+                       <StatsPage />
+                     </ProtectedRoute>
+                   } 
+                 />
+                 <Route 
+                   path="/settings" 
+                   element={
+                     <ProtectedRoute>
+                       <SettingsPage />
+                     </ProtectedRoute>
+                   } 
+                 />
+                 <Route 
+                   path="/support" 
+                   element={
+                     <ProtectedRoute>
+                       <SupportPage />
+                     </ProtectedRoute>
+                   } 
+                 />
+                              </Routes>
+        </MainContent>
       <Footer />
     </AppContainer>
+    </ThemeProvider>
   );
 };
 
