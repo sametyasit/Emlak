@@ -155,13 +155,13 @@ const MobileMenu = styled.div<{ isOpen: boolean }>`
 
 const ThemeToggleButton = styled.button`
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.25) 100%);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: none;
   color: white;
   padding: 12px 16px;
   border-radius: 16px;
   cursor: pointer;
   font-size: 1.4rem;
-  margin-right: 15px;
+  margin-right: 10px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(15px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -196,7 +196,77 @@ const ThemeToggleButton = styled.button`
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.4) 100%);
     transform: translateY(-3px) scale(1.08);
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
-    border-color: rgba(255, 255, 255, 0.6);
+    
+    &::before {
+      left: 100%;
+    }
+    
+    &::after {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  
+  &:active {
+    transform: translateY(-1px) scale(0.98);
+    transition: all 0.1s;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 10px 14px;
+    font-size: 1.3rem;
+    margin-right: 10px;
+  }
+`;
+
+const SettingsButton = styled(Link)`
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.25) 100%);
+  border: none;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 1.4rem;
+  margin-right: 10px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+  }
+  
+  &:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.4) 100%);
+    transform: translateY(-3px) scale(1.08);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+    color: white;
     
     &::before {
       left: 100%;
@@ -226,6 +296,9 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Debug için tema durumunu konsola yazdır
+  console.log('Header - Current theme:', theme);
+
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -235,6 +308,12 @@ const Header: React.FC = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
+  const handleThemeToggle = () => {
+    console.log('Theme toggle clicked! Current theme:', theme);
+    toggleTheme();
+    console.log('Theme after toggle:', theme === 'light' ? 'dark' : 'light');
+  };
+
   return (
     <HeaderContainer>
       <Nav>
@@ -242,22 +321,27 @@ const Header: React.FC = () => {
         
         <NavLinks>
           <NavLink to="/">Ana Sayfa</NavLink>
-          <NavLink to="/properties">Emlaklar</NavLink>
+          <NavLink to="/properties">İlanlar</NavLink>
           {isAuthenticated && (
             <>
               {isAdmin ? (
                 <NavLink to="/admin">Admin Panel</NavLink>
               ) : (
-                <NavLink to="/dashboard">Dashboard</NavLink>
+                <NavLink to="/settings">Profil</NavLink>
               )}
             </>
           )}
         </NavLinks>
 
         <UserSection>
-          <ThemeToggleButton onClick={toggleTheme}>
+          <ThemeToggleButton onClick={handleThemeToggle}>
             {theme === 'light' ? '🌙' : '☀️'}
           </ThemeToggleButton>
+          {isAuthenticated && (
+            <SettingsButton to="/settings">
+              ⚙️
+            </SettingsButton>
+          )}
           {isAuthenticated ? (
             <>
               <UserInfo>
@@ -285,7 +369,7 @@ const Header: React.FC = () => {
           Ana Sayfa
         </NavLink>
         <NavLink to="/properties" onClick={() => setMobileMenuOpen(false)}>
-          Emlaklar
+          İlanlar
         </NavLink>
         {isAuthenticated && (
           <>
@@ -294,8 +378,8 @@ const Header: React.FC = () => {
                 Admin Panel
               </NavLink>
             ) : (
-              <NavLink to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                Dashboard
+              <NavLink to="/settings" onClick={() => setMobileMenuOpen(false)}>
+                Profil
               </NavLink>
             )}
           </>

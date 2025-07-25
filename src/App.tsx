@@ -23,6 +23,7 @@ import ConsultationPage from './pages/ConsultationPage';
 import MortgagePage from './pages/MortgagePage';
 import InsurancePage from './pages/InsurancePage';
 import LegalPage from './pages/LegalPage';
+import RenovationPage from './pages/RenovationPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AddPropertyPage from './pages/AddPropertyPage';
 import EditPropertiesPage from './pages/EditPropertiesPage';
@@ -37,6 +38,7 @@ import StatsPage from './pages/StatsPage';
 import SettingsPage from './pages/SettingsPage';
 import SupportPage from './pages/SupportPage';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { GlobalStyles } from './styles/GlobalStyles';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -51,6 +53,7 @@ const MainContent = styled.main`
 const App: React.FC = () => {
   return (
     <ThemeProvider>
+      <GlobalStyles />
       <AppContainer>
         <Header />
         <MainContent>
