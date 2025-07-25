@@ -2,15 +2,28 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 const HeaderContainer = styled.header`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   color: white;
   padding: 1rem 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
   z-index: 1000;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    pointer-events: none;
+  }
 `;
 
 const Nav = styled.nav`
@@ -140,8 +153,76 @@ const MobileMenu = styled.div<{ isOpen: boolean }>`
   }
 `;
 
+const ThemeToggleButton = styled.button`
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.25) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 1.4rem;
+  margin-right: 15px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+  }
+  
+  &:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.4) 100%);
+    transform: translateY(-3px) scale(1.08);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+    border-color: rgba(255, 255, 255, 0.6);
+    
+    &::before {
+      left: 100%;
+    }
+    
+    &::after {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  
+  &:active {
+    transform: translateY(-1px) scale(0.98);
+    transition: all 0.1s;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 10px 14px;
+    font-size: 1.3rem;
+    margin-right: 10px;
+  }
+`;
+
 const Header: React.FC = () => {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -174,6 +255,9 @@ const Header: React.FC = () => {
         </NavLinks>
 
         <UserSection>
+          <ThemeToggleButton onClick={toggleTheme}>
+            {theme === 'light' ? '🌙' : '☀️'}
+          </ThemeToggleButton>
           {isAuthenticated ? (
             <>
               <UserInfo>
