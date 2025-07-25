@@ -9,6 +9,20 @@ import AdminDashboard from './pages/AdminDashboard';
 import UserDashboard from './pages/UserDashboard';
 import PropertyList from './pages/PropertyList';
 import PropertyDetail from './pages/PropertyDetail';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import BlogPage from './pages/BlogPage';
+import NewsPage from './pages/NewsPage';
+import FAQPage from './pages/FAQPage';
+import CareersPage from './pages/CareersPage';
+import BuyPage from './pages/BuyPage';
+import RentPage from './pages/RentPage';
+import SellPage from './pages/SellPage';
+import ValuationPage from './pages/ValuationPage';
+import ConsultationPage from './pages/ConsultationPage';
+import MortgagePage from './pages/MortgagePage';
+import InsurancePage from './pages/InsurancePage';
+import LegalPage from './pages/LegalPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AddPropertyPage from './pages/AddPropertyPage';
 import EditPropertiesPage from './pages/EditPropertiesPage';
@@ -45,6 +59,21 @@ const App: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/properties" element={<PropertyList />} />
           <Route path="/property/:id" element={<PropertyDetail />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/news" element={<NewsPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/careers" element={<CareersPage />} />
+          <Route path="/buy" element={<BuyPage />} />
+          <Route path="/rent" element={<RentPage />} />
+          <Route path="/sell" element={<SellPage />} />
+          <Route path="/valuation" element={<ValuationPage />} />
+          <Route path="/consultation" element={<ConsultationPage />} />
+          <Route path="/mortgage" element={<MortgagePage />} />
+          <Route path="/insurance" element={<InsurancePage />} />
+          <Route path="/legal" element={<LegalPage />} />
+          <Route path="/renovation" element={<RenovationPage />} />
           <Route 
             path="/admin" 
             element={
