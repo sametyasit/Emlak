@@ -3,22 +3,12 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 const FooterContainer = styled.footer`
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: #f8fafc;
+  color: #1f2937;
   padding: 4rem 0 2rem;
   margin-top: auto;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid #e5e7eb;
   position: relative;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--gradient-secondary);
-  }
 `;
 
 const FooterContent = styled.div`
@@ -36,10 +26,10 @@ const FooterGrid = styled.div`
 
 const FooterSection = styled.div`
   h3 {
-    color: var(--text-primary);
+    color: #1f2937;
     margin-bottom: 1.5rem;
     font-size: 1.3rem;
-    font-weight: 700;
+    font-weight: 600;
     position: relative;
     padding-bottom: 0.5rem;
     
@@ -49,14 +39,14 @@ const FooterSection = styled.div`
       bottom: 0;
       left: 0;
       width: 40px;
-      height: 3px;
-      background: var(--gradient-secondary);
-      border-radius: 2px;
+      height: 2px;
+      background: #10b981;
+      border-radius: 1px;
     }
   }
   
   p {
-    color: var(--text-secondary);
+    color: #6b7280;
     line-height: 1.7;
     margin-bottom: 1rem;
     font-size: 0.95rem;
@@ -70,9 +60,9 @@ const FooterLinks = styled.div`
 `;
 
 const FooterLink = styled(Link)`
-  color: var(--text-secondary);
+  color: #6b7280;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   font-size: 0.95rem;
   padding: 0.3rem 0;
   position: relative;
@@ -83,14 +73,14 @@ const FooterLink = styled(Link)`
     left: 0;
     bottom: 0;
     width: 0;
-    height: 2px;
-    background: var(--gradient-secondary);
-    transition: width 0.3s ease;
+    height: 1px;
+    background: #10b981;
+    transition: width 0.2s ease;
   }
   
   &:hover {
-    color: var(--text-primary);
-    transform: translateX(5px);
+    color: #10b981;
+    transform: translateX(3px);
     
     &::before {
       width: 100%;
@@ -108,44 +98,21 @@ const SocialLink = styled.a`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 45px;
-  height: 45px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  color: var(--text-secondary);
+  width: 40px;
+  height: 40px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #6b7280;
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 1.2rem;
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: var(--gradient-secondary);
-    transition: left 0.3s ease;
-    z-index: 0;
-  }
-  
-  span {
-    position: relative;
-    z-index: 1;
-  }
+  transition: all 0.2s ease;
+  font-size: 1.1rem;
   
   &:hover {
-    color: white;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
-    border-color: var(--accent-color);
-    
-    &::before {
-      left: 0;
-    }
+    color: #10b981;
+    border-color: #10b981;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
   }
 `;
 
@@ -159,7 +126,7 @@ const ContactItem = styled.div`
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  color: var(--text-secondary);
+  color: #6b7280;
   font-size: 0.95rem;
   
   .icon {
@@ -168,7 +135,7 @@ const ContactItem = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--accent-color);
+    background: #10b981;
     border-radius: 50%;
     color: white;
     font-size: 0.8rem;
@@ -176,20 +143,20 @@ const ContactItem = styled.div`
 `;
 
 const FooterBottom = styled.div`
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid #e5e7eb;
   padding-top: 2rem;
   text-align: center;
-  color: var(--text-secondary);
+  color: #6b7280;
   font-size: 0.9rem;
   
   a {
-    color: var(--accent-color);
+    color: #10b981;
     text-decoration: none;
     margin: 0 0.5rem;
-    transition: color 0.3s ease;
+    transition: color 0.2s ease;
     
     &:hover {
-      color: var(--accent-hover);
+      color: #059669;
       text-decoration: underline;
     }
   }
