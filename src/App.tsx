@@ -37,7 +37,6 @@ import AppointmentsPage from './pages/AppointmentsPage';
 import StatsPage from './pages/StatsPage';
 import SettingsPage from './pages/SettingsPage';
 import SupportPage from './pages/SupportPage';
-import { ThemeProvider } from './contexts/ThemeContext';
 import { GlobalStyles } from './styles/GlobalStyles';
 
 const AppContainer = styled.div`
@@ -52,7 +51,7 @@ const MainContent = styled.main`
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider>
+    <>
       <GlobalStyles />
       <AppContainer>
         <Header />
@@ -201,7 +200,7 @@ const App: React.FC = () => {
         </MainContent>
       <Footer />
     </AppContainer>
-    </ThemeProvider>
+    </>
   );
 };
 
