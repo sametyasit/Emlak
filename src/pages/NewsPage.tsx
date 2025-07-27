@@ -12,12 +12,21 @@ const fadeInUp = keyframes`
   }
 `;
 
+const shimmer = keyframes`
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+`;
+
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 20px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #1e293b;
   min-height: 100vh;
   position: relative;
   
@@ -29,7 +38,7 @@ const Container = styled.div`
     transform: translateX(-50%);
     width: 100vw;
     height: 100%;
-    background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+    background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
   }
@@ -44,28 +53,34 @@ const HeroSection = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1e293b;
   margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+  
+  span {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
   
   @media (max-width: 768px) {
-    font-size: 2.5rem;
+    font-size: clamp(2rem, 4vw, 2.5rem);
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: 1.3rem;
-  color: var(--text-secondary);
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: #64748b;
   max-width: 700px;
   margin: 0 auto;
   line-height: 1.6;
+  font-weight: 400;
   
   @media (max-width: 768px) {
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 2vw, 1.1rem);
   }
 `;
 
@@ -80,33 +95,39 @@ const NewsGrid = styled.div`
     grid-template-columns: 1fr;
     gap: 2rem;
   }
+  
+  @media (max-width: 480px) {
+    gap: 1.5rem;
+  }
 `;
 
 const NewsCard = styled.div`
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.1);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   animation: ${fadeInUp} 0.8s ease-out;
   
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.2);
   }
 `;
 
 const NewsImage = styled.div`
   height: 200px;
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 3rem;
   color: white;
   position: relative;
+  overflow: hidden;
   
   &::before {
     content: '';
@@ -115,7 +136,13 @@ const NewsImage = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, transparent 50%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  }
+  
+  span {
+    z-index: 1;
+    position: relative;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
   }
 `;
 
@@ -124,15 +151,15 @@ const NewsContent = styled.div`
 `;
 
 const NewsTitle = styled.h3`
-  font-size: 1.4rem;
+  font-size: clamp(1.2rem, 2.5vw, 1.4rem);
   font-weight: 700;
   margin-bottom: 1rem;
-  color: var(--text-primary);
+  color: #1e293b;
   line-height: 1.3;
 `;
 
 const NewsExcerpt = styled.p`
-  color: var(--text-secondary);
+  color: #64748b;
   line-height: 1.6;
   margin-bottom: 1.5rem;
   font-size: 0.95rem;
@@ -142,22 +169,41 @@ const NewsMeta = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: var(--text-secondary);
+  color: #64748b;
   font-size: 0.9rem;
   
   .date {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-weight: 500;
   }
   
   .category {
-    background: var(--accent-color);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
-    padding: 0.3rem 0.8rem;
+    padding: 0.4rem 1rem;
     border-radius: 20px;
     font-size: 0.8rem;
-    font-weight: 500;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    &:hover::before {
+      left: 100%;
+    }
   }
 `;
 
@@ -216,7 +262,7 @@ const NewsPage: React.FC = () => {
   return (
     <Container>
       <HeroSection>
-        <Title>📰 Emlak Haberleri</Title>
+        <Title>📰 Emlak <span>Haberleri</span></Title>
         <Subtitle>
           Emlak sektöründen en güncel haberler, yasal değişiklikler ve piyasa güncellemeleri. 
           Bilgiye dayalı kararlar almanız için güncel kalın.
@@ -227,7 +273,7 @@ const NewsPage: React.FC = () => {
         {newsItems.map((news) => (
           <NewsCard key={news.id}>
             <NewsImage>
-              <span style={{ zIndex: 1, position: 'relative' }}>{news.icon}</span>
+              <span>{news.icon}</span>
             </NewsImage>
             <NewsContent>
               <NewsTitle>{news.title}</NewsTitle>
