@@ -33,12 +33,13 @@ const Container = styled.div`
 `;
 
 const PageHeader = styled.div`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   padding: 2rem;
   border-radius: 16px;
   margin-bottom: 2rem;
   text-align: center;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
 `;
 
 const PageTitle = styled.h1`
@@ -73,12 +74,13 @@ const FilterSelect = styled.select`
   
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   }
 `;
 
 const ExportButton = styled.button`
-  background: #10b981;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;
@@ -89,8 +91,8 @@ const ExportButton = styled.button`
   transition: all 0.3s ease;
   
   &:hover {
-    background: #059669;
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
   }
 `;
 
@@ -149,7 +151,7 @@ const SummaryIcon = styled.div`
 const SummaryNumber = styled.div`
   font-size: 2rem;
   font-weight: 700;
-  color: #667eea;
+  color: #10b981;
   margin-bottom: 0.5rem;
 `;
 
@@ -271,9 +273,87 @@ const ReportsPage: React.FC = () => {
     conversionRate: '23.5%'
   };
 
-  const handleExport = () => {
-    console.log('Rapor dışa aktarılıyor...');
-    // PDF veya Excel export işlemi
+  const handleExport = (format?: string) => {
+    // Rapor verilerini hazırla
+    const reportData = {
+      timeRange,
+      reportType,
+      summaryData,
+      salesTrend: salesTrendData,
+      regionDistribution: regionData,
+      performance: performanceData,
+      exportDate: new Date().toISOString(),
+      reportTitle: `Emlak Platform Raporu - ${timeRange} - ${reportType}`
+    };
+
+    // Dosya adı oluştur
+    const fileName = `emlak-raporu-${timeRange}-${reportType}-${new Date().toISOString().split('T')[0]}`;
+    
+    let message = '';
+
+    // Format seçimine göre indirme işlemi
+    if (format === '1' || format === '3') {
+      // JSON formatında rapor oluştur
+      const reportContent = JSON.stringify(reportData, null, 2);
+      const jsonBlob = new Blob([reportContent], { type: 'application/json' });
+      const jsonUrl = URL.createObjectURL(jsonBlob);
+      const jsonLink = document.createElement('a');
+      jsonLink.href = jsonUrl;
+      jsonLink.download = `${fileName}.json`;
+      document.body.appendChild(jsonLink);
+      jsonLink.click();
+      document.body.removeChild(jsonLink);
+      URL.revokeObjectURL(jsonUrl);
+      message += 'JSON dosyası indirildi. ';
+    }
+
+    if (format === '2' || format === '3') {
+      // CSV formatında rapor oluştur
+      const csvContent = createCSVReport(reportData);
+      const csvBlob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const csvUrl = URL.createObjectURL(csvBlob);
+      const csvLink = document.createElement('a');
+      csvLink.href = csvUrl;
+      csvLink.download = `${fileName}.csv`;
+      document.body.appendChild(csvLink);
+      csvLink.click();
+      document.body.removeChild(csvLink);
+      URL.revokeObjectURL(csvUrl);
+      message += 'CSV dosyası indirildi. ';
+    }
+
+    // Başarı mesajı göster
+    if (message) {
+      alert(`Rapor başarıyla indirildi! ${message}`);
+    } else {
+      alert('Rapor indirme işlemi iptal edildi.');
+    }
+  };
+
+  const createCSVReport = (data: any) => {
+    const headers = [
+      'Rapor Başlığı',
+      'Zaman Aralığı', 
+      'Rapor Türü',
+      'Toplam Gelir',
+      'Toplam Emlak',
+      'Aktif Kullanıcı',
+      'Dönüşüm Oranı',
+      'Dışa Aktarma Tarihi'
+    ];
+    
+    const values = [
+      data.reportTitle,
+      data.timeRange,
+      data.reportType,
+      data.summaryData.totalRevenue,
+      data.summaryData.totalProperties,
+      data.summaryData.activeUsers,
+      data.summaryData.conversionRate,
+      new Date(data.exportDate).toLocaleDateString('tr-TR')
+    ];
+    
+    return [headers.join(','), values.join(',')].join('\n');
   };
 
   return (
@@ -304,7 +384,12 @@ const ReportsPage: React.FC = () => {
           <option value="properties">Emlak Raporları</option>
         </FilterSelect>
         
-        <ExportButton onClick={handleExport}>
+        <ExportButton onClick={() => {
+          const format = prompt('Hangi formatta indirmek istiyorsunuz?\n1. JSON (Detaylı veri)\n2. CSV (Tablo formatı)\n3. Her ikisi\n\nLütfen 1, 2 veya 3 yazın:');
+          if (format) {
+            handleExport(format);
+          }
+        }}>
           📥 Raporu İndir
         </ExportButton>
       </FilterSection>
