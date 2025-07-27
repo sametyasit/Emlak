@@ -25,12 +25,21 @@ const slideIn = keyframes`
   }
 `;
 
+const shimmer = keyframes`
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+`;
+
 const Container = styled.div`
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem 20px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #1e293b;
   min-height: 100vh;
   position: relative;
   
@@ -50,7 +59,7 @@ const Container = styled.div`
     transform: translateX(-50%);
     width: 100vw;
     height: 100%;
-    background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+    background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
   }
@@ -65,21 +74,18 @@ const HeaderSection = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1e293b;
   margin-bottom: 1rem;
   position: relative;
+  letter-spacing: -0.02em;
   
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 2rem;
+  span {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   
   &::after {
@@ -90,37 +96,27 @@ const Title = styled.h1`
     transform: translateX(-50%);
     width: 80px;
     height: 3px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
     border-radius: 2px;
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: 1.2rem;
-  color: var(--text-secondary);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: #64748b;
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
-  
-  @media (max-width: 768px) {
-    font-size: 1rem;
-    max-width: 100%;
-    padding: 0 1rem;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 0.9rem;
-    padding: 0 0.5rem;
-  }
+  font-weight: 400;
 `;
 
 const FilterSection = styled.div`
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   padding: 2.5rem;
   margin-bottom: 3rem;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.1);
   position: relative;
   z-index: 1;
   backdrop-filter: blur(10px);
@@ -142,7 +138,7 @@ const FilterSection = styled.div`
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
     border-radius: 20px 20px 0 0;
   }
 `;
@@ -165,26 +161,43 @@ const FilterHeader = styled.div`
 const FilterTitle = styled.h3`
   font-size: 1.4rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #1e293b;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
 const FilterToggle = styled.button`
-  background: var(--accent-color);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
   
   &:hover {
-    background: var(--accent-hover);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    
+    &::before {
+      left: 100%;
+    }
   }
 `;
 
@@ -213,43 +226,59 @@ const FilterGroup = styled.div`
 const FilterLabel = styled.label`
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #374151;
   margin-bottom: 0.3rem;
 `;
 
 const FilterSelect = styled.select`
   padding: 0.8rem 1rem;
-  border: 2px solid var(--border-color);
+  border: 2px solid #e5e7eb;
   border-radius: 10px;
   font-size: 0.95rem;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: #ffffff;
+  color: #374151;
   outline: none;
   transition: all 0.3s ease;
+  font-weight: 500;
   
   &:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+  
+  option {
+    font-weight: 500;
   }
 `;
 
 const FilterInput = styled.input`
   padding: 0.8rem 1rem;
-  border: 2px solid var(--border-color);
+  border: 2px solid #e5e7eb;
   border-radius: 10px;
   font-size: 0.95rem;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: #ffffff;
+  color: #374151;
   outline: none;
   transition: all 0.3s ease;
+  font-weight: 500;
   
   &:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   }
   
   &::placeholder {
-    color: var(--text-secondary);
+    color: #9ca3af;
+  }
+  
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  &[type=number] {
+    -moz-appearance: textfield;
   }
 `;
 
@@ -269,7 +298,7 @@ const PriceInput = styled(FilterInput)`
 `;
 
 const PriceSeparator = styled.span`
-  color: var(--text-secondary);
+  color: #6b7280;
   font-weight: 600;
 `;
 
@@ -277,7 +306,7 @@ const AdvancedFilters = styled.div<{ isOpen: boolean }>`
   max-height: ${props => props.isOpen ? '500px' : '0'};
   overflow: hidden;
   transition: max-height 0.4s ease;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid #e5e7eb;
   padding-top: 2rem;
   margin-top: 2rem;
 `;
@@ -299,9 +328,9 @@ const AdvancedFiltersGrid = styled.div`
 `;
 
 const FilterButton = styled.button<{ active?: boolean }>`
-  background: ${props => props.active ? 'var(--accent-color)' : 'var(--bg-secondary)'};
-  color: ${props => props.active ? 'white' : 'var(--text-primary)'};
-  border: 2px solid ${props => props.active ? 'var(--accent-color)' : 'var(--border-color)'};
+  background: ${props => props.active ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : '#ffffff'};
+  color: ${props => props.active ? 'white' : '#374151'};
+  border: 2px solid ${props => props.active ? '#10b981' : '#e5e7eb'};
   padding: 0.8rem 1.5rem;
   border-radius: 12px;
   font-size: 0.95rem;
@@ -310,9 +339,9 @@ const FilterButton = styled.button<{ active?: boolean }>`
   transition: all 0.3s ease;
   
   &:hover {
-    background: ${props => props.active ? 'var(--accent-hover)' : 'var(--card-hover)'};
+    background: ${props => props.active ? 'linear-gradient(135deg, #059669 0%, #047857 100%)' : '#f9fafb'};
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
   }
 `;
 
@@ -330,20 +359,37 @@ const FilterActions = styled.div`
 `;
 
 const ActionButton = styled.button<{ variant?: 'primary' | 'secondary' }>`
-  background: ${props => props.variant === 'primary' ? 'var(--accent-color)' : 'transparent'};
-  color: ${props => props.variant === 'primary' ? 'white' : 'var(--text-primary)'};
-  border: 2px solid ${props => props.variant === 'primary' ? 'var(--accent-color)' : 'var(--border-color)'};
+  background: ${props => props.variant === 'primary' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'transparent'};
+  color: ${props => props.variant === 'primary' ? 'white' : '#374151'};
+  border: 2px solid ${props => props.variant === 'primary' ? '#10b981' : '#e5e7eb'};
   padding: 0.8rem 1.5rem;
   border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
   
   &:hover {
-    background: ${props => props.variant === 'primary' ? 'var(--accent-hover)' : 'var(--card-hover)'};
+    background: ${props => props.variant === 'primary' ? 'linear-gradient(135deg, #059669 0%, #047857 100%)' : '#f9fafb'};
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+    
+    &::before {
+      left: 100%;
+    }
   }
 `;
 
@@ -353,28 +399,28 @@ const ResultsInfo = styled.div`
   justify-content: space-between;
   margin-bottom: 2rem;
   padding: 1rem 0;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid #e5e7eb;
   animation: ${slideIn} 0.6s ease-out;
 `;
 
 const ResultsCount = styled.p`
   font-size: 1rem;
-  color: var(--text-secondary);
+  color: #6b7280;
   font-weight: 500;
 `;
 
 const SortSelect = styled.select`
   padding: 0.5rem 1rem;
-  border: 2px solid var(--border-color);
+  border: 2px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.9rem;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: #ffffff;
+  color: #374151;
   outline: none;
   transition: all 0.3s ease;
   
   &:focus {
-    border-color: var(--accent-color);
+    border-color: #10b981;
   }
 `;
 
@@ -397,15 +443,16 @@ const PropertyGrid = styled.div`
 `;
 
 const PropertyCard = styled.div`
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(16, 185, 129, 0.1);
   position: relative;
   backdrop-filter: blur(10px);
   animation: ${fadeInUp} 0.8s ease-out;
+  cursor: pointer;
   
   &::before {
     content: '';
@@ -414,7 +461,7 @@ const PropertyCard = styled.div`
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
     transform: scaleX(0);
     transition: transform 0.4s ease;
     z-index: 1;
@@ -422,9 +469,9 @@ const PropertyCard = styled.div`
   
   &:hover {
     transform: translateY(-10px);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-    background: var(--card-hover);
-    border-color: var(--accent-color);
+    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
+    background: rgba(255, 255, 255, 1);
+    border-color: #10b981;
     
     &::before {
       transform: scaleX(1);
@@ -434,7 +481,7 @@ const PropertyCard = styled.div`
 
 const PropertyImage = styled.div`
   height: 240px;
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -463,13 +510,13 @@ const PropertyContent = styled.div`
 const PropertyTitle = styled.h3`
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #1e293b;
   margin-bottom: 0.8rem;
   line-height: 1.3;
 `;
 
 const PropertyLocation = styled.p`
-  color: var(--text-secondary);
+  color: #6b7280;
   margin-bottom: 1.2rem;
   font-size: 1rem;
   display: flex;
@@ -480,7 +527,7 @@ const PropertyLocation = styled.p`
 const PropertyPrice = styled.div`
   font-size: 1.5rem;
   font-weight: 800;
-  color: var(--accent-color);
+  color: #10b981;
   margin-bottom: 1.2rem;
   display: flex;
   align-items: center;
@@ -490,11 +537,11 @@ const PropertyPrice = styled.div`
 const PropertyDetails = styled.div`
   display: flex;
   justify-content: space-between;
-  color: var(--text-secondary);
+  color: #6b7280;
   font-size: 0.95rem;
   font-weight: 500;
   padding-top: 1rem;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid #e5e7eb;
 `;
 
 const DetailItem = styled.div`
@@ -504,7 +551,7 @@ const DetailItem = styled.div`
 `;
 
 const StatusBadge = styled.span<{ type: 'sale' | 'rent' }>`
-  background: ${props => props.type === 'sale' ? 'linear-gradient(135deg, #10B981, #059669)' : 'linear-gradient(135deg, #F59E0B, #D97706)'};
+  background: ${props => props.type === 'sale' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #f59e0b, #d97706)'};
   color: white;
   padding: 0.4rem 1rem;
   border-radius: 20px;
@@ -514,17 +561,18 @@ const StatusBadge = styled.span<{ type: 'sale' | 'rent' }>`
   top: 1rem;
   right: 1rem;
   z-index: 2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 `;
 
 const NoResults = styled.div`
   text-align: center;
   padding: 4rem 2rem;
-  color: var(--text-secondary);
+  color: #6b7280;
   
   h3 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: var(--text-primary);
+    color: #1e293b;
   }
   
   p {
@@ -551,7 +599,19 @@ const PropertyList: React.FC = () => {
     heating: '',
     parking: '',
     balcony: '',
-    furnished: ''
+    furnished: '',
+    // Yeni eklenen gelişmiş filtreler
+    buildingAge: '',
+    elevator: '',
+    security: '',
+    siteInside: '',
+    seaView: '',
+    metroNearby: '',
+    garden: '',
+    pool: '',
+    gym: '',
+    petFriendly: '',
+    creditAvailable: ''
   });
   
   const properties = allProperties;
@@ -599,7 +659,19 @@ const PropertyList: React.FC = () => {
       heating: '',
       parking: '',
       balcony: '',
-      furnished: ''
+      furnished: '',
+      // Yeni eklenen gelişmiş filtreler
+      buildingAge: '',
+      elevator: '',
+      security: '',
+      siteInside: '',
+      seaView: '',
+      metroNearby: '',
+      garden: '',
+      pool: '',
+      gym: '',
+      petFriendly: '',
+      creditAvailable: ''
     });
     setFilter('all');
   };
@@ -607,7 +679,7 @@ const PropertyList: React.FC = () => {
   return (
     <Container>
       <HeaderSection>
-        <Title>🏠 Emlak İlanları</Title>
+        <Title>🏠 Emlak <span>İlanları</span></Title>
         <Subtitle>
           Hayalinizdeki evi bulun - Binlerce ilan arasından size en uygun olanını seçin
         </Subtitle>
@@ -797,6 +869,146 @@ const PropertyList: React.FC = () => {
                 <option value="evet">Evet</option>
                 <option value="hayır">Hayır</option>
                 <option value="yarı">Yarı Eşyalı</option>
+              </FilterSelect>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Emlak Yaşı</FilterLabel>
+              <FilterSelect 
+                value={filters.buildingAge}
+                onChange={(e) => setFilters({...filters, buildingAge: e.target.value})}
+              >
+                <option value="">Yaş Seçin</option>
+                <option value="0-1">0-1 Yaş</option>
+                <option value="1-5">1-5 Yaş</option>
+                <option value="5-10">5-10 Yaş</option>
+                <option value="10-20">10-20 Yaş</option>
+                <option value="20+">20+ Yaş</option>
+              </FilterSelect>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Asansör</FilterLabel>
+              <FilterSelect 
+                value={filters.elevator}
+                onChange={(e) => setFilters({...filters, elevator: e.target.value})}
+              >
+                <option value="">Asansör Seçin</option>
+                <option value="var">Var</option>
+                <option value="yok">Yok</option>
+              </FilterSelect>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Güvenlik</FilterLabel>
+              <FilterSelect 
+                value={filters.security}
+                onChange={(e) => setFilters({...filters, security: e.target.value})}
+              >
+                <option value="">Güvenlik Seçin</option>
+                <option value="var">Var</option>
+                <option value="yok">Yok</option>
+                <option value="24-saat">24 Saat</option>
+              </FilterSelect>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Site İçinde</FilterLabel>
+              <FilterSelect 
+                value={filters.siteInside}
+                onChange={(e) => setFilters({...filters, siteInside: e.target.value})}
+              >
+                <option value="">Site Durumu</option>
+                <option value="evet">Evet</option>
+                <option value="hayır">Hayır</option>
+              </FilterSelect>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Deniz Manzarası</FilterLabel>
+              <FilterSelect 
+                value={filters.seaView}
+                onChange={(e) => setFilters({...filters, seaView: e.target.value})}
+              >
+                <option value="">Manzara Seçin</option>
+                <option value="evet">Var</option>
+                <option value="hayır">Yok</option>
+              </FilterSelect>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Metro Yakını</FilterLabel>
+              <FilterSelect 
+                value={filters.metroNearby}
+                onChange={(e) => setFilters({...filters, metroNearby: e.target.value})}
+              >
+                <option value="">Metro Durumu</option>
+                <option value="evet">Var</option>
+                <option value="hayır">Yok</option>
+                <option value="yakın">Yakın</option>
+              </FilterSelect>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Bahçe</FilterLabel>
+              <FilterSelect 
+                value={filters.garden}
+                onChange={(e) => setFilters({...filters, garden: e.target.value})}
+              >
+                <option value="">Bahçe Seçin</option>
+                <option value="var">Var</option>
+                <option value="yok">Yok</option>
+                <option value="ortak">Ortak</option>
+              </FilterSelect>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Havuz</FilterLabel>
+              <FilterSelect 
+                value={filters.pool}
+                onChange={(e) => setFilters({...filters, pool: e.target.value})}
+              >
+                <option value="">Havuz Seçin</option>
+                <option value="var">Var</option>
+                <option value="yok">Yok</option>
+                <option value="kapalı">Kapalı</option>
+              </FilterSelect>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Spor Salonu</FilterLabel>
+              <FilterSelect 
+                value={filters.gym}
+                onChange={(e) => setFilters({...filters, gym: e.target.value})}
+              >
+                <option value="">Spor Salonu</option>
+                <option value="var">Var</option>
+                <option value="yok">Yok</option>
+              </FilterSelect>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Evcil Hayvan</FilterLabel>
+              <FilterSelect 
+                value={filters.petFriendly}
+                onChange={(e) => setFilters({...filters, petFriendly: e.target.value})}
+              >
+                <option value="">Evcil Hayvan</option>
+                <option value="evet">Kabul</option>
+                <option value="hayır">Kabul Etmez</option>
+              </FilterSelect>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Kredi Uygunluğu</FilterLabel>
+              <FilterSelect 
+                value={filters.creditAvailable}
+                onChange={(e) => setFilters({...filters, creditAvailable: e.target.value})}
+              >
+                <option value="">Kredi Durumu</option>
+                <option value="evet">Uygun</option>
+                <option value="hayır">Uygun Değil</option>
+                <option value="kısmi">Kısmi</option>
               </FilterSelect>
             </FilterGroup>
           </AdvancedFiltersGrid>
