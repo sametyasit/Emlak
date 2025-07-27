@@ -16,8 +16,8 @@ const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 20px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #1e293b;
   min-height: 100vh;
   position: relative;
   
@@ -29,7 +29,7 @@ const Container = styled.div`
     transform: translateX(-50%);
     width: 100vw;
     height: 100%;
-    background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+    background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
   }
@@ -44,29 +44,27 @@ const HeroSection = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1e293b;
   margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
   
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
+  span {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: 1.3rem;
-  color: var(--text-secondary);
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: #64748b;
   max-width: 700px;
   margin: 0 auto;
   line-height: 1.6;
-  
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-  }
+  font-weight: 400;
 `;
 
 const ContentSection = styled.div`
@@ -84,11 +82,11 @@ const ContentSection = styled.div`
 `;
 
 const InfoCard = styled.div`
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   padding: 2.5rem;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.1);
   backdrop-filter: blur(10px);
   animation: ${fadeInUp} 0.8s ease-out;
   
@@ -96,54 +94,29 @@ const InfoCard = styled.div`
     font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: var(--text-primary);
+    color: #1e293b;
   }
   
   p {
-    color: var(--text-secondary);
+    color: #6b7280;
     line-height: 1.7;
     margin-bottom: 1rem;
-    font-size: 1rem;
   }
   
   ul {
-    list-style: none;
-    padding: 0;
-    margin: 1.5rem 0;
-  }
-  
-  li {
-    color: var(--text-secondary);
-    margin-bottom: 0.8rem;
+    color: #6b7280;
+    line-height: 1.7;
     padding-left: 1.5rem;
-    position: relative;
     
-    &::before {
-      content: '✓';
-      position: absolute;
-      left: 0;
-      color: var(--accent-color);
-      font-weight: bold;
+    li {
+      margin-bottom: 0.5rem;
     }
   }
 `;
 
 const JobsSection = styled.div`
-  margin-bottom: 4rem;
   position: relative;
   z-index: 1;
-  animation: ${fadeInUp} 0.8s ease-out;
-  
-  h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 3rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
 `;
 
 const JobsGrid = styled.div`
@@ -153,162 +126,197 @@ const JobsGrid = styled.div`
 `;
 
 const JobCard = styled.div`
-  background: var(--card-bg);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.1);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  cursor: pointer;
   
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 15px 35px rgba(16, 185, 129, 0.15);
   }
   
-  h3 {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--text-primary);
+  h4 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.8rem;
   }
   
-  .location {
-    color: var(--accent-color);
+  .department {
+    color: #10b981;
     font-weight: 500;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
   }
   
   .description {
-    color: var(--text-secondary);
+    color: #6b7280;
     line-height: 1.6;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     font-size: 0.95rem;
   }
   
   .requirements {
-    color: var(--text-secondary);
+    color: #9ca3af;
     font-size: 0.9rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
   }
   
   .apply-button {
-    background: var(--accent-color);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
     border: none;
     padding: 0.8rem 1.5rem;
     border-radius: 10px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     width: 100%;
     
     &:hover {
-      background: var(--accent-hover);
       transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
     }
   }
 `;
 
+const SectionTitle = styled.h2`
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  text-align: center;
+  
+  span {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+`;
+
+const SectionSubtitle = styled.p`
+  font-size: 1.1rem;
+  color: #64748b;
+  max-width: 600px;
+  margin: 0 auto 3rem;
+  line-height: 1.6;
+  text-align: center;
+`;
+
 const CareersPage: React.FC = () => {
-  const jobs = [
+  const jobOpenings = [
     {
       id: 1,
       title: "Emlak Danışmanı",
-      location: "İstanbul, Türkiye",
-      description: "Müşterilere emlak satış ve kiralama konularında profesyonel danışmanlık hizmeti sunacak deneyimli danışmanlar arıyoruz.",
-      requirements: "En az 2 yıl emlak sektörü deneyimi, mükemmel iletişim becerileri, sürücü belgesi",
-      icon: "👨‍💼"
+      department: "Satış Departmanı",
+      description: "Müşterilere emlak alım-satım konularında danışmanlık yapacak, deneyimli emlak danışmanları arıyoruz.",
+      requirements: "En az 2 yıl deneyim, emlak lisansı gerekli",
+      location: "İstanbul"
     },
     {
       id: 2,
-      title: "Yazılım Geliştirici",
-      location: "İstanbul, Türkiye",
-      description: "Emlak platformumuzun geliştirilmesi ve sürdürülmesi için React ve Node.js deneyimli yazılım geliştiriciler arıyoruz.",
-      requirements: "React, Node.js, TypeScript deneyimi, en az 3 yıl yazılım geliştirme deneyimi",
-      icon: "👨‍💻"
+      title: "Web Geliştirici",
+      department: "Teknoloji Departmanı",
+      description: "React ve Node.js teknolojileri ile web uygulamaları geliştirecek yazılım geliştiriciler arıyoruz.",
+      requirements: "En az 3 yıl deneyim, React/Node.js bilgisi",
+      location: "Uzaktan"
     },
     {
       id: 3,
-      title: "Pazarlama Uzmanı",
-      location: "İstanbul, Türkiye",
-      description: "Dijital pazarlama stratejileri geliştirerek platformumuzun büyümesine katkıda bulunacak pazarlama uzmanları arıyoruz.",
-      requirements: "Dijital pazarlama deneyimi, sosyal medya yönetimi, analitik beceriler",
-      icon: "📈"
+      title: "Müşteri Hizmetleri Temsilcisi",
+      department: "Müşteri Hizmetleri",
+      description: "Müşteri sorularını yanıtlayacak ve destek sağlayacak deneyimli temsilciler arıyoruz.",
+      requirements: "En az 1 yıl deneyim, iyi iletişim becerileri",
+      location: "İstanbul"
     },
     {
       id: 4,
-      title: "Müşteri Hizmetleri Temsilcisi",
-      location: "İstanbul, Türkiye",
-      description: "Müşterilerimize en iyi hizmeti sunmak için sabırlı ve iletişim becerileri güçlü temsilciler arıyoruz.",
-      requirements: "Mükemmel Türkçe, temel İngilizce, müşteri odaklı yaklaşım",
-      icon: "📞"
+      title: "Pazarlama Uzmanı",
+      department: "Pazarlama Departmanı",
+      description: "Dijital pazarlama stratejileri geliştirecek ve kampanyaları yönetecek uzmanlar arıyoruz.",
+      requirements: "En az 2 yıl deneyim, dijital pazarlama bilgisi",
+      location: "İstanbul"
+    },
+    {
+      id: 5,
+      title: "Muhasebe Uzmanı",
+      department: "Finans Departmanı",
+      description: "Şirket muhasebe işlemlerini yürütecek deneyimli muhasebe uzmanları arıyoruz.",
+      requirements: "En az 3 yıl deneyim, muhasebe lisansı",
+      location: "İstanbul"
+    },
+    {
+      id: 6,
+      title: "İnsan Kaynakları Uzmanı",
+      department: "İnsan Kaynakları",
+      description: "İşe alım süreçlerini yönetecek ve çalışan gelişimi konularında destek sağlayacak uzmanlar arıyoruz.",
+      requirements: "En az 2 yıl deneyim, İK süreçleri bilgisi",
+      location: "İstanbul"
     }
   ];
 
   return (
     <Container>
       <HeroSection>
-        <Title>💼 Kariyer</Title>
+        <Title>Kariyer <span>Fırsatları</span></Title>
         <Subtitle>
-          Emlak sektörünün öncü şirketlerinden biri olan ekibimize katılın. 
-          Kariyerinizi geliştirmek ve başarılı olmak için mükemmel fırsatlar sunuyoruz.
+          Dinamik ekibimizin bir parçası olun ve emlak sektörünün geleceğini birlikte şekillendirelim
         </Subtitle>
       </HeroSection>
 
       <ContentSection>
         <InfoCard>
-          <h3>🎯 Neden Biz?</h3>
+          <h3>Neden Biz?</h3>
           <p>
-            Emlak sektöründe 20 yılı aşkın deneyimimizle, çalışanlarımızın 
-            kariyer gelişimine önem veriyoruz.
+            Emlak sektörünün öncü şirketlerinden biri olarak, çalışanlarımıza en iyi fırsatları sunuyoruz.
           </p>
           <ul>
             <li>Rekabetçi maaş ve yan haklar</li>
-            <li>Sürekli eğitim ve gelişim fırsatları</li>
             <li>Esnek çalışma saatleri</li>
-            <li>Modern ofis ortamı</li>
+            <li>Sürekli eğitim ve gelişim imkanları</li>
             <li>Kariyer gelişim planları</li>
-            <li>Ekip aktiviteleri ve sosyal etkinlikler</li>
+            <li>Modern ofis ortamı</li>
+            <li>Takım çalışması odaklı kültür</li>
           </ul>
         </InfoCard>
 
         <InfoCard>
-          <h3>🏢 Şirket Kültürümüz</h3>
+          <h3>Değerlerimiz</h3>
           <p>
-            Yenilikçi, şeffaf ve kapsayıcı bir çalışma ortamı yaratıyoruz. 
-            Her çalışanımızın değerli olduğuna inanıyoruz.
+            Şirket kültürümüzü oluşturan temel değerlerimiz ve çalışma prensiplerimiz.
           </p>
           <ul>
-            <li>Şeffaf iletişim ve açık kapı politikası</li>
-            <li>Yenilikçi projeler ve teknoloji odaklı yaklaşım</li>
-            <li>Çeşitlilik ve kapsayıcılık</li>
-            <li>Çevre dostu iş uygulamaları</li>
-            <li>Toplumsal sorumluluk projeleri</li>
-            <li>Güçlü ekip ruhu ve işbirliği</li>
+            <li>Müşteri odaklı yaklaşım</li>
+            <li>Şeffaflık ve dürüstlük</li>
+            <li>Yenilikçilik ve sürekli gelişim</li>
+            <li>Takım çalışması ve işbirliği</li>
+            <li>Sosyal sorumluluk</li>
+            <li>Kalite ve mükemmellik</li>
           </ul>
         </InfoCard>
       </ContentSection>
 
       <JobsSection>
-        <h2>🔍 Açık Pozisyonlar</h2>
+        <SectionTitle>Açık <span>Pozisyonlar</span></SectionTitle>
+        <SectionSubtitle>
+          Şu anda aşağıdaki pozisyonlar için başvuru alıyoruz. Sizin için uygun olan pozisyonu bulun ve başvurunuzu yapın.
+        </SectionSubtitle>
+        
         <JobsGrid>
-          {jobs.map((job) => (
+          {jobOpenings.map((job) => (
             <JobCard key={job.id}>
-              <h3>{job.icon} {job.title}</h3>
-              <div className="location">
-                📍 {job.location}
-              </div>
-              <div className="description">
-                {job.description}
-              </div>
-              <div className="requirements">
-                <strong>Gereksinimler:</strong> {job.requirements}
-              </div>
+              <h4>{job.title}</h4>
+              <div className="department">{job.department}</div>
+              <p className="description">{job.description}</p>
+              <div className="requirements">📋 {job.requirements}</div>
+              <div className="requirements">📍 {job.location}</div>
               <button className="apply-button">
                 Başvuru Yap
               </button>
