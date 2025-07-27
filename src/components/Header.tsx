@@ -2,28 +2,18 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
 
 const HeaderContainer = styled.header`
-  background: var(--gradient-primary);
-  color: white;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  color: #1f2937;
   padding: 1rem 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
   z-index: 1000;
-  position: relative;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    pointer-events: none;
-  }
+  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+  transition: all 0.3s ease;
 `;
 
 const Nav = styled.nav`
@@ -37,19 +27,37 @@ const Nav = styled.nav`
 
 const Logo = styled(Link)`
   font-size: 1.8rem;
-  font-weight: 700;
-  color: white;
+  font-weight: 800;
+  color: #10b981;
   text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #10b981, #059669);
+    transition: width 0.3s ease;
+  }
   
   &:hover {
-    color: #f1f5f9;
+    color: #059669;
+    transform: translateY(-1px);
+    
+    &::after {
+      width: 100%;
+    }
   }
 `;
 
 const NavLinks = styled.div`
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 2.5rem;
 
   @media (max-width: 768px) {
     display: none;
@@ -57,13 +65,31 @@ const NavLinks = styled.div`
 `;
 
 const NavLink = styled(Link)`
-  color: white;
+  color: #6b7280;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 0.5rem 0;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #10b981, #059669);
+    transition: width 0.3s ease;
+  }
   
   &:hover {
-    color: #f1f5f9;
+    color: #10b981;
+    transform: translateY(-1px);
+    
+    &::after {
+      width: 100%;
+    }
   }
 `;
 
@@ -80,36 +106,56 @@ const UserInfo = styled.div`
 `;
 
 const UserName = styled.span`
-  font-weight: 500;
+  font-weight: 600;
+  color: #1f2937;
 `;
 
 const LogoutButton = styled.button`
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  background: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
   font-weight: 500;
   transition: all 0.3s ease;
   
   &:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: #e5e7eb;
+    color: #374151;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 `;
 
 const LoginButton = styled(Link)`
-  background: white;
-  color: #667eea;
-  padding: 0.5rem 1.5rem;
-  border-radius: 6px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
   
   &:hover {
-    background: #f8fafc;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+    
+    &::before {
+      left: 100%;
+    }
   }
 `;
 
@@ -117,9 +163,15 @@ const MobileMenuButton = styled.button`
   display: none;
   background: none;
   border: none;
-  color: white;
+  color: #6b7280;
   font-size: 1.5rem;
   cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    color: #10b981;
+    transform: scale(1.1);
+  }
   
   @media (max-width: 768px) {
     display: block;
@@ -136,107 +188,45 @@ const MobileMenu = styled.div<{ isOpen: boolean }>`
     top: 100%;
     left: 0;
     right: 0;
-    background: white;
-    color: #1e293b;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    color: #1f2937;
     padding: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(229, 231, 235, 0.5);
     
     ${NavLink} {
-      color: #1e293b;
+      color: #6b7280;
       padding: 0.75rem 0;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid rgba(229, 231, 235, 0.3);
       
       &:last-child {
         border-bottom: none;
+      }
+      
+      &:hover {
+        color: #10b981;
       }
     }
   }
 `;
 
-const ThemeToggleButton = styled.button`
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.25) 100%);
-  border: none;
-  color: white;
-  padding: 12px 16px;
-  border-radius: 16px;
-  cursor: pointer;
-  font-size: 1.4rem;
-  margin-right: 10px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(15px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.6s;
-  }
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s, height 0.3s;
-  }
-  
-  &:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.4) 100%);
-    transform: translateY(-3px) scale(1.08);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
-    
-    &::before {
-      left: 100%;
-    }
-    
-    &::after {
-      width: 100%;
-      height: 100%;
-    }
-  }
-  
-  &:active {
-    transform: translateY(-1px) scale(0.98);
-    transition: all 0.1s;
-  }
-  
-  @media (max-width: 768px) {
-    padding: 10px 14px;
-    font-size: 1.3rem;
-    margin-right: 10px;
-  }
-`;
-
 const SettingsButton = styled(Link)`
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.25) 100%);
-  border: none;
-  color: white;
-  padding: 12px 16px;
-  border-radius: 16px;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border: 1px solid #d1d5db;
+  color: #6b7280;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   margin-right: 10px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(15px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  position: relative;
-  overflow: hidden;
+  transition: all 0.3s ease;
   text-decoration: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
   
   &::before {
     content: '';
@@ -245,59 +235,32 @@ const SettingsButton = styled(Link)`
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.6s;
-  }
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s, height 0.3s;
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+    transition: left 0.5s;
   }
   
   &:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.4) 100%);
-    transform: translateY(-3px) scale(1.08);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
-    color: white;
+    background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+    color: #10b981;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
     
     &::before {
       left: 100%;
     }
-    
-    &::after {
-      width: 100%;
-      height: 100%;
-    }
-  }
-  
-  &:active {
-    transform: translateY(-1px) scale(0.98);
-    transition: all 0.1s;
   }
   
   @media (max-width: 768px) {
-    padding: 10px 14px;
-    font-size: 1.3rem;
-    margin-right: 10px;
+    padding: 0.5rem 0.7rem;
+    font-size: 1.1rem;
+    margin-right: 8px;
   }
 `;
 
 const Header: React.FC = () => {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Debug için tema durumunu konsola yazdır
-  console.log('Header - Current theme:', theme);
 
   const handleLogout = () => {
     logout();
@@ -306,12 +269,6 @@ const Header: React.FC = () => {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
-  };
-
-  const handleThemeToggle = () => {
-    console.log('Theme toggle clicked! Current theme:', theme);
-    toggleTheme();
-    console.log('Theme after toggle:', theme === 'light' ? 'dark' : 'light');
   };
 
   return (
@@ -334,9 +291,6 @@ const Header: React.FC = () => {
         </NavLinks>
 
         <UserSection>
-          <ThemeToggleButton onClick={handleThemeToggle}>
-            {theme === 'light' ? '🌙' : '☀️'}
-          </ThemeToggleButton>
           {isAuthenticated && (
             <SettingsButton to="/settings">
               ⚙️
