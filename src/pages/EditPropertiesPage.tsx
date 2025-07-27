@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { allProperties } from '../data/properties';
 
 const Container = styled.div`
   max-width: 1200px;
@@ -9,12 +10,13 @@ const Container = styled.div`
 `;
 
 const PageHeader = styled.div`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   padding: 2rem;
   border-radius: 16px;
   margin-bottom: 2rem;
   text-align: center;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
 `;
 
 const PageTitle = styled.h1`
@@ -50,7 +52,8 @@ const SearchInput = styled.input`
   
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   }
 `;
 
@@ -63,7 +66,8 @@ const FilterSelect = styled.select`
   
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   }
 `;
 
@@ -140,7 +144,7 @@ const PropertyLocation = styled.div`
 
 const PropertyPrice = styled.div`
   font-weight: 600;
-  color: #667eea;
+  color: #10b981;
 `;
 
 const PropertyType = styled.div`
@@ -171,7 +175,7 @@ const ActionButtons = styled.div`
   }
 `;
 
-const Button = styled.button`
+const ActionButton = styled.button`
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 6px;
@@ -179,36 +183,40 @@ const Button = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-right: 0.5rem;
   
-  &:hover {
-    transform: translateY(-1px);
+  &:last-child {
+    margin-right: 0;
   }
 `;
 
-const EditButton = styled(Button)`
-  background: #fbbf24;
-  color: white;
-  
-  &:hover {
-    background: #f59e0b;
-  }
-`;
-
-const DeleteButton = styled(Button)`
-  background: #ef4444;
-  color: white;
-  
-  &:hover {
-    background: #dc2626;
-  }
-`;
-
-const ViewButton = styled(Button)`
+const EditButton = styled(ActionButton)`
   background: #10b981;
   color: white;
   
   &:hover {
     background: #059669;
+    transform: translateY(-1px);
+  }
+`;
+
+const DeleteButton = styled(ActionButton)`
+  background: #ef4444;
+  color: white;
+  
+  &:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+  }
+`;
+
+const ViewButton = styled(ActionButton)`
+  background: #3b82f6;
+  color: white;
+  
+  &:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
   }
 `;
 
@@ -224,53 +232,38 @@ const EditPropertiesPage: React.FC = () => {
   const [filterType, setFilterType] = useState('all');
 
   // Simüle edilmiş emlak verileri
-  const properties = [
-    {
-      id: 1,
-      title: 'Modern Daire',
-      location: 'Kadıköy, İstanbul',
-      price: '2.500.000 TL',
-      type: 'sale',
-      status: 'active'
-    },
-    {
-      id: 2,
-      title: 'Lüks Villa',
-      location: 'Beşiktaş, İstanbul',
-      price: '8.500.000 TL',
-      type: 'sale',
-      status: 'active'
-    },
-    {
-      id: 3,
-      title: 'Güzel Kiralık Daire',
-      location: 'Şişli, İstanbul',
-      price: '15.000 TL/ay',
-      type: 'rent',
-      status: 'active'
-    },
-    {
-      id: 4,
-      title: 'Bahçeli Müstakil Ev',
-      location: 'Çankaya, Ankara',
-      price: '3.200.000 TL',
-      type: 'sale',
-      status: 'pending'
-    },
-    {
-      id: 5,
-      title: 'Deniz Manzaralı Daire',
-      location: 'Konak, İzmir',
-      price: '22.000 TL/ay',
-      type: 'rent',
-      status: 'active'
+  // LocalStorage'dan verileri oku, yoksa varsayılan verileri kullan
+  const getProperties = () => {
+    const storedProperties = localStorage.getItem('properties');
+    if (storedProperties) {
+      return JSON.parse(storedProperties);
     }
-  ];
+    return allProperties;
+  };
 
-  const filteredProperties = properties.filter(property => {
-    const matchesSearch = property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         property.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterType === 'all' || property.type === filterType;
+  const [properties, setProperties] = useState(getProperties());
+
+  const filteredProperties = properties.filter((property: any) => {
+    // Arama kriterleri - daha fazla alanı ara
+    const searchLower = searchTerm.toLowerCase();
+    const matchesSearch = searchTerm === '' || 
+                         property.title?.toLowerCase().includes(searchLower) ||
+                         property.location?.toLowerCase().includes(searchLower) ||
+                         property.city?.toLowerCase().includes(searchLower) ||
+                         property.district?.toLowerCase().includes(searchLower) ||
+                         property.price?.toString().includes(searchLower) ||
+                         property.rooms?.toLowerCase().includes(searchLower);
+    
+    // Filtreleme mantığını düzelt - Türkçe type değerlerini kontrol et
+    let matchesFilter = true;
+    if (filterType !== 'all') {
+      if (filterType === 'sale') {
+        matchesFilter = property.type === 'Satılık';
+      } else if (filterType === 'rent') {
+        matchesFilter = property.type === 'Kiralık' || property.type === 'Günlük Kiralık';
+      }
+    }
+    
     return matchesSearch && matchesFilter;
   });
 
@@ -281,8 +274,10 @@ const EditPropertiesPage: React.FC = () => {
 
   const handleDelete = (id: number) => {
     if (window.confirm('Bu ilanı silmek istediğinizden emin misiniz?')) {
-      // Silme işlemi
-      console.log('İlan silindi:', id);
+      // LocalStorage'dan silme işlemi
+      const updatedProperties = properties.filter((property: any) => property.id !== id);
+      setProperties(updatedProperties);
+      localStorage.setItem('properties', JSON.stringify(updatedProperties));
     }
   };
 
@@ -292,10 +287,14 @@ const EditPropertiesPage: React.FC = () => {
 
   const getTypeComponent = (type: string) => {
     switch (type) {
-      case 'sale':
+      case 'Satılık':
         return <SaleType>Satılık</SaleType>;
-      case 'rent':
+      case 'Kiralık':
         return <RentType>Kiralık</RentType>;
+      case 'Günlük Kiralık':
+        return <RentType>Günlük Kiralık</RentType>;
+      case 'Proje':
+        return <PropertyType>Proje</PropertyType>;
       default:
         return <PropertyType>{type}</PropertyType>;
     }
@@ -311,7 +310,7 @@ const EditPropertiesPage: React.FC = () => {
       <SearchBar>
         <SearchInput
           type="text"
-          placeholder="İlan başlığı veya konum ara..."
+          placeholder="İlan başlığı, konum, şehir, fiyat veya oda sayısı ara..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -336,7 +335,7 @@ const EditPropertiesPage: React.FC = () => {
         </TableHeader>
 
         {filteredProperties.length > 0 ? (
-          filteredProperties.map((property) => (
+          filteredProperties.map((property: any) => (
             <PropertyRow key={property.id}>
               <PropertyInfo data-label="İlan Başlığı:">
                 <PropertyTitle>{property.title}</PropertyTitle>
@@ -347,7 +346,12 @@ const EditPropertiesPage: React.FC = () => {
               </PropertyInfo>
               
               <PropertyInfo data-label="Fiyat:">
-                <PropertyPrice>{property.price}</PropertyPrice>
+                <PropertyPrice>
+                  {typeof property.price === 'number' 
+                    ? property.price.toLocaleString('tr-TR') + ' TL'
+                    : property.price || 'Fiyat belirtilmemiş'
+                  }
+                </PropertyPrice>
               </PropertyInfo>
               
               <PropertyInfo data-label="Tür:">
