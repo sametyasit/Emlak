@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import styled from 'styled-components';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/AdminDashboard';
@@ -53,6 +54,7 @@ const App: React.FC = () => {
   return (
     <>
       <GlobalStyles />
+      <ScrollToTop />
       <AppContainer>
         <Header />
         <MainContent>
