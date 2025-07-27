@@ -8,12 +8,13 @@ const Container = styled.div`
 `;
 
 const PageHeader = styled.div`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   padding: 2rem;
   border-radius: 16px;
   margin-bottom: 2rem;
   text-align: center;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
 `;
 
 const PageTitle = styled.h1`
@@ -59,8 +60,8 @@ const NotificationItem = styled.div`
   transition: all 0.3s ease;
   
   &:hover {
-    border-color: #667eea;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    border-color: #10b981;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
   }
 `;
 
@@ -101,27 +102,42 @@ const Button = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-right: 0.5rem;
   
-  &:hover {
-    transform: translateY(-1px);
+  &:last-child {
+    margin-right: 0;
   }
 `;
 
-const MarkReadButton = styled(Button)`
+const PrimaryButton = styled(Button)`
   background: #10b981;
   color: white;
   
   &:hover {
     background: #059669;
+    transform: translateY(-1px);
   }
 `;
 
-const DeleteButton = styled(Button)`
+const SecondaryButton = styled(Button)`
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  
+  &:hover {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+  }
+`;
+
+const DangerButton = styled(Button)`
   background: #ef4444;
   color: white;
   
   &:hover {
     background: #dc2626;
+    transform: translateY(-1px);
   }
 `;
 
@@ -234,8 +250,18 @@ const StatLabel = styled.div`
   font-weight: 500;
 `;
 
+const SuccessMessage = styled.div`
+  background: #f0fdf4;
+  color: #16a34a;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 500;
+`;
+
 const ManageNotificationsPage: React.FC = () => {
-  const [notifications] = useState([
+  const [notifications, setNotifications] = useState([
     {
       id: 1,
       title: 'Yeni İlan Eklendi',
@@ -269,6 +295,9 @@ const ManageNotificationsPage: React.FC = () => {
       read: true
     }
   ]);
+  
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const [settings, setSettings] = useState({
     emailNotifications: true,
@@ -293,12 +322,24 @@ const ManageNotificationsPage: React.FC = () => {
   };
 
   const handleMarkAsRead = (id: number) => {
-    console.log('Bildirim okundu olarak işaretlendi:', id);
+    const updatedNotifications = notifications.map(notification => 
+      notification.id === id ? { ...notification, read: true } : notification
+    );
+    setNotifications(updatedNotifications);
+    
+    setSuccessMessage('Bildirim okundu olarak işaretlendi!');
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
   };
 
   const handleDelete = (id: number) => {
     if (window.confirm('Bu bildirimi silmek istediğinizden emin misiniz?')) {
-      console.log('Bildirim silindi:', id);
+      const updatedNotifications = notifications.filter(notification => notification.id !== id);
+      setNotifications(updatedNotifications);
+      
+      setSuccessMessage('Bildirim başarıyla silindi!');
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
     }
   };
 
@@ -323,6 +364,12 @@ const ManageNotificationsPage: React.FC = () => {
         <PageTitle>🔔 Bildirimleri Yönet</PageTitle>
         <PageSubtitle>Platform bildirimlerini yönetin</PageSubtitle>
       </PageHeader>
+
+      {showSuccess && (
+        <SuccessMessage>
+          ✅ {successMessage}
+        </SuccessMessage>
+      )}
 
       <StatsGrid>
         <StatCard>
@@ -466,13 +513,13 @@ const ManageNotificationsPage: React.FC = () => {
               
               <NotificationActions>
                 {!notification.read && (
-                  <MarkReadButton onClick={() => handleMarkAsRead(notification.id)}>
+                  <PrimaryButton onClick={() => handleMarkAsRead(notification.id)}>
                     ✅ Okundu
-                  </MarkReadButton>
+                  </PrimaryButton>
                 )}
-                <DeleteButton onClick={() => handleDelete(notification.id)}>
+                <DangerButton onClick={() => handleDelete(notification.id)}>
                   🗑️ Sil
-                </DeleteButton>
+                </DangerButton>
               </NotificationActions>
             </NotificationItem>
           ))}
