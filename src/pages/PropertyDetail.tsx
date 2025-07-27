@@ -15,6 +15,15 @@ const fadeInUp = keyframes`
   }
 `;
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
@@ -62,6 +71,137 @@ const PropertyImage = styled.div`
   margin-bottom: 2rem;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+`;
+
+const ImageNavigation = styled.div`
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+`;
+
+const ImageDot = styled.div<{ active: boolean }>`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: ${props => props.active ? 'white' : 'rgba(255, 255, 255, 0.5)'};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: white;
+    transform: scale(1.2);
+  }
+`;
+
+const ImageCounter = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  z-index: 3;
+`;
+
+const Modal = styled.div<{ isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  display: ${props => props.isOpen ? 'flex' : 'none'};
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: ${fadeIn} 0.3s ease;
+`;
+
+const ModalContent = styled.div`
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ModalImage = styled.img`
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+`;
+
+const ModalCloseButton = styled.button`
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+`;
+
+const ModalNavigationButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 20px 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  &.prev {
+    left: 20px;
+  }
+  
+  &.next {
+    right: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 15px 10px;
+    font-size: 1.5rem;
+    
+    &.prev {
+      left: 10px;
+    }
+    
+    &.next {
+      right: 10px;
+    }
+  }
 `;
 
 const TitleSection = styled.div`
@@ -194,28 +334,135 @@ const DetailItem = styled.div`
   }
 `;
 
-const PropertyDescription = styled.div`
+const TabContainer = styled.div`
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
-  padding: 2rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(16, 185, 129, 0.1);
   backdrop-filter: blur(10px);
   position: relative;
   z-index: 1;
+  margin-bottom: 2rem;
 `;
 
-const DescriptionTitle = styled.h2`
-  font-size: 1.5rem;
+const TabButtons = styled.div`
+  display: flex;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+  overflow-x: auto;
+  
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+  }
+`;
+
+const TabButton = styled.button<{ active: boolean }>`
+  background: ${props => props.active ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'transparent'};
+  color: ${props => props.active ? 'white' : '#64748b'};
+  border: none;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  
+  &:hover {
+    background: ${props => props.active ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'rgba(16, 185, 129, 0.05)'};
+  }
+  
+  @media (max-width: 768px) {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
 `;
 
-const DescriptionText = styled.p`
-  color: #64748b;
-  line-height: 1.6;
-  font-size: 1.1rem;
+const TabContent = styled.div`
+  padding: 2rem;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+`;
+
+const FeaturesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+`;
+
+const FeatureCard = styled.div`
+  background: rgba(16, 185, 129, 0.05);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  
+  h3 {
+    color: #1e293b;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  p {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0;
+  }
+`;
+
+const FeaturesList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+`;
+
+const FeatureTag = styled.span`
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+`;
+
+const ContactInfo = styled.div`
+  background: rgba(16, 185, 129, 0.05);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  margin-bottom: 1.5rem;
+  
+  h3 {
+    color: #1e293b;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 `;
 
 const ContactButton = styled.button`
@@ -262,7 +509,6 @@ const MapButton = styled.button`
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-left: 1rem;
   position: relative;
   overflow: hidden;
   
@@ -284,22 +530,6 @@ const MapButton = styled.button`
     &::before {
       left: 100%;
     }
-  }
-  
-  @media (max-width: 768px) {
-    margin-left: 0;
-    margin-top: 1rem;
-  }
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 0.5rem;
   }
 `;
 
@@ -332,11 +562,12 @@ const PropertyDetail: React.FC = () => {
   const { isAdmin, isAuthenticated } = useAuth();
   const property = allProperties.find((p) => p.id.toString() === id);
   const [currentImage, setCurrentImage] = useState(0);
-  const [images, setImages] = useState(property ? [property.image] : []);
   const [modalOpen, setModalOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
+  const [activeTab, setActiveTab] = useState('overview');
+  const [error, setError] = useState<string | null>(null);
   
   if (!property) {
     return (
@@ -346,6 +577,52 @@ const PropertyDetail: React.FC = () => {
           <p>Aradığınız ilan mevcut değil veya kaldırılmış olabilir.</p>
           <ContactButton onClick={() => window.history.back()}>
             Geri Dön
+          </ContactButton>
+        </NoProperty>
+      </Container>
+    );
+  }
+
+  // Güvenli images array oluşturma
+  const images = React.useMemo(() => {
+    try {
+      // Önce property.images kontrolü
+      if (property.images && Array.isArray(property.images) && property.images.length > 0) {
+        return property.images.filter(img => img && typeof img === 'string');
+      }
+      
+      // Sonra property.image kontrolü
+      if (property.image && typeof property.image === 'string') {
+        return [property.image];
+      }
+      
+      // Varsayılan resim
+      return ['https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80'];
+    } catch (err) {
+      console.error('Images array error:', err);
+      return ['https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80'];
+    }
+  }, [property]);
+
+  // currentImage'ın geçerli olup olmadığını kontrol et
+  const safeCurrentImage = Math.min(currentImage, images.length - 1);
+
+  // currentImage'ı güvenli hale getir
+  React.useEffect(() => {
+    if (currentImage >= images.length) {
+      setCurrentImage(0);
+    }
+  }, [currentImage, images.length]);
+
+  // Error boundary
+  if (error) {
+    return (
+      <Container>
+        <NoProperty>
+          <h2>😔 Bir Hata Oluştu</h2>
+          <p>{error}</p>
+          <ContactButton onClick={() => window.location.reload()}>
+            Sayfayı Yenile
           </ContactButton>
         </NoProperty>
       </Container>
@@ -371,14 +648,178 @@ const PropertyDetail: React.FC = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const url = URL.createObjectURL(file);
-      setImages((prev) => [...prev, url]);
-      setCurrentImage(images.length); // yeni eklenen fotoğrafı göster
+      // Bu özelliği daha sonra geliştirebiliriz
+      console.log('Yeni fotoğraf eklendi:', url);
     }
   };
 
   // Modal galeri ileri/geri
   const nextImage = () => setCurrentImage((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   const prevImage = () => setCurrentImage((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+
+  // Modal kapatma
+  const closeModal = () => setModalOpen(false);
+
+  // Klavye ile modal kontrolü
+  React.useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (!modalOpen) return;
+      
+      switch (e.key) {
+        case 'Escape':
+          closeModal();
+          break;
+        case 'ArrowRight':
+          nextImage();
+          break;
+        case 'ArrowLeft':
+          prevImage();
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, [modalOpen, currentImage, images.length]);
+
+  const renderOverviewTab = () => {
+    try {
+      return (
+        <div>
+          <FeaturesGrid>
+            <FeatureCard>
+              <h3>🏗️ Bina Bilgileri</h3>
+              <p><strong>Bina Yaşı:</strong> {property.buildingAge || 'Belirtilmemiş'}</p>
+              <p><strong>Kat:</strong> {property.floor || 'Belirtilmemiş'}</p>
+              <p><strong>Isıtma:</strong> {property.heating || 'Belirtilmemiş'}</p>
+              <p><strong>Asansör:</strong> {property.elevator || 'Belirtilmemiş'}</p>
+            </FeatureCard>
+            
+            <FeatureCard>
+              <h3>🚗 Otopark & Güvenlik</h3>
+              <p><strong>Otopark:</strong> {property.parking || 'Belirtilmemiş'}</p>
+              <p><strong>Güvenlik:</strong> {property.security || 'Belirtilmemiş'}</p>
+              <p><strong>Site İçinde:</strong> {property.inComplex || 'Belirtilmemiş'}</p>
+            </FeatureCard>
+            
+            <FeatureCard>
+              <h3>🏠 Konfor Özellikleri</h3>
+              <p><strong>Balkon:</strong> {property.balcony || 'Belirtilmemiş'}</p>
+              <p><strong>Eşyalı:</strong> {property.furnished || 'Belirtilmemiş'}</p>
+              <p><strong>Evcil Hayvan:</strong> {property.petFriendly || 'Belirtilmemiş'}</p>
+              <p><strong>Kredi Uygunluğu:</strong> {property.loanEligible || 'Belirtilmemiş'}</p>
+            </FeatureCard>
+            
+            <FeatureCard>
+              <h3>🌊 Manzara & Konum</h3>
+              <p><strong>Deniz Manzarası:</strong> {property.seaView || 'Belirtilmemiş'}</p>
+              <p><strong>Metro Yakını:</strong> {property.nearMetro || 'Belirtilmemiş'}</p>
+              <p><strong>Bahçe:</strong> {property.garden || 'Belirtilmemiş'}</p>
+              <p><strong>Havuz:</strong> {property.pool || 'Belirtilmemiş'}</p>
+            </FeatureCard>
+            
+            <FeatureCard>
+              <h3>🏋️ Sosyal Tesisler</h3>
+              <p><strong>Spor Salonu:</strong> {property.gym || 'Belirtilmemiş'}</p>
+              <p><strong>Havuz:</strong> {property.pool || 'Belirtilmemiş'}</p>
+              <p><strong>Bahçe:</strong> {property.garden || 'Belirtilmemiş'}</p>
+            </FeatureCard>
+          </FeaturesGrid>
+          
+          <div>
+            <h3 style={{ color: '#1e293b', fontSize: '1.3rem', fontWeight: 600, marginBottom: '1rem' }}>
+              ✨ Öne Çıkan Özellikler
+            </h3>
+            <FeaturesList>
+              {(property.features || []).map((feature, index) => (
+                <FeatureTag key={index}>{feature}</FeatureTag>
+              ))}
+            </FeaturesList>
+          </div>
+        </div>
+      );
+    } catch (err) {
+      console.error('Overview tab error:', err);
+      setError('Genel bakış bilgileri yüklenirken hata oluştu.');
+      return null;
+    }
+  };
+
+  const renderDescriptionTab = () => {
+    try {
+      return (
+        <div>
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ color: '#1e293b', fontSize: '1.3rem', fontWeight: 600, marginBottom: '1rem' }}>
+              📋 İlan Açıklaması
+            </h3>
+            <p style={{ color: '#64748b', lineHeight: '1.8', fontSize: '1.1rem' }}>
+              {property.description || 'Bu ilan için henüz detaylı açıklama eklenmemiş.'}
+            </p>
+          </div>
+          
+          <ContactInfo>
+            <h3>📞 İletişim Bilgileri</h3>
+            <p><strong>📱 Telefon:</strong> {property.contactPhone || 'Belirtilmemiş'}</p>
+            <p><strong>✉️ E-posta:</strong> {property.contactEmail || 'Belirtilmemiş'}</p>
+            <p><strong>📅 İlan Tarihi:</strong> {property.listedDate || 'Belirtilmemiş'}</p>
+            <p><strong>🔄 Son Güncelleme:</strong> {property.lastUpdated || 'Belirtilmemiş'}</p>
+          </ContactInfo>
+        </div>
+      );
+    } catch (err) {
+      console.error('Description tab error:', err);
+      setError('Açıklama bilgileri yüklenirken hata oluştu.');
+      return null;
+    }
+  };
+
+  const renderLocationTab = () => {
+    try {
+      return (
+        <div>
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ color: '#1e293b', fontSize: '1.3rem', fontWeight: 600, marginBottom: '1rem' }}>
+              📍 Konum Bilgileri
+            </h3>
+            <FeaturesGrid>
+              <FeatureCard>
+                <h3>🏙️ Şehir & İlçe</h3>
+                <p><strong>Şehir:</strong> {property.city || 'Belirtilmemiş'}</p>
+                <p><strong>İlçe:</strong> {property.district || 'Belirtilmemiş'}</p>
+                <p><strong>Mahalle:</strong> {property.neighborhood || 'Belirtilmemiş'}</p>
+              </FeatureCard>
+              
+              <FeatureCard>
+                <h3>🚇 Ulaşım</h3>
+                <p><strong>Metro Yakınlığı:</strong> {property.nearMetro || 'Belirtilmemiş'}</p>
+                <p><strong>Merkezi Konum:</strong> {(property.features || []).includes('Merkezi Konum') ? 'Evet' : 'Hayır'}</p>
+              </FeatureCard>
+              
+              <FeatureCard>
+                <h3>🏫 Yakınlık</h3>
+                <p><strong>Üniversite Yakını:</strong> {(property.features || []).includes('Üniversite Yakını') ? 'Evet' : 'Hayır'}</p>
+                <p><strong>Deniz Manzarası:</strong> {property.seaView || 'Belirtilmemiş'}</p>
+              </FeatureCard>
+            </FeaturesGrid>
+          </div>
+          
+          <ButtonGroup>
+            <MapButton onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${property.location}`, '_blank')}>
+              🗺️ Haritada Gör
+            </MapButton>
+            <ContactButton onClick={() => window.location.href = '/contact'}>
+              📞 İletişime Geç
+            </ContactButton>
+          </ButtonGroup>
+        </div>
+      );
+    } catch (err) {
+      console.error('Location tab error:', err);
+      setError('Konum bilgileri yüklenirken hata oluştu.');
+      return null;
+    }
+  };
 
   return (
     <Container>
@@ -389,82 +830,87 @@ const PropertyDetail: React.FC = () => {
 
       <PropertyHeader>
         <div style={{position: 'relative'}}>
-          <PropertyImage style={{
-            backgroundImage: `url(${images[currentImage]})`, 
-            backgroundSize: 'cover', 
-            backgroundPosition: 'center', 
-            color: 'transparent', 
-            transition: 'background-image 0.3s', 
-            objectFit: 'cover', 
-            position: 'relative'
-          }}>
-            {/* Büyütme butonu */}
-            <button
-              style={{
-                position: 'absolute',
-                top: 12,
-                right: 12,
-                background: 'rgba(255,255,255,0.8)',
-                border: 'none',
-                borderRadius: '50%',
-                width: 32,
-                height: 32,
-                fontSize: '1.1rem',
-                cursor: 'pointer',
-                zIndex: 3
-              }}
-              onClick={() => setModalOpen(true)}
-              aria-label="Büyüt"
-            >
-              🔍
-            </button>
-            <span role="img" aria-label="ev">🏠</span>
+          <PropertyImage 
+            style={{
+              backgroundImage: `url(${images[safeCurrentImage]})`, 
+              backgroundSize: 'cover', 
+              backgroundPosition: 'center', 
+              color: 'transparent', 
+              transition: 'background-image 0.3s', 
+              objectFit: 'cover', 
+              position: 'relative'
+            }}
+            onClick={() => setModalOpen(true)}
+          >
+            <ImageCounter>
+              {safeCurrentImage + 1} / {images.length}
+            </ImageCounter>
+            
+            {images.length > 1 && (
+              <>
+                <button
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '10px',
+                    transform: 'translateY(-50%)',
+                    background: 'rgba(255,255,255,0.7)',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '40px',
+                    height: '40px',
+                    fontSize: '1.5rem',
+                    cursor: 'pointer',
+                    zIndex: 2
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevImage();
+                  }}
+                  aria-label="Önceki fotoğraf"
+                >
+                  ‹
+                </button>
+                <button
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    right: '10px',
+                    transform: 'translateY(-50%)',
+                    background: 'rgba(255,255,255,0.7)',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '40px',
+                    height: '40px',
+                    fontSize: '1.5rem',
+                    cursor: 'pointer',
+                    zIndex: 2
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextImage();
+                  }}
+                  aria-label="Sonraki fotoğraf"
+                >
+                  ›
+                </button>
+              </>
+            )}
+            
+            <ImageNavigation>
+              {images.map((_, index) => (
+                <ImageDot
+                  key={index}
+                  active={index === safeCurrentImage}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImage(index);
+                  }}
+                />
+              ))}
+            </ImageNavigation>
           </PropertyImage>
-          {images.length > 1 && (
-            <>
-              <button
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '10px',
-                  transform: 'translateY(-50%)',
-                  background: 'rgba(255,255,255,0.7)',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '40px',
-                  height: '40px',
-                  fontSize: '1.5rem',
-                  cursor: 'pointer',
-                  zIndex: 2
-                }}
-                onClick={prevImage}
-                aria-label="Önceki fotoğraf"
-              >
-                ‹
-              </button>
-              <button
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  right: '10px',
-                  transform: 'translateY(-50%)',
-                  background: 'rgba(255,255,255,0.7)',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '40px',
-                  height: '40px',
-                  fontSize: '1.5rem',
-                  cursor: 'pointer',
-                  zIndex: 2
-                }}
-                onClick={nextImage}
-                aria-label="Sonraki fotoğraf"
-              >
-                ›
-              </button>
-            </>
-          )}
-          {/* Admin ise fotoğraf ekle kutusu */}
+          
           {isAdmin && (
             <>
               <div style={{display: 'flex', justifyContent: 'center', marginTop: 16, gap: 8}}>
@@ -495,8 +941,8 @@ const PropertyDetail: React.FC = () => {
                   }}
                   onClick={() => {
                     if (images.length > 1) {
-                      setImages(images.filter((_, index) => index !== currentImage));
-                      setCurrentImage(0);
+                      // Bu özelliği daha sonra geliştirebiliriz
+                      console.log('Fotoğraf silme özelliği');
                     }
                   }}
                 >
@@ -551,24 +997,68 @@ const PropertyDetail: React.FC = () => {
         </PropertyDetails>
       </PropertyHeader>
 
-      <PropertyDescription>
-        <DescriptionTitle>📋 İlan Detayları</DescriptionTitle>
-        <DescriptionText>
-          Bu {property.type.toLowerCase()} ilanı {property.location} konumunda yer almaktadır. 
-          {property.rooms} oda düzeninde, {property.area} alanında bulunan bu emlak, 
-          {property.type === 'Satılık' ? ' satın almak' : ' kiralamak'} için ideal bir seçenektir.
-          <br /><br />
-          Detaylı bilgi ve görüntüleme için lütfen bizimle iletişime geçin.
-        </DescriptionText>
-        <ButtonGroup>
-          <ContactButton onClick={() => window.location.href = '/contact'}>
-            📞 İletişime Geç
-          </ContactButton>
-          <MapButton onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${property.location}`, '_blank')}>
-            🗺️ Haritada Gör
-          </MapButton>
-        </ButtonGroup>
-      </PropertyDescription>
+      <TabContainer>
+        <TabButtons>
+          <TabButton 
+            active={activeTab === 'overview'} 
+            onClick={() => setActiveTab('overview')}
+          >
+            📋 Genel Bakış
+          </TabButton>
+          <TabButton 
+            active={activeTab === 'description'} 
+            onClick={() => setActiveTab('description')}
+          >
+            📝 Açıklama & İletişim
+          </TabButton>
+          <TabButton 
+            active={activeTab === 'location'} 
+            onClick={() => setActiveTab('location')}
+          >
+            📍 Konum & Ulaşım
+          </TabButton>
+        </TabButtons>
+        
+        <TabContent>
+          {activeTab === 'overview' && renderOverviewTab()}
+          {activeTab === 'description' && renderDescriptionTab()}
+          {activeTab === 'location' && renderLocationTab()}
+        </TabContent>
+      </TabContainer>
+
+      {/* Modal */}
+      <Modal isOpen={modalOpen} onClick={closeModal}>
+        <ModalContent onClick={(e) => e.stopPropagation()}>
+          <ModalCloseButton onClick={closeModal}>×</ModalCloseButton>
+          
+          {images.length > 1 && (
+            <>
+              <ModalNavigationButton className="prev" onClick={prevImage}>
+                ‹
+              </ModalNavigationButton>
+              <ModalNavigationButton className="next" onClick={nextImage}>
+                ›
+              </ModalNavigationButton>
+            </>
+          )}
+          
+          <ModalImage src={images[safeCurrentImage]} alt={`${property.title} - Fotoğraf ${safeCurrentImage + 1}`} />
+          
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(0, 0, 0, 0.7)',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '20px',
+            fontSize: '0.9rem'
+          }}>
+            {safeCurrentImage + 1} / {images.length}
+          </div>
+        </ModalContent>
+      </Modal>
     </Container>
   );
 };
