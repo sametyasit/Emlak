@@ -16,8 +16,8 @@ const Container = styled.div`
   max-width: 1000px;
   margin: 0 auto;
   padding: 2rem 20px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #1e293b;
   min-height: 100vh;
   position: relative;
   
@@ -29,7 +29,7 @@ const Container = styled.div`
     transform: translateX(-50%);
     width: 100vw;
     height: 100%;
-    background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+    background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
   }
@@ -44,29 +44,27 @@ const HeroSection = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1e293b;
   margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
   
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
+  span {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: 1.3rem;
-  color: var(--text-secondary);
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: #64748b;
   max-width: 700px;
   margin: 0 auto;
   line-height: 1.6;
-  
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-  }
+  font-weight: 400;
 `;
 
 const FAQSection = styled.div`
@@ -76,15 +74,16 @@ const FAQSection = styled.div`
 `;
 
 const FAQItem = styled.div<{ isOpen: boolean }>`
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
   margin-bottom: 1rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(16, 185, 129, 0.1);
   overflow: hidden;
   transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
   
   &:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.1);
   }
 `;
 
@@ -98,44 +97,31 @@ const FAQQuestion = styled.button<{ isOpen: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: var(--text-primary);
   font-size: 1.1rem;
   font-weight: 600;
+  color: #1e293b;
   transition: all 0.3s ease;
   
   &:hover {
-    background: var(--card-hover);
+    background: rgba(16, 185, 129, 0.05);
   }
   
   .icon {
     font-size: 1.2rem;
+    color: #10b981;
     transition: transform 0.3s ease;
     transform: ${props => props.isOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
   }
 `;
 
 const FAQAnswer = styled.div<{ isOpen: boolean }>`
+  padding: ${props => props.isOpen ? '0 2rem 1.5rem 2rem' : '0 2rem'};
   max-height: ${props => props.isOpen ? '500px' : '0'};
   overflow: hidden;
-  transition: max-height 0.3s ease;
-  padding: ${props => props.isOpen ? '0 2rem 1.5rem 2rem' : '0 2rem'};
-  color: var(--text-secondary);
+  transition: all 0.3s ease;
+  color: #6b7280;
   line-height: 1.6;
-  font-size: 1rem;
-`;
-
-const CategorySection = styled.div`
-  margin-bottom: 3rem;
-  
-  h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
+  border-top: ${props => props.isOpen ? '1px solid rgba(16, 185, 129, 0.1)' : 'none'};
 `;
 
 const FAQPage: React.FC = () => {
@@ -151,116 +137,70 @@ const FAQPage: React.FC = () => {
 
   const faqData = [
     {
-      category: "🏠 Genel Sorular",
-      items: [
-        {
-          id: 1,
-          question: "Emlak platformunuzda kaç ilan bulunuyor?",
-          answer: "Platformumuzda sürekli güncellenen binlerce emlak ilanı bulunmaktadır. İlan sayısı günlük olarak değişmekte olup, her zaman güncel veriler sunmaktayız."
-        },
-        {
-          id: 2,
-          question: "İlanları nasıl filtreleyebilirim?",
-          answer: "Gelişmiş filtreleme seçeneklerimiz ile fiyat aralığı, konum, oda sayısı, emlak tipi ve daha birçok kriteri kullanarak aradığınız emlağı kolayca bulabilirsiniz."
-        },
-        {
-          id: 3,
-          question: "İlanlar güncel mi?",
-          answer: "Evet, tüm ilanlarımız düzenli olarak güncellenmektedir. Satılan veya kiralanan emlaklar hemen platformdan kaldırılır."
-        }
-      ]
+      id: 1,
+      question: "Emlak alım-satım işlemlerinde hangi belgeler gerekli?",
+      answer: "Emlak alım-satım işlemlerinde tapu, kimlik fotokopisi, vergi levhası, emlak beyannamesi ve gerekli durumlarda noter belgeleri gereklidir. Detaylı liste için müşteri hizmetlerimizle iletişime geçebilirsiniz."
     },
     {
-      category: "💰 Satış ve Kiralama",
-      items: [
-        {
-          id: 4,
-          question: "Emlak satış süreci nasıl işliyor?",
-          answer: "Emlak satış sürecimiz profesyonel danışmanlarımız eşliğinde yürütülür. Değerleme, pazarlama, görüşmeler ve sözleşme süreçlerinde size destek oluruz."
-        },
-        {
-          id: 5,
-          question: "Kiralama için gerekli belgeler nelerdir?",
-          answer: "Kiralama işlemi için kimlik, gelir belgesi, referans mektubu ve kefil bilgileri gerekebilir. Detaylı bilgi için danışmanlarımızla iletişime geçebilirsiniz."
-        },
-        {
-          id: 6,
-          question: "Komisyon oranları nedir?",
-          answer: "Komisyon oranlarımız hizmet türüne ve emlak değerine göre değişmektedir. Detaylı bilgi için ofislerimizle iletişime geçebilirsiniz."
-        }
-      ]
+      id: 2,
+      question: "Konut kredisi alırken dikkat edilmesi gerekenler nelerdir?",
+      answer: "Konut kredisi alırken faiz oranları, vade süresi, ön ödeme oranı, kredi limiti ve bankanın şartlarını detaylı olarak incelemeniz önemlidir. Ayrıca gelir belgelerinizin güncel olması gerekmektedir."
     },
     {
-      category: "📋 Hukuki Konular",
-      items: [
-        {
-          id: 7,
-          question: "Tapu işlemleri ne kadar sürer?",
-          answer: "Tapu işlemleri genellikle 1-3 hafta arasında tamamlanır. Bu süre belge eksikliği ve resmi kurum yoğunluğuna göre değişebilir."
-        },
-        {
-          id: 8,
-          question: "Emlak vergisi nasıl hesaplanır?",
-          answer: "Emlak vergisi, emlağın rayiç değeri ve bulunduğu bölgeye göre hesaplanır. Hesaplama aracımızı kullanarak yaklaşık tutarı öğrenebilirsiniz."
-        },
-        {
-          id: 9,
-          question: "Kentsel dönüşüm süreci nasıl işliyor?",
-          answer: "Kentsel dönüşüm süreci riskli bina tespiti, anlaşma, proje ve inşaat aşamalarından oluşur. Uzman ekibimiz tüm süreçte yanınızda."
-        }
-      ]
+      id: 3,
+      question: "Emlak değerleme nasıl yapılır?",
+      answer: "Emlak değerleme, konum, bina yaşı, metrekare, oda sayısı, kat durumu, ısıtma sistemi ve çevre faktörleri göz önünde bulundurularak yapılır. Uzman değerleme ekibimiz size detaylı rapor sunar."
     },
     {
-      category: "💳 Kredi ve Finansman",
-      items: [
-        {
-          id: 10,
-          question: "Konut kredisi şartları nelerdir?",
-          answer: "Konut kredisi için düzenli gelir, kredi notu, peşinat oranı ve yaş şartları aranır. Detaylı bilgi için banka ortaklarımızla görüşebiliriz."
-        },
-        {
-          id: 11,
-          question: "Kredi hesaplama aracı doğru mu?",
-          answer: "Kredi hesaplama aracımız güncel faiz oranları ile çalışır ve yaklaşık sonuçlar verir. Kesin bilgi için banka ile görüşmeniz önerilir."
-        },
-        {
-          id: 12,
-          question: "Peşinat oranları değişti mi?",
-          answer: "Peşinat oranları Merkez Bankası düzenlemelerine göre değişmektedir. Güncel oranlar için danışmanlarımızla iletişime geçebilirsiniz."
-        }
-      ]
+      id: 4,
+      question: "Kiralık ev ararken nelere dikkat etmeliyim?",
+      answer: "Kiralık ev ararken bütçenizi, lokasyonu, ulaşım imkanlarını, güvenliği, evin durumunu ve kira sözleşmesinin şartlarını detaylı olarak değerlendirmeniz önerilir."
+    },
+    {
+      id: 5,
+      question: "Emlak vergileri ne zaman ödenir?",
+      answer: "Emlak vergileri genellikle yılda iki taksit halinde ödenir. İlk taksit Mart ayında, ikinci taksit ise Kasım ayında sona erer. Belediyenizin web sitesinden detaylı bilgi alabilirsiniz."
+    },
+    {
+      id: 6,
+      question: "Ev satarken hangi masraflar çıkar?",
+      answer: "Ev satarken emlak komisyonu, tapu harcı, noter masrafları, vergi ve gerekli durumlarda ekspertiz ücreti gibi masraflar çıkabilir. Detaylı maliyet analizi için danışmanlarımızla görüşebilirsiniz."
+    },
+    {
+      id: 7,
+      question: "Yatırım amaçlı emlak alırken hangi bölgeler tercih edilmeli?",
+      answer: "Yatırım amaçlı emlak alırken gelişmekte olan bölgeler, toplu taşıma imkanları, eğitim kurumları ve ticari merkezlere yakınlık önemli faktörlerdir. Uzman analiz ekibimiz size özel öneriler sunar."
+    },
+    {
+      id: 8,
+      question: "Emlak sigortası zorunlu mu?",
+      answer: "Emlak sigortası yasal olarak zorunlu değildir ancak evinizin ve eşyalarınızın güvenliği için önerilir. Deprem, hırsızlık ve doğal afetlere karşı koruma sağlar."
     }
   ];
 
   return (
     <Container>
       <HeroSection>
-        <Title>❓ Sık Sorulan Sorular</Title>
+        <Title>Sıkça Sorulan <span>Sorular</span></Title>
         <Subtitle>
-          Emlak süreçleri hakkında merak ettiğiniz her şey. Uzman ekibimiz tarafından 
-          hazırlanan detaylı cevaplar ile bilgilendirilirsiniz.
+          Emlak işlemlerinizle ilgili merak ettiğiniz soruların cevaplarını burada bulabilirsiniz
         </Subtitle>
       </HeroSection>
 
       <FAQSection>
-        {faqData.map((category) => (
-          <CategorySection key={category.category}>
-            <h2>{category.category}</h2>
-            {category.items.map((item) => (
-              <FAQItem key={item.id} isOpen={openItems.includes(item.id)}>
-                <FAQQuestion 
-                  isOpen={openItems.includes(item.id)}
-                  onClick={() => toggleItem(item.id)}
-                >
-                  {item.question}
-                  <span className="icon">▼</span>
-                </FAQQuestion>
-                <FAQAnswer isOpen={openItems.includes(item.id)}>
-                  {item.answer}
-                </FAQAnswer>
-              </FAQItem>
-            ))}
-          </CategorySection>
+        {faqData.map((item) => (
+          <FAQItem key={item.id} isOpen={openItems.includes(item.id)}>
+            <FAQQuestion 
+              isOpen={openItems.includes(item.id)}
+              onClick={() => toggleItem(item.id)}
+            >
+              {item.question}
+              <span className="icon">▼</span>
+            </FAQQuestion>
+            <FAQAnswer isOpen={openItems.includes(item.id)}>
+              {item.answer}
+            </FAQAnswer>
+          </FAQItem>
         ))}
       </FAQSection>
     </Container>
