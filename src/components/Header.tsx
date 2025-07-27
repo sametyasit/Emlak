@@ -291,17 +291,14 @@ const Header: React.FC = () => {
         </NavLinks>
 
         <UserSection>
-          {isAuthenticated && (
-            <SettingsButton to="/settings">
-              ⚙️
-            </SettingsButton>
-          )}
           {isAuthenticated ? (
             <>
               <UserInfo>
                 <UserName>{user?.name}</UserName>
-                {isAdmin && <span>👑</span>}
               </UserInfo>
+              <SettingsButton to="/settings">
+                ⚙️
+              </SettingsButton>
               <LogoutButton onClick={handleLogout}>
                 Çıkış
               </LogoutButton>
