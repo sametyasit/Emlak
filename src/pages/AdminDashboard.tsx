@@ -31,12 +31,13 @@ const Container = styled.div`
 `;
 
 const AdminHeader = styled.div`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   padding: 3rem;
   border-radius: 16px;
   margin-bottom: 2rem;
   text-align: center;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
 `;
 
 const AdminTitle = styled.h1`
@@ -64,10 +65,12 @@ const StatCard = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
   transition: all 0.3s ease;
+  border: 1px solid rgba(16, 185, 129, 0.1);
   
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.3);
   }
 `;
 
@@ -79,7 +82,7 @@ const StatIcon = styled.div`
 const StatNumber = styled.div`
   font-size: 2.5rem;
   font-weight: 700;
-  color: #667eea;
+  color: #10b981;
   margin-bottom: 0.5rem;
 `;
 
@@ -105,6 +108,7 @@ const ChartCard = styled.div`
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.1);
 `;
 
 const ChartTitle = styled.h3`
@@ -120,6 +124,7 @@ const ActionsSection = styled.div`
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.1);
 `;
 
 const ActionsTitle = styled.h2`
@@ -148,10 +153,11 @@ const ActionButton = styled.button`
   transition: all 0.3s ease;
   
   &:hover {
-    background: #667eea;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
-    border-color: #667eea;
+    border-color: #10b981;
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
   }
 `;
 
@@ -166,15 +172,15 @@ const AdminDashboard: React.FC = () => {
       {
         label: 'Satılan Emlaklar',
         data: [12, 19, 15, 25, 22, 30],
-        backgroundColor: 'rgba(102, 126, 234, 0.8)',
-        borderColor: 'rgba(102, 126, 234, 1)',
+        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+        borderColor: 'rgba(16, 185, 129, 1)',
         borderWidth: 1,
       },
       {
         label: 'Kiralanan Emlaklar',
         data: [8, 15, 12, 18, 20, 25],
-        backgroundColor: 'rgba(118, 75, 162, 0.8)',
-        borderColor: 'rgba(118, 75, 162, 1)',
+        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+        borderColor: 'rgba(59, 130, 246, 1)',
         borderWidth: 1,
       },
     ],
@@ -204,16 +210,16 @@ const AdminDashboard: React.FC = () => {
       {
         data: [45, 30, 15, 10],
         backgroundColor: [
-          'rgba(102, 126, 234, 0.8)',
-          'rgba(118, 75, 162, 0.8)',
-          'rgba(34, 197, 94, 0.8)',
+          'rgba(16, 185, 129, 0.8)',
+          'rgba(59, 130, 246, 0.8)',
           'rgba(251, 146, 60, 0.8)',
+          'rgba(239, 68, 68, 0.8)',
         ],
         borderColor: [
-          'rgba(102, 126, 234, 1)',
-          'rgba(118, 75, 162, 1)',
-          'rgba(34, 197, 94, 1)',
+          'rgba(16, 185, 129, 1)',
+          'rgba(59, 130, 246, 1)',
           'rgba(251, 146, 60, 1)',
+          'rgba(239, 68, 68, 1)',
         ],
         borderWidth: 2,
       },
