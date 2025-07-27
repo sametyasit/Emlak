@@ -1,33 +1,73 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { useAuth } from '../contexts/AuthContext';
+
+const fadeInUp = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 const LoginContainer = styled.div`
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   padding: 2rem;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
 `;
 
 const LoginCard = styled.div`
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  backdrop-filter: blur(10px);
   padding: 3rem;
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
   text-align: center;
+  position: relative;
+  z-index: 1;
+  animation: ${fadeInUp} 0.6s ease;
+  
+  @media (max-width: 768px) {
+    padding: 2rem;
+    margin: 1rem;
+  }
 `;
 
 const Logo = styled.div`
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: 700;
-  color: #667eea;
-  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 `;
 
 const Title = styled.h1`
@@ -40,6 +80,7 @@ const Title = styled.h1`
 const Subtitle = styled.p`
   color: #64748b;
   margin-bottom: 2rem;
+  font-size: 1rem;
 `;
 
 const Form = styled.form`
@@ -57,20 +98,23 @@ const Label = styled.label`
   font-weight: 500;
   color: #374151;
   margin-bottom: 0.5rem;
+  font-size: 0.9rem;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1rem;
   border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 1rem;
   transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
   
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    background: white;
   }
   
   &::placeholder {
@@ -79,88 +123,119 @@ const Input = styled.input`
 `;
 
 const LoginButton = styled.button`
-  background: #667eea;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 1rem;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
   
   &:hover {
-    background: #5a67d8;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    
+    &::before {
+      left: 100%;
+    }
   }
   
   &:disabled {
     background: #9ca3af;
     cursor: not-allowed;
     transform: none;
+    box-shadow: none;
+    
+    &::before {
+      display: none;
+    }
   }
 `;
 
 const ErrorMessage = styled.div`
-  background: #fef2f2;
+  background: rgba(239, 68, 68, 0.1);
   color: #dc2626;
-  padding: 0.75rem;
-  border-radius: 6px;
+  padding: 1rem;
+  border-radius: 12px;
   font-size: 0.9rem;
   margin-bottom: 1rem;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 `;
 
 const SuccessMessage = styled.div`
-  background: #f0fdf4;
-  color: #16a34a;
-  padding: 0.75rem;
-  border-radius: 6px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  padding: 1rem;
+  border-radius: 12px;
   font-size: 0.9rem;
   margin-bottom: 1rem;
+  border: 1px solid rgba(16, 185, 129, 0.2);
 `;
 
 const DemoInfo = styled.div`
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 1rem;
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
   margin-top: 1.5rem;
   text-align: left;
 `;
 
 const DemoTitle = styled.h4`
   color: #1e293b;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
 `;
 
 const DemoText = styled.p`
   color: #64748b;
-  font-size: 0.8rem;
-  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  
+  strong {
+    color: #10b981;
+  }
 `;
 
 const TabContainer = styled.div`
   display: flex;
   margin-bottom: 2rem;
   border-bottom: 2px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
 `;
 
 const Tab = styled.button<{ active: boolean }>`
   flex: 1;
   padding: 1rem;
-  background: none;
+  background: ${props => props.active ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'transparent'};
   border: none;
   font-size: 1rem;
   font-weight: 600;
-  color: ${props => props.active ? '#667eea' : '#64748b'};
+  color: ${props => props.active ? 'white' : '#64748b'};
   cursor: pointer;
-  border-bottom: 3px solid ${props => props.active ? '#667eea' : 'transparent'};
   transition: all 0.3s ease;
   
   &:hover {
-    color: #667eea;
+    background: ${props => props.active ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'rgba(16, 185, 129, 0.05)'};
+    color: ${props => props.active ? 'white' : '#10b981'};
   }
 `;
 
@@ -189,8 +264,8 @@ const GoogleButton = styled.button`
   background: white;
   color: #374151;
   border: 2px solid #e5e7eb;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -203,8 +278,9 @@ const GoogleButton = styled.button`
   
   &:hover {
     background: #f9fafb;
-    border-color: #d1d5db;
+    border-color: #10b981;
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
   &:active {
@@ -219,14 +295,18 @@ const RecaptchaContainer = styled.div`
 `;
 
 const BackLink = styled(Link)`
-  color: #667eea;
+  color: #10b981;
   text-decoration: none;
   font-weight: 500;
   margin-top: 1.5rem;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
   
   &:hover {
-    text-decoration: underline;
+    color: #059669;
+    transform: translateX(-2px);
   }
 `;
 
@@ -361,7 +441,9 @@ const LoginPage: React.FC = () => {
   return (
     <LoginContainer>
       <LoginCard>
-        <Logo>🏠 Emlak</Logo>
+        <Logo>
+          🏠 Emlak
+        </Logo>
         
         <TabContainer>
           <Tab 
@@ -530,7 +612,9 @@ const LoginPage: React.FC = () => {
           </>
         )}
 
-        <BackLink to="/">← Ana Sayfaya Dön</BackLink>
+        <BackLink to="/">
+          ← Ana Sayfaya Dön
+        </BackLink>
       </LoginCard>
     </LoginContainer>
   );
