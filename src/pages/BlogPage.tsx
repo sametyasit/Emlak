@@ -16,8 +16,8 @@ const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 20px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #1e293b;
   min-height: 100vh;
   position: relative;
   
@@ -29,7 +29,7 @@ const Container = styled.div`
     transform: translateX(-50%);
     width: 100vw;
     height: 100%;
-    background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+    background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
   }
@@ -44,29 +44,27 @@ const HeroSection = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1e293b;
   margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
   
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
+  span {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: 1.3rem;
-  color: var(--text-secondary);
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: #64748b;
   max-width: 700px;
   margin: 0 auto;
   line-height: 1.6;
-  
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-  }
+  font-weight: 400;
 `;
 
 const BlogGrid = styled.div`
@@ -83,30 +81,32 @@ const BlogGrid = styled.div`
 `;
 
 const BlogCard = styled.div`
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.1);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   animation: ${fadeInUp} 0.8s ease-out;
+  cursor: pointer;
   
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
   }
 `;
 
 const BlogImage = styled.div`
   height: 200px;
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
   color: white;
+  font-size: 2rem;
   position: relative;
+  overflow: hidden;
   
   &::before {
     content: '';
@@ -120,21 +120,21 @@ const BlogImage = styled.div`
 `;
 
 const BlogContent = styled.div`
-  padding: 2rem;
+  padding: 1.5rem;
 `;
 
 const BlogTitle = styled.h3`
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  margin-bottom: 1rem;
-  color: var(--text-primary);
+  color: #1e293b;
+  margin-bottom: 0.8rem;
   line-height: 1.3;
 `;
 
 const BlogExcerpt = styled.p`
-  color: var(--text-secondary);
+  color: #6b7280;
   line-height: 1.6;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   font-size: 0.95rem;
 `;
 
@@ -142,23 +142,9 @@ const BlogMeta = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  
-  .date {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .category {
-    background: var(--accent-color);
-    color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-  }
+  color: #9ca3af;
+  font-size: 0.85rem;
+  font-weight: 500;
 `;
 
 const BlogPage: React.FC = () => {
@@ -166,60 +152,53 @@ const BlogPage: React.FC = () => {
     {
       id: 1,
       title: "2024 Emlak Piyasası Trendleri",
-      excerpt: "Bu yıl emlak piyasasında yaşanan değişimler ve gelecek dönem için öngörüler hakkında detaylı analiz.",
+      excerpt: "Bu yıl emlak piyasasında yaşanan değişimler ve gelecek dönem için öngörüler...",
       date: "15 Mart 2024",
-      category: "Piyasa Analizi",
-      icon: "📈"
+      readTime: "5 dk"
     },
     {
       id: 2,
       title: "Ev Alırken Dikkat Edilmesi Gerekenler",
-      excerpt: "İlk evinizi alırken göz önünde bulundurmanız gereken önemli faktörler ve ipuçları.",
+      excerpt: "Doğru ev seçimi için göz önünde bulundurmanız gereken önemli faktörler...",
       date: "12 Mart 2024",
-      category: "Rehber",
-      icon: "🏠"
+      readTime: "7 dk"
     },
     {
       id: 3,
-      title: "Kredi Hesaplama Rehberi",
-      excerpt: "Konut kredisi alırken nasıl hesaplama yapacağınız ve en uygun kredi seçeneklerini nasıl bulacağınız.",
+      title: "Kredi Çekerken Bilmeniz Gerekenler",
+      excerpt: "Konut kredisi alırken dikkat edilmesi gereken detaylar ve ipuçları...",
       date: "10 Mart 2024",
-      category: "Kredi",
-      icon: "💰"
+      readTime: "6 dk"
     },
     {
       id: 4,
-      title: "İstanbul'un En Popüler Semtleri",
-      excerpt: "2024 yılında İstanbul'da en çok tercih edilen semtler ve bu semtlerin avantajları.",
+      title: "Yatırım İçin En İyi Bölgeler",
+      excerpt: "2024 yılında yatırım yapılabilecek en değerli emlak bölgeleri...",
       date: "8 Mart 2024",
-      category: "Semt Analizi",
-      icon: "🌆"
+      readTime: "8 dk"
     },
     {
       id: 5,
-      title: "Emlak Yatırımı Yaparken Dikkat Edilecekler",
-      excerpt: "Emlak yatırımı yaparken risk faktörleri ve karlı yatırım stratejileri.",
+      title: "Emlak Vergileri Rehberi",
+      excerpt: "Emlak alım-satım işlemlerinde ödenmesi gereken vergiler hakkında detaylı bilgi...",
       date: "5 Mart 2024",
-      category: "Yatırım",
-      icon: "📊"
+      readTime: "10 dk"
     },
     {
       id: 6,
-      title: "Ev Dekorasyon Trendleri 2024",
-      excerpt: "Bu yılın en popüler ev dekorasyon trendleri ve modern tasarım önerileri.",
+      title: "Tadilat ve Dekorasyon İpuçları",
+      excerpt: "Evinizi değerlendirmek için yapabileceğiniz tadilat ve dekorasyon önerileri...",
       date: "3 Mart 2024",
-      category: "Dekorasyon",
-      icon: "🎨"
+      readTime: "9 dk"
     }
   ];
 
   return (
     <Container>
       <HeroSection>
-        <Title>📝 Emlak Blog</Title>
+        <Title>Emlak <span>Blog</span></Title>
         <Subtitle>
-          Emlak dünyasından en güncel haberler, piyasa analizleri ve uzman görüşleri. 
-          Bilgiye dayalı kararlar almanız için yanınızdayız.
+          Emlak dünyasından en güncel haberler, ipuçları ve rehberler
         </Subtitle>
       </HeroSection>
 
@@ -227,18 +206,14 @@ const BlogPage: React.FC = () => {
         {blogPosts.map((post) => (
           <BlogCard key={post.id}>
             <BlogImage>
-              <span style={{ zIndex: 1, position: 'relative' }}>{post.icon}</span>
+              📰
             </BlogImage>
             <BlogContent>
               <BlogTitle>{post.title}</BlogTitle>
               <BlogExcerpt>{post.excerpt}</BlogExcerpt>
               <BlogMeta>
-                <div className="date">
-                  📅 {post.date}
-                </div>
-                <div className="category">
-                  {post.category}
-                </div>
+                <span>📅 {post.date}</span>
+                <span>⏱️ {post.readTime}</span>
               </BlogMeta>
             </BlogContent>
           </BlogCard>
