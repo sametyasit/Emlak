@@ -4,46 +4,16 @@ export const GlobalStyles = createGlobalStyle`
   :root {
     --bg-primary: #f8fafc;
     --bg-secondary: #ffffff;
-    --text-primary: #333333;
-    --text-secondary: #666666;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
     --border-color: #e5e7eb;
     --card-bg: #ffffff;
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     --card-hover: #f9fafb;
-    --accent-color: #8B5CF6;
-    --accent-hover: #7C3AED;
-    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-secondary: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
-  }
-
-  body.light {
-    --bg-primary: #f8fafc;
-    --bg-secondary: #ffffff;
-    --text-primary: #333333;
-    --text-secondary: #666666;
-    --border-color: #e5e7eb;
-    --card-bg: #ffffff;
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --card-hover: #f9fafb;
-    --accent-color: #8B5CF6;
-    --accent-hover: #7C3AED;
-    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-secondary: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
-  }
-
-  body.dark {
-    --bg-primary: #0f0f23;
-    --bg-secondary: #1a1a2e;
-    --text-primary: #ffffff;
-    --text-secondary: #a0a0a0;
-    --border-color: #2a2a3e;
-    --card-bg: #1a1a2e;
-    --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    --card-hover: #252542;
-    --accent-color: #8B5CF6;
-    --accent-hover: #7C3AED;
-    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-secondary: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
+    --accent-color: #10b981;
+    --accent-hover: #059669;
+    --gradient-primary: linear-gradient(135deg, #f8fffe 0%, #f0fdf4 100%);
+    --gradient-secondary: linear-gradient(135deg, #10b981 0%, #059669 100%);
   }
 
   * {
@@ -61,7 +31,6 @@ export const GlobalStyles = createGlobalStyle`
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
-    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   html {
