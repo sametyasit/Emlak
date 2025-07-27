@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 const MessagesContainer = styled.div`
@@ -8,54 +8,58 @@ const MessagesContainer = styled.div`
   height: calc(100vh - 200px);
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: #f8fafc;
 `;
 
 const PageTitle = styled.h1`
-  color: #333;
+  color: #1e293b;
   margin-bottom: 20px;
   font-size: 2rem;
   text-align: center;
+  font-weight: 700;
 `;
 
 const ChatContainer = styled.div`
-  background: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: var(--shadow);
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   display: flex;
   height: 100%;
   overflow: hidden;
-  border: 1px solid var(--border-color);
+  border: 1px solid #e2e8f0;
 `;
 
 const ConversationsList = styled.div`
-  width: 300px;
-  border-right: 1px solid var(--border-color);
-  background: var(--bg-secondary);
+  width: 350px;
+  border-right: 1px solid #e2e8f0;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ConversationsHeader = styled.div`
   padding: 20px;
-  border-bottom: 1px solid #e5e7eb;
-  background: #8B5CF6;
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
 `;
 
 const ConversationsTitle = styled.h3`
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
 `;
 
 const ConversationItem = styled.div<{ isActive?: boolean }>`
   padding: 15px 20px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid #e2e8f0;
   cursor: pointer;
-  background: ${props => props.isActive ? '#e0e7ff' : 'var(--card-bg)'};
-  transition: background 0.2s;
+  background: ${props => props.isActive ? 'rgba(16, 185, 129, 0.1)' : 'white'};
+  transition: all 0.2s ease;
+  border-left: ${props => props.isActive ? '4px solid #10b981' : '4px solid transparent'};
 
   &:hover {
-    background: ${props => props.isActive ? '#e0e7ff' : 'var(--bg-secondary)'};
+    background: ${props => props.isActive ? 'rgba(16, 185, 129, 0.15)' : '#f1f5f9'};
   }
 `;
 
@@ -63,221 +67,391 @@ const ConversationHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 `;
 
 const ConversationName = styled.div`
-  font-weight: bold;
-  color: #333;
-  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 1rem;
 `;
 
 const ConversationTime = styled.div`
   font-size: 0.8rem;
-  color: #666;
+  color: #64748b;
 `;
 
 const ConversationPreview = styled.div`
-  color: #666;
-  font-size: 0.85rem;
+  color: #64748b;
+  font-size: 0.9rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.4;
+`;
+
+const UnreadBadge = styled.div`
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-left: 8px;
 `;
 
 const ChatArea = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  background: white;
 `;
 
 const ChatHeader = styled.div`
   padding: 20px;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--bg-secondary);
+  border-bottom: 1px solid #e2e8f0;
+  background: white;
   display: flex;
   align-items: center;
   gap: 15px;
 `;
 
-const ChatAvatar = styled.div`
-  width: 40px;
-  height: 40px;
+const UserAvatar = styled.div`
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background: #8B5CF6;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 1.2rem;
 `;
 
-const ChatInfo = styled.div`
+const UserInfo = styled.div`
   flex: 1;
 `;
 
-const ChatName = styled.div`
-  font-weight: bold;
-  color: #333;
+const UserName = styled.div`
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 1.1rem;
+  margin-bottom: 2px;
 `;
 
-const ChatStatus = styled.div`
-  font-size: 0.85rem;
-  color: #666;
+const UserRole = styled.div`
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+`;
+
+const UserStatus = styled.div<{ isOnline?: boolean }>`
+  color: ${props => props.isOnline ? '#10b981' : '#64748b'};
+  font-size: 0.8rem;
+  font-weight: 500;
+  
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: ${props => props.isOnline ? '#10b981' : '#64748b'};
+    margin-right: 6px;
+  }
 `;
 
 const MessagesArea = styled.div`
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  background: var(--bg-primary);
+  background: #f8fafc;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
 `;
 
-const Message = styled.div<{ isOwn?: boolean }>`
+const MessageBubble = styled.div<{ isAdmin?: boolean }>`
   max-width: 70%;
   padding: 12px 16px;
   border-radius: 18px;
-  align-self: ${props => props.isOwn ? 'flex-end' : 'flex-start'};
-  background: ${props => props.isOwn ? '#8B5CF6' : 'var(--card-bg)'};
-  color: ${props => props.isOwn ? 'white' : 'var(--text-primary)'};
-  box-shadow: var(--shadow);
+  position: relative;
+  align-self: ${props => props.isAdmin ? 'flex-end' : 'flex-start'};
+  background: ${props => props.isAdmin ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'white'};
+  color: ${props => props.isAdmin ? 'white' : '#1e293b'};
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: ${props => props.isAdmin ? 'none' : '1px solid #e2e8f0'};
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    ${props => props.isAdmin ? 'right: -8px' : 'left: -8px'};
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+    border-${props => props.isAdmin ? 'left' : 'right'}-color: ${props => props.isAdmin ? '#10b981' : 'white'};
+  }
+`;
+
+const MessageText = styled.div`
+  font-size: 0.95rem;
+  line-height: 1.4;
   word-wrap: break-word;
-  border: 1px solid var(--border-color);
 `;
 
-const MessageTime = styled.div<{ isOwn?: boolean }>`
+const MessageTime = styled.div`
   font-size: 0.75rem;
-  color: ${props => props.isOwn ? 'rgba(255, 255, 255, 0.7)' : '#666'};
-  margin-top: 5px;
-  text-align: ${props => props.isOwn ? 'right' : 'left'};
+  color: #64748b;
+  margin-top: 4px;
+  text-align: right;
 `;
 
-const MessageInput = styled.div`
+const MessageInputArea = styled.div`
   padding: 20px;
-  border-top: 1px solid var(--border-color);
-  background: var(--card-bg);
+  border-top: 1px solid #e2e8f0;
+  background: white;
   display: flex;
-  gap: 10px;
-  align-items: center;
+  gap: 12px;
+  align-items: flex-end;
 `;
 
-const Input = styled.input`
+const MessageInput = styled.textarea`
   flex: 1;
   padding: 12px 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 25px;
+  border: 2px solid #e2e8f0;
+  border-radius: 24px;
   font-size: 0.95rem;
-  outline: none;
-
+  resize: none;
+  min-height: 44px;
+  max-height: 120px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  
   &:focus {
-    border-color: #8B5CF6;
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+  
+  &::placeholder {
+    color: #94a3b8;
   }
 `;
 
 const SendButton = styled.button`
-  background: #8B5CF6;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border: none;
-  width: 40px;
-  height: 40px;
   border-radius: 50%;
-  cursor: pointer;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
   font-size: 1.2rem;
-
+  
   &:hover {
-    background: #7C3AED;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
   }
 `;
 
 const EmptyState = styled.div`
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #666;
+  height: 100%;
+  color: #64748b;
+  text-align: center;
 `;
 
 const EmptyIcon = styled.div`
   font-size: 4rem;
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+`;
+
+const EmptyText = styled.div`
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+`;
+
+const EmptySubtext = styled.div`
+  font-size: 0.9rem;
+  opacity: 0.7;
 `;
 
 const MessagesPage: React.FC = () => {
-  const [selectedConversation, setSelectedConversation] = useState(0);
-  const [newMessage, setNewMessage] = useState('');
-
-  // Örnek konuşma verileri
-  const conversations = [
-    {
-      id: 0,
-      name: 'Ahmet Yılmaz',
-      role: 'Emlak Danışmanı',
-      avatar: 'AY',
-      lastMessage: 'Merhaba! Size nasıl yardımcı olabilirim?',
-      time: '14:30',
-      messages: [
-        { id: 1, text: 'Merhaba! Size nasıl yardımcı olabilirim?', time: '14:30', isOwn: false },
-        { id: 2, text: 'Merhaba! Kadıköy\'de 3+1 daire arıyorum.', time: '14:32', isOwn: true },
-        { id: 3, text: 'Tabii! Size birkaç seçenek gösterebilirim. Bütçeniz nedir?', time: '14:35', isOwn: false },
-        { id: 4, text: '2-3 milyon TL arası düşünüyorum.', time: '14:37', isOwn: true }
-      ]
-    },
+  const [conversations, setConversations] = useState([
     {
       id: 1,
-      name: 'Fatma Demir',
+      name: 'Ahmet Yılmaz',
       role: 'Emlak Danışmanı',
-      avatar: 'FD',
-      lastMessage: 'Randevu saatini onaylıyorum.',
-      time: '12:15',
+      isOnline: true,
+      avatar: 'AY',
+      lastMessage: 'Merhaba! Size nasıl yardımcı olabilirim?',
+      lastTime: '14:30',
+      unreadCount: 0,
       messages: [
-        { id: 1, text: 'Merhaba! Beşiktaş\'taki villayı görmek istiyorum.', time: '12:00', isOwn: true },
-        { id: 2, text: 'Tabii! Yarın saat 15:00\'da uygun mu?', time: '12:05', isOwn: false },
-        { id: 3, text: 'Evet, uygun. Teşekkürler!', time: '12:10', isOwn: true },
-        { id: 4, text: 'Randevu saatini onaylıyorum.', time: '12:15', isOwn: false }
+        {
+          id: 1,
+          text: 'Merhaba! Size nasıl yardımcı olabilirim?',
+          time: '14:30',
+          isAdmin: false
+        },
+        {
+          id: 2,
+          text: 'Merhaba! Kadıköy\'de 3+1 daire arıyorum.',
+          time: '14:32',
+          isAdmin: true
+        },
+        {
+          id: 3,
+          text: 'Tabii! Size birkaç seçenek gösterebilirim. Bütçeniz nedir?',
+          time: '14:35',
+          isAdmin: false
+        },
+        {
+          id: 4,
+          text: '2-3 milyon TL arası düşünüyorum.',
+          time: '14:37',
+          isAdmin: true
+        }
       ]
     },
     {
       id: 2,
+      name: 'Fatma Demir',
+      role: 'Müşteri',
+      isOnline: false,
+      avatar: 'FD',
+      lastMessage: 'Randevu saatini onaylıyorum.',
+      lastTime: '12:15',
+      unreadCount: 2,
+      messages: [
+        {
+          id: 1,
+          text: 'Merhaba, evinizi görmek istiyorum.',
+          time: '12:00',
+          isAdmin: true
+        },
+        {
+          id: 2,
+          text: 'Tabii, yarın saat 15:00\'da müsait misiniz?',
+          time: '12:10',
+          isAdmin: false
+        },
+        {
+          id: 3,
+          text: 'Randevu saatini onaylıyorum.',
+          time: '12:15',
+          isAdmin: true
+        }
+      ]
+    },
+    {
+      id: 3,
       name: 'Mehmet Kaya',
-      role: 'Emlak Danışmanı',
+      role: 'Müşteri',
+      isOnline: true,
       avatar: 'MK',
       lastMessage: 'Fiyat konusunda pazarlık yapabiliriz.',
-      time: '09:45',
+      lastTime: '09:45',
+      unreadCount: 0,
       messages: [
-        { id: 1, text: 'Merhaba! Şişli\'deki dairenin fiyatı biraz yüksek.', time: '09:30', isOwn: true },
-        { id: 2, text: 'Fiyat konusunda pazarlık yapabiliriz.', time: '09:45', isOwn: false }
+        {
+          id: 1,
+          text: 'Merhaba, bu ev hala satılık mı?',
+          time: '09:30',
+          isAdmin: true
+        },
+        {
+          id: 2,
+          text: 'Evet, hala satılık. Fiyat konusunda pazarlık yapabiliriz.',
+          time: '09:45',
+          isAdmin: false
+        }
       ]
     }
-  ];
+  ]);
+
+  const [activeConversation, setActiveConversation] = useState(1);
+  const [newMessage, setNewMessage] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [activeConversation, conversations]);
 
   const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const conversation = conversations[selectedConversation];
-      const newMsg = {
-        id: conversation.messages.length + 1,
-        text: newMessage,
-        time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
-        isOwn: true
-      };
-      
-      // Gerçek uygulamada bu state güncellemesi yapılır
-      console.log('Yeni mesaj gönderildi:', newMsg);
-      setNewMessage('');
-    }
+    if (newMessage.trim() === '') return;
+
+    const updatedConversations = conversations.map(conv => {
+      if (conv.id === activeConversation) {
+        const newMsg = {
+          id: Date.now(),
+          text: newMessage.trim(),
+          time: new Date().toLocaleTimeString('tr-TR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          }),
+          isAdmin: true
+        };
+
+        return {
+          ...conv,
+          lastMessage: newMessage.trim(),
+          lastTime: newMsg.time,
+          unreadCount: 0,
+          messages: [...conv.messages, newMsg]
+        };
+      }
+      return conv;
+    });
+
+    setConversations(updatedConversations);
+    setNewMessage('');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
       handleSendMessage();
     }
   };
+
+  const handleConversationClick = (conversationId: number) => {
+    setActiveConversation(conversationId);
+    
+    // Okunmamış mesajları sıfırla
+    setConversations(prev => prev.map(conv => 
+      conv.id === conversationId 
+        ? { ...conv, unreadCount: 0 }
+        : conv
+    ));
+  };
+
+  const currentConversation = conversations.find(conv => conv.id === activeConversation);
 
   return (
     <MessagesContainer>
@@ -289,15 +463,20 @@ const MessagesPage: React.FC = () => {
             <ConversationsTitle>Konuşmalar</ConversationsTitle>
           </ConversationsHeader>
           
-          {conversations.map((conversation) => (
-            <ConversationItem 
+          {conversations.map(conversation => (
+            <ConversationItem
               key={conversation.id}
-              isActive={selectedConversation === conversation.id}
-              onClick={() => setSelectedConversation(conversation.id)}
+              isActive={conversation.id === activeConversation}
+              onClick={() => handleConversationClick(conversation.id)}
             >
               <ConversationHeader>
                 <ConversationName>{conversation.name}</ConversationName>
-                <ConversationTime>{conversation.time}</ConversationTime>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  {conversation.unreadCount > 0 && (
+                    <UnreadBadge>{conversation.unreadCount}</UnreadBadge>
+                  )}
+                  <ConversationTime>{conversation.lastTime}</ConversationTime>
+                </div>
               </ConversationHeader>
               <ConversationPreview>{conversation.lastMessage}</ConversationPreview>
             </ConversationItem>
@@ -305,43 +484,50 @@ const MessagesPage: React.FC = () => {
         </ConversationsList>
 
         <ChatArea>
-          {selectedConversation !== null ? (
+          {currentConversation ? (
             <>
               <ChatHeader>
-                <ChatAvatar>{conversations[selectedConversation].avatar}</ChatAvatar>
-                <ChatInfo>
-                  <ChatName>{conversations[selectedConversation].name}</ChatName>
-                  <ChatStatus>{conversations[selectedConversation].role} • Çevrimiçi</ChatStatus>
-                </ChatInfo>
+                <UserAvatar>{currentConversation.avatar}</UserAvatar>
+                <UserInfo>
+                  <UserName>{currentConversation.name}</UserName>
+                  <UserRole>{currentConversation.role}</UserRole>
+                  <UserStatus isOnline={currentConversation.isOnline}>
+                    {currentConversation.isOnline ? 'Çevrimiçi' : 'Çevrimdışı'}
+                  </UserStatus>
+                </UserInfo>
               </ChatHeader>
 
               <MessagesArea>
-                {conversations[selectedConversation].messages.map((message) => (
-                  <Message key={message.id} isOwn={message.isOwn}>
-                    {message.text}
-                    <MessageTime isOwn={message.isOwn}>{message.time}</MessageTime>
-                  </Message>
+                {currentConversation.messages.map(message => (
+                  <MessageBubble key={message.id} isAdmin={message.isAdmin}>
+                    <MessageText>{message.text}</MessageText>
+                    <MessageTime>{message.time}</MessageTime>
+                  </MessageBubble>
                 ))}
+                <div ref={messagesEndRef} />
               </MessagesArea>
 
-              <MessageInput>
-                <Input
-                  type="text"
-                  placeholder="Mesajınızı yazın..."
+              <MessageInputArea>
+                <MessageInput
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
+                  placeholder="Mesajınızı yazın..."
+                  rows={1}
                 />
-                <SendButton onClick={handleSendMessage}>
+                <SendButton 
+                  onClick={handleSendMessage}
+                  disabled={newMessage.trim() === ''}
+                >
                   ➤
                 </SendButton>
-              </MessageInput>
+              </MessageInputArea>
             </>
           ) : (
             <EmptyState>
               <EmptyIcon>💬</EmptyIcon>
-              <h3>Mesaj seçin</h3>
-              <p>Bir konuşma seçerek mesajlaşmaya başlayın.</p>
+              <EmptyText>Mesaj seçilmedi</EmptyText>
+              <EmptySubtext>Sol taraftan bir konuşma seçin</EmptySubtext>
             </EmptyState>
           )}
         </ChatArea>
