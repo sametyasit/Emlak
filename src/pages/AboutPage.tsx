@@ -16,8 +16,8 @@ const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 20px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #1e293b;
   min-height: 100vh;
   position: relative;
   
@@ -29,7 +29,7 @@ const Container = styled.div`
     transform: translateX(-50%);
     width: 100vw;
     height: 100%;
-    background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+    background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
   }
@@ -44,29 +44,27 @@ const HeroSection = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1e293b;
   margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
   
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
+  span {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: 1.3rem;
-  color: var(--text-secondary);
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: #64748b;
   max-width: 700px;
   margin: 0 auto;
   line-height: 1.6;
-  
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-  }
+  font-weight: 400;
 `;
 
 const ContentSection = styled.div`
@@ -84,11 +82,11 @@ const ContentSection = styled.div`
 `;
 
 const ContentCard = styled.div`
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   padding: 2.5rem;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.1);
   backdrop-filter: blur(10px);
   animation: ${fadeInUp} 0.8s ease-out;
   
@@ -96,232 +94,250 @@ const ContentCard = styled.div`
     font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: var(--text-primary);
+    color: #1e293b;
   }
   
   p {
-    color: var(--text-secondary);
+    color: #6b7280;
     line-height: 1.7;
     margin-bottom: 1rem;
-    font-size: 1rem;
   }
   
   ul {
-    list-style: none;
-    padding: 0;
-    margin: 1.5rem 0;
-  }
-  
-  li {
-    color: var(--text-secondary);
-    margin-bottom: 0.8rem;
+    color: #6b7280;
+    line-height: 1.7;
     padding-left: 1.5rem;
-    position: relative;
     
-    &::before {
-      content: '✓';
-      position: absolute;
-      left: 0;
-      color: var(--accent-color);
-      font-weight: bold;
+    li {
+      margin-bottom: 0.5rem;
     }
   }
 `;
 
 const StatsSection = styled.div`
-  background: var(--card-bg);
-  border-radius: 20px;
-  padding: 3rem;
-  margin-bottom: 4rem;
   text-align: center;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
+  margin-bottom: 4rem;
   position: relative;
   z-index: 1;
-  animation: ${fadeInUp} 0.8s ease-out;
-  
-  h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 3rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
 `;
 
 const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2rem;
+  margin-top: 3rem;
 `;
 
-const StatItem = styled.div`
+const StatCard = styled.div`
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(16, 185, 129, 0.15);
+  }
+  
   h3 {
-    font-size: 3rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    color: var(--accent-color);
+    color: #10b981;
     margin-bottom: 0.5rem;
   }
   
   p {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
+    color: #6b7280;
     font-weight: 500;
   }
 `;
 
 const TeamSection = styled.div`
+  text-align: center;
   margin-bottom: 4rem;
   position: relative;
   z-index: 1;
-  animation: ${fadeInUp} 0.8s ease-out;
+`;
+
+const TeamGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+`;
+
+const TeamCard = styled.div`
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
   
-  h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 3rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(16, 185, 129, 0.15);
+  }
+  
+  .avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    overflow: hidden;
+    border: 3px solid #10b981;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover img {
+      transform: scale(1.1);
+    }
+  }
+  
+  h4 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    color: #10b981;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  
+  .description {
+    color: #6b7280;
+    line-height: 1.6;
+  }
+`;
+
+const SectionTitle = styled.h2`
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  
+  span {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 `;
 
-const TeamGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-`;
-
-const TeamCard = styled.div`
-  background: var(--card-bg);
-  border-radius: 20px;
-  padding: 2rem;
-  text-align: center;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  }
-  
-  .avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    margin: 0 auto 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    color: white;
-  }
-  
-  h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: var(--text-primary);
-  }
-  
-  p {
-    color: var(--accent-color);
-    font-weight: 500;
-    margin-bottom: 1rem;
-  }
-  
-  .description {
-    color: var(--text-secondary);
-    line-height: 1.6;
-    font-size: 0.95rem;
-  }
+const SectionSubtitle = styled.p`
+  font-size: 1.1rem;
+  color: #64748b;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
 `;
 
 const AboutPage: React.FC = () => {
   return (
     <Container>
       <HeroSection>
-        <Title>🏠 Hakkımızda</Title>
+        <Title>Hakkımızda <span>Emlak</span></Title>
         <Subtitle>
-          20 yılı aşkın deneyimimizle, Türkiye'nin en güvenilir emlak platformu olarak 
-          hayalinizdeki evi bulmanız için yanınızdayız.
+          20 yılı aşkın deneyimimizle Türkiye'nin en güvenilir emlak platformu olarak hizmet veriyoruz.
         </Subtitle>
       </HeroSection>
 
       <ContentSection>
         <ContentCard>
-          <h3>🎯 Misyonumuz</h3>
+          <h3>Misyonumuz</h3>
           <p>
-            Müşterilerimize en kaliteli emlak hizmetini sunarak, hayallerindeki evi 
-            bulmalarında yardımcı olmak ve güvenilir bir ortak olmak.
+            Müşterilerimizin hayallerindeki evi bulmalarına yardımcı olmak için en kaliteli hizmeti sunmak.
           </p>
           <ul>
-            <li>Şeffaf ve dürüst hizmet anlayışı</li>
+            <li>Güvenilir ve şeffaf hizmet</li>
             <li>Müşteri memnuniyeti odaklı yaklaşım</li>
-            <li>Teknolojik yeniliklerle desteklenen hizmet</li>
-            <li>Uzman kadromuzla profesyonel danışmanlık</li>
+            <li>Teknolojik yenilikler</li>
+            <li>Uzman kadro desteği</li>
           </ul>
         </ContentCard>
 
         <ContentCard>
-          <h3>👁️ Vizyonumuz</h3>
+          <h3>Vizyonumuz</h3>
           <p>
-            Türkiye'nin lider emlak platformu olarak, sektörde standartları belirlemek 
-            ve müşterilerimize en iyi deneyimi yaşatmak.
+            Türkiye'nin lider emlak platformu olarak, dijital dönüşümün öncüsü olmak.
           </p>
           <ul>
-            <li>Dijital dönüşümde öncü olmak</li>
-            <li>Sürdürülebilir büyüme stratejisi</li>
-            <li>Toplumsal sorumluluk bilinci</li>
-            <li>Çevre dostu yaklaşımlar</li>
+            <li>Yapay zeka destekli arama</li>
+            <li>Mobil uygulama geliştirme</li>
+            <li>Uluslararası genişleme</li>
+            <li>Sürdürülebilir büyüme</li>
           </ul>
         </ContentCard>
       </ContentSection>
 
       <StatsSection>
-        <h2>📊 Rakamlarla Biz</h2>
+        <SectionTitle>Rakamlarla <span>Başarılarımız</span></SectionTitle>
+        <SectionSubtitle>
+          Yılların deneyimi ve binlerce mutlu müşteri ile emlak sektörünün güvenilir adresi
+        </SectionSubtitle>
+        
         <StatsGrid>
-          <StatItem>
-            <h3>50K+</h3>
+          <StatCard>
+            <h3>50,000+</h3>
+            <p>Başarılı Satış</p>
+          </StatCard>
+          <StatCard>
+            <h3>25,000+</h3>
             <p>Mutlu Müşteri</p>
-          </StatItem>
-          <StatItem>
-            <h3>15K+</h3>
-            <p>Satılan Emlak</p>
-          </StatItem>
-          <StatItem>
-            <h3>20+</h3>
+          </StatCard>
+          <StatCard>
+            <h3>15+</h3>
             <p>Yıllık Deneyim</p>
-          </StatItem>
-          <StatItem>
-            <h3>100+</h3>
-            <p>Uzman Danışman</p>
-          </StatItem>
+          </StatCard>
+          <StatCard>
+            <h3>%98</h3>
+            <p>Müşteri Memnuniyeti</p>
+          </StatCard>
         </StatsGrid>
       </StatsSection>
 
       <TeamSection>
-        <h2>👥 Ekibimiz</h2>
+        <SectionTitle>Uzman <span>Ekibimiz</span></SectionTitle>
+        <SectionSubtitle>
+          Deneyimli ve profesyonel kadromuz ile size en iyi hizmeti sunuyoruz
+        </SectionSubtitle>
+        
         <TeamGrid>
           <TeamCard>
-            <div className="avatar">👨‍💼</div>
-            <h3>Ahmet Yılmaz</h3>
+            <div className="avatar">
+              <img 
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" 
+                alt="Ahmet Yılmaz - Genel Müdür"
+              />
+            </div>
+            <h4>Ahmet Yılmaz</h4>
             <p>Genel Müdür</p>
             <div className="description">
-              15 yıllık emlak sektörü deneyimi ile şirketimizin vizyonunu yönetiyor.
+              15 yıllık emlak deneyimi ile şirketimizin vizyonunu yönetiyor.
             </div>
           </TeamCard>
           
           <TeamCard>
-            <div className="avatar">👩‍💼</div>
-            <h3>Ayşe Demir</h3>
+            <div className="avatar">
+              <img 
+                src="https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=200&q=80" 
+                alt="Fatma Demir - Satış Müdürü"
+              />
+            </div>
+            <h4>Fatma Demir</h4>
             <p>Satış Müdürü</p>
             <div className="description">
               Müşteri ilişkileri ve satış stratejileri konusunda uzman.
@@ -329,20 +345,30 @@ const AboutPage: React.FC = () => {
           </TeamCard>
           
           <TeamCard>
-            <div className="avatar">👨‍💻</div>
-            <h3>Mehmet Kaya</h3>
+            <div className="avatar">
+              <img 
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80" 
+                alt="Mehmet Kaya - Teknoloji Direktörü"
+              />
+            </div>
+            <h4>Mehmet Kaya</h4>
             <p>Teknoloji Direktörü</p>
             <div className="description">
-              Dijital platformumuzun geliştirilmesinden sorumlu.
+              Dijital dönüşüm ve teknoloji geliştirme projelerini yönetiyor.
             </div>
           </TeamCard>
           
           <TeamCard>
-            <div className="avatar">👩‍⚖️</div>
-            <h3>Fatma Özkan</h3>
-            <p>Hukuk Danışmanı</p>
+            <div className="avatar">
+              <img 
+                src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=80" 
+                alt="Zeynep Özkan - Müşteri Hizmetleri"
+              />
+            </div>
+            <h4>Zeynep Özkan</h4>
+            <p>Müşteri Hizmetleri</p>
             <div className="description">
-              Emlak hukuku konusunda uzman, güvenli işlemler sağlıyor.
+              Müşteri memnuniyeti ve destek hizmetlerinden sorumlu.
             </div>
           </TeamCard>
         </TeamGrid>
