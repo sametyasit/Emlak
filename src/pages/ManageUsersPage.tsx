@@ -8,12 +8,13 @@ const Container = styled.div`
 `;
 
 const PageHeader = styled.div`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   padding: 2rem;
   border-radius: 16px;
   margin-bottom: 2rem;
   text-align: center;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
 `;
 
 const PageTitle = styled.h1`
@@ -56,7 +57,7 @@ const StatIcon = styled.div`
 const StatNumber = styled.div`
   font-size: 2rem;
   font-weight: 700;
-  color: #667eea;
+  color: #10b981;
   margin-bottom: 0.5rem;
 `;
 
@@ -183,7 +184,7 @@ const ActionButtons = styled.div`
   }
 `;
 
-const Button = styled.button`
+const ActionButton = styled.button`
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 6px;
@@ -191,88 +192,113 @@ const Button = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-right: 0.5rem;
+  
+  &:last-child {
+    margin-right: 0;
+  }
+`;
+
+const EditButton = styled(ActionButton)`
+  background: #10b981;
+  color: white;
   
   &:hover {
+    background: #059669;
     transform: translateY(-1px);
   }
 `;
 
-const EditButton = styled(Button)`
-  background: #fbbf24;
-  color: white;
-  
-  &:hover {
-    background: #f59e0b;
-  }
-`;
-
-const DeleteButton = styled(Button)`
+const DeleteButton = styled(ActionButton)`
   background: #ef4444;
   color: white;
   
   &:hover {
     background: #dc2626;
+    transform: translateY(-1px);
   }
 `;
 
-const BlockButton = styled(Button)`
-  background: #6b7280;
+const BlockButton = styled(ActionButton)`
+  background: #f59e0b;
   color: white;
   
   &:hover {
-    background: #4b5563;
+    background: #d97706;
+    transform: translateY(-1px);
   }
 `;
 
+const SuccessMessage = styled.div`
+  background: #f0fdf4;
+  color: #16a34a;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 500;
+`;
+
 const ManageUsersPage: React.FC = () => {
-  const [users] = useState([
-    {
-      id: 1,
-      name: 'Admin Kullanıcı',
-      email: 'admin@emlak.com',
-      role: 'admin',
-      status: 'active',
-      joinDate: '2024-01-15'
-    },
-    {
-      id: 2,
-      name: 'Normal Kullanıcı',
-      email: 'user@emlak.com',
-      role: 'user',
-      status: 'active',
-      joinDate: '2024-02-20'
-    },
-    {
-      id: 3,
-      name: 'Ahmet Yılmaz',
-      email: 'ahmet@email.com',
-      role: 'user',
-      status: 'active',
-      joinDate: '2024-03-10'
-    },
-    {
-      id: 4,
-      name: 'Fatma Demir',
-      email: 'fatma@email.com',
-      role: 'user',
-      status: 'inactive',
-      joinDate: '2024-01-25'
-    },
-    {
-      id: 5,
-      name: 'Mehmet Kaya',
-      email: 'mehmet@email.com',
-      role: 'user',
-      status: 'active',
-      joinDate: '2024-02-15'
+  // LocalStorage'dan kullanıcı verilerini oku, yoksa varsayılan verileri kullan
+  const getUsers = () => {
+    const storedUsers = localStorage.getItem('users');
+    if (storedUsers) {
+      return JSON.parse(storedUsers);
     }
-  ]);
+    return [
+      {
+        id: 1,
+        name: 'Admin Kullanıcı',
+        email: 'admin@emlak.com',
+        role: 'admin',
+        status: 'active',
+        joinDate: '2024-01-15'
+      },
+      {
+        id: 2,
+        name: 'Normal Kullanıcı',
+        email: 'user@emlak.com',
+        role: 'user',
+        status: 'active',
+        joinDate: '2024-02-20'
+      },
+      {
+        id: 3,
+        name: 'Ahmet Yılmaz',
+        email: 'ahmet@email.com',
+        role: 'user',
+        status: 'active',
+        joinDate: '2024-03-10'
+      },
+      {
+        id: 4,
+        name: 'Fatma Demir',
+        email: 'fatma@email.com',
+        role: 'user',
+        status: 'inactive',
+        joinDate: '2024-01-25'
+      },
+      {
+        id: 5,
+        name: 'Mehmet Kaya',
+        email: 'mehmet@email.com',
+        role: 'user',
+        status: 'active',
+        joinDate: '2024-02-15'
+      }
+    ];
+  };
+
+  const [users, setUsers] = useState(getUsers());
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const stats = {
     totalUsers: users.length,
-    activeUsers: users.filter(user => user.status === 'active').length,
-    adminUsers: users.filter(user => user.role === 'admin').length,
-    newUsers: users.filter(user => {
+    activeUsers: users.filter((user: any) => user.status === 'active').length,
+    adminUsers: users.filter((user: any) => user.role === 'admin').length,
+    newUsers: users.filter((user: any) => {
       const joinDate = new Date(user.joinDate);
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -281,17 +307,60 @@ const ManageUsersPage: React.FC = () => {
   };
 
   const handleEdit = (id: number) => {
-    console.log('Kullanıcı düzenle:', id);
+    const user = users.find((u: any) => u.id === id);
+    if (user) {
+      const newName = prompt('Yeni kullanıcı adı:', user.name);
+      const newEmail = prompt('Yeni e-posta:', user.email);
+      
+      if (newName && newEmail) {
+        const updatedUsers = users.map((u: any) => 
+          u.id === id ? { ...u, name: newName, email: newEmail } : u
+        );
+        setUsers(updatedUsers);
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
+        
+        setSuccessMessage('Kullanıcı başarıyla güncellendi!');
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 3000);
+      }
+    }
   };
 
   const handleDelete = (id: number) => {
+    const user = users.find((u: any) => u.id === id);
+    if (user && user.role === 'admin') {
+      alert('Admin kullanıcısı silinemez!');
+      return;
+    }
+    
     if (window.confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?')) {
-      console.log('Kullanıcı silindi:', id);
+      const updatedUsers = users.filter((u: any) => u.id !== id);
+      setUsers(updatedUsers);
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+      
+      setSuccessMessage('Kullanıcı başarıyla silindi!');
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
     }
   };
 
   const handleBlock = (id: number) => {
-    console.log('Kullanıcı engellendi:', id);
+    const user = users.find((u: any) => u.id === id);
+    if (user && user.role === 'admin') {
+      alert('Admin kullanıcısı engellenemez!');
+      return;
+    }
+    
+    const updatedUsers = users.map((u: any) => 
+      u.id === id ? { ...u, status: u.status === 'active' ? 'inactive' : 'active' } : u
+    );
+    setUsers(updatedUsers);
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+    
+    const action = user?.status === 'active' ? 'engellendi' : 'aktifleştirildi';
+    setSuccessMessage(`Kullanıcı başarıyla ${action}!`);
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
   };
 
   const getRoleComponent = (role: string) => {
@@ -322,6 +391,12 @@ const ManageUsersPage: React.FC = () => {
         <PageTitle>👥 Kullanıcıları Yönet</PageTitle>
         <PageSubtitle>Platform kullanıcılarını yönetin</PageSubtitle>
       </PageHeader>
+
+      {showSuccess && (
+        <SuccessMessage>
+          ✅ {successMessage}
+        </SuccessMessage>
+      )}
 
       <StatsGrid>
         <StatCard>
@@ -355,7 +430,7 @@ const ManageUsersPage: React.FC = () => {
           <div>İşlemler</div>
         </TableHeader>
 
-        {users.map((user) => (
+        {users.map((user: any) => (
           <UserRow key={user.id}>
             <UserInfo data-label="Kullanıcı Adı:">
               <UserName>{user.name}</UserName>
