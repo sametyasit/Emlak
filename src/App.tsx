@@ -28,6 +28,7 @@ import RenovationPage from './pages/RenovationPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AddPropertyPage from './pages/AddPropertyPage';
 import EditPropertiesPage from './pages/EditPropertiesPage';
+import EditPropertyPage from './pages/EditPropertyPage';
 import ManageUsersPage from './pages/ManageUsersPage';
 import ReportsPage from './pages/ReportsPage';
 import SystemSettingsPage from './pages/SystemSettingsPage';
@@ -107,6 +108,14 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute requireAdmin>
                 <EditPropertiesPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/edit-property/:id" 
+            element={
+              <ProtectedRoute requireAdmin>
+                <EditPropertyPage />
               </ProtectedRoute>
             } 
           />
