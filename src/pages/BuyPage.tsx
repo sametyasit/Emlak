@@ -17,8 +17,8 @@ const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 20px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #1e293b;
   min-height: 100vh;
   position: relative;
   
@@ -30,7 +30,7 @@ const Container = styled.div`
     transform: translateX(-50%);
     width: 100vw;
     height: 100%;
-    background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+    background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
   }
@@ -45,29 +45,27 @@ const HeroSection = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1e293b;
   margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
   
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
+  span {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: 1.3rem;
-  color: var(--text-secondary);
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: #64748b;
   max-width: 700px;
   margin: 0 auto;
   line-height: 1.6;
-  
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-  }
+  font-weight: 400;
 `;
 
 const ServicesGrid = styled.div`
@@ -85,174 +83,176 @@ const ServicesGrid = styled.div`
 `;
 
 const ServiceCard = styled.div`
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   padding: 2.5rem;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.1);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   animation: ${fadeInUp} 0.8s ease-out;
+  cursor: pointer;
   
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
+  }
+  
+  .icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    font-size: 2rem;
+    font-weight: 600;
   }
   
   h3 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    margin-bottom: 1.5rem;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    text-align: center;
   }
   
   p {
-    color: var(--text-secondary);
-    line-height: 1.7;
+    color: #6b7280;
+    line-height: 1.6;
+    text-align: center;
     margin-bottom: 1.5rem;
-    font-size: 1rem;
   }
   
-  ul {
+  .features {
     list-style: none;
     padding: 0;
-    margin: 1.5rem 0;
-  }
-  
-  li {
-    color: var(--text-secondary);
-    margin-bottom: 0.8rem;
-    padding-left: 1.5rem;
-    position: relative;
+    margin: 0;
     
-    &::before {
-      content: '✓';
-      position: absolute;
-      left: 0;
-      color: var(--accent-color);
-      font-weight: bold;
+    li {
+      color: #6b7280;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+      display: flex;
+      align-items: center;
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      &::before {
+        content: '✓';
+        color: #10b981;
+        font-weight: bold;
+        margin-right: 0.5rem;
+      }
     }
   }
 `;
 
 const CTAButton = styled(Link)`
   display: inline-block;
-  background: var(--accent-color);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   text-decoration: none;
   padding: 1rem 2rem;
   border-radius: 12px;
-  font-size: 1rem;
   font-weight: 600;
+  font-size: 1.1rem;
   transition: all 0.3s ease;
-  margin-top: 1rem;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
   
   &:hover {
-    background: var(--accent-hover);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    
+    &::before {
+      left: 100%;
+    }
   }
 `;
 
 const BuyPage: React.FC = () => {
+  const services = [
+    {
+      icon: '🏠',
+      title: 'Konut Satın Alma',
+      description: 'Hayalinizdeki evi bulmanız için profesyonel danışmanlık hizmeti',
+      features: [
+        'Detaylı piyasa analizi',
+        'Uygun fiyat belirleme',
+        'Hukuki süreç desteği',
+        'Kredi danışmanlığı'
+      ]
+    },
+    {
+      icon: '🏢',
+      title: 'Ticari Emlak',
+      description: 'İşletmeniz için en uygun ticari emlak seçenekleri',
+      features: [
+        'Ticari emlak değerleme',
+        'Yatırım analizi',
+        'Kira sözleşmesi desteği',
+        'Pazarlık süreci'
+      ]
+    },
+    {
+      icon: '🏗️',
+      title: 'Arsa ve Arazi',
+      description: 'Yatırım ve geliştirme projeleri için arsa seçimi',
+      features: [
+        'Arsa değerleme',
+        'İmar durumu analizi',
+        'Geliştirme potansiyeli',
+        'Yasal süreçler'
+      ]
+    }
+  ];
+
   return (
     <Container>
       <HeroSection>
-        <Title>🏠 Emlak Satın Al</Title>
+        <Title>Emlak <span>Satın Al</span></Title>
         <Subtitle>
-          Hayalinizdeki evi satın almak için profesyonel hizmetlerimizden yararlanın. 
-          Uzman ekibimiz size en uygun emlağı bulmanızda yardımcı olur.
+          Uzman ekibimizle birlikte hayalinizdeki emlağı bulun ve güvenli bir şekilde satın alın
         </Subtitle>
       </HeroSection>
 
       <ServicesGrid>
-        <ServiceCard>
-          <h3>🔍 Emlak Arama</h3>
-          <p>
-            Kriterlerinize uygun emlakları bulmak için gelişmiş arama araçlarımızı kullanın.
-          </p>
-          <ul>
-            <li>Detaylı filtreleme seçenekleri</li>
-            <li>Konum bazlı arama</li>
-            <li>Fiyat aralığı belirleme</li>
-            <li>Emlak tipi seçimi</li>
-          </ul>
-          <CTAButton to="/properties">Emlak Ara</CTAButton>
-        </ServiceCard>
-
-        <ServiceCard>
-          <h3>💰 Değerleme Hizmeti</h3>
-          <p>
-            Uzman değerleme ekibimiz ile emlağınızın gerçek piyasa değerini öğrenin.
-          </p>
-          <ul>
-            <li>Profesyonel değerleme raporu</li>
-            <li>Piyasa analizi</li>
-            <li>Karşılaştırmalı fiyat analizi</li>
-            <li>Yatırım potansiyeli değerlendirmesi</li>
-          </ul>
-          <CTAButton to="/contact">Değerleme Talep Et</CTAButton>
-        </ServiceCard>
-
-        <ServiceCard>
-          <h3>💳 Kredi Danışmanlığı</h3>
-          <p>
-            Konut kredisi alımında size en uygun seçenekleri sunuyoruz.
-          </p>
-          <ul>
-            <li>Kredi hesaplama araçları</li>
-            <li>Bankalar arası karşılaştırma</li>
-            <li>Kredi başvuru desteği</li>
-            <li>Faiz oranı analizi</li>
-          </ul>
-          <CTAButton to="/contact">Kredi Danışmanlığı</CTAButton>
-        </ServiceCard>
-
-        <ServiceCard>
-          <h3>📋 Hukuki Danışmanlık</h3>
-          <p>
-            Emlak satın alma sürecinde hukuki konularda uzman desteği alın.
-          </p>
-          <ul>
-            <li>Tapu işlemleri takibi</li>
-            <li>Sözleşme inceleme</li>
-            <li>Hukuki risk analizi</li>
-            <li>Uyuşmazlık çözümü</li>
-          </ul>
-          <CTAButton to="/contact">Hukuki Danışmanlık</CTAButton>
-        </ServiceCard>
-
-        <ServiceCard>
-          <h3>🏗️ Tadilat ve Yenileme</h3>
-          <p>
-            Satın aldığınız emlağı yenilemek için güvenilir hizmet sağlayıcıları.
-          </p>
-          <ul>
-            <li>İç mekan tasarımı</li>
-            <li>Yapısal yenileme</li>
-            <li>Enerji verimliliği iyileştirmeleri</li>
-            <li>Proje yönetimi</li>
-          </ul>
-          <CTAButton to="/contact">Tadilat Teklifi Al</CTAButton>
-        </ServiceCard>
-
-        <ServiceCard>
-          <h3>🛡️ Sigorta Hizmetleri</h3>
-          <p>
-            Emlağınızı korumak için kapsamlı sigorta çözümleri.
-          </p>
-          <ul>
-            <li>Konut sigortası</li>
-            <li>Doğal afet sigortası</li>
-            <li>Hırsızlık sigortası</li>
-            <li>Kasko sigortası</li>
-          </ul>
-          <CTAButton to="/contact">Sigorta Teklifi Al</CTAButton>
-        </ServiceCard>
+        {services.map((service, index) => (
+          <ServiceCard key={index}>
+            <div className="icon">{service.icon}</div>
+            <h3>{service.title}</h3>
+            <p>{service.description}</p>
+            <ul className="features">
+              {service.features.map((feature, featureIndex) => (
+                <li key={featureIndex}>{feature}</li>
+              ))}
+            </ul>
+          </ServiceCard>
+        ))}
       </ServicesGrid>
+
+      <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+        <CTAButton to="/properties">
+          İlanları İncele
+        </CTAButton>
+      </div>
     </Container>
   );
 };
