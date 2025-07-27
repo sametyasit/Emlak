@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { allProperties } from '../data/properties';
+import { useAuth } from '../contexts/AuthContext';
 
 const fadeInUp = keyframes`
   from {
@@ -581,100 +582,251 @@ const NoResults = styled.div`
   }
 `;
 
+const DeleteButton = styled.button`
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 0.5rem;
+  
+  &:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+  }
+`;
+
+const AdminActions = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+`;
+
 const PropertyList: React.FC = () => {
   const navigate = useNavigate();
-  const [filter, setFilter] = useState('all');
+  const { isAdmin } = useAuth();
+  
+  // LocalStorage'dan verileri oku, yoksa varsayılan verileri kullan
+  const getProperties = () => {
+    const storedProperties = localStorage.getItem('properties');
+    if (storedProperties) {
+      return JSON.parse(storedProperties);
+    }
+    return allProperties;
+  };
+
+  const [properties, setProperties] = useState(getProperties());
+  const [filteredProperties, setFilteredProperties] = useState(properties);
+  const [loading, setLoading] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState<any>(null);
+  const [showFilters, setShowFilters] = useState(false);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showPropertyModal, setShowPropertyModal] = useState(false);
   const [sortBy, setSortBy] = useState('newest');
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | null>(null);
+  
+  // Filtreler
   const [filters, setFilters] = useState({
+    search: '',
+    type: '',
     city: '',
     district: '',
-    propertyType: '',
     minPrice: '',
     maxPrice: '',
     rooms: '',
-    area: '',
-    floor: '',
+    minArea: '',
+    maxArea: '',
     age: '',
     heating: '',
     parking: '',
     balcony: '',
     furnished: '',
-    // Yeni eklenen gelişmiş filtreler
-    buildingAge: '',
     elevator: '',
     security: '',
+    inComplex: '',
     siteInside: '',
     seaView: '',
+    nearMetro: '',
     metroNearby: '',
     garden: '',
     pool: '',
     gym: '',
     petFriendly: '',
-    creditAvailable: ''
-  });
-  
-  const properties = allProperties;
-
-  const filteredProperties = properties.filter(property => {
-    // Basic filter
-    if (filter === 'sale' && property.type !== 'Satılık') return false;
-    if (filter === 'rent' && property.type !== 'Kiralık') return false;
-    
-    // Advanced filters
-    if (filters.city && !property.location.toLowerCase().includes(filters.city.toLowerCase())) return false;
-    if (filters.minPrice && property.price < Number(filters.minPrice)) return false;
-    if (filters.maxPrice && property.price > Number(filters.maxPrice)) return false;
-    if (filters.rooms && !property.rooms.includes(filters.rooms)) return false;
-    
-    return true;
+    loanEligible: ''
   });
 
-  const sortedProperties = [...filteredProperties].sort((a, b) => {
-    switch (sortBy) {
-      case 'price-low':
-        return a.price - b.price;
-      case 'price-high':
-        return b.price - a.price;
-      case 'newest':
-        return b.id - a.id;
-      case 'oldest':
-        return a.id - b.id;
-      default:
-        return 0;
+  // Sayfa yüklendiğinde localStorage'dan verileri güncelle
+  React.useEffect(() => {
+    const updatedProperties = getProperties();
+    setProperties(updatedProperties);
+    setFilteredProperties(updatedProperties);
+  }, []);
+
+  // İlan silme fonksiyonu
+  const handleDeleteProperty = (propertyId: number) => {
+    const updatedProperties = properties.filter((property: any) => property.id !== propertyId);
+    setProperties(updatedProperties);
+    setFilteredProperties(updatedProperties);
+    localStorage.setItem('properties', JSON.stringify(updatedProperties));
+    setShowDeleteConfirm(null);
+  };
+
+  // Filtreler değiştiğinde özellikleri filtrele
+  React.useEffect(() => {
+    let filtered = properties;
+
+    // Arama filtresi
+    if (filters.search) {
+      filtered = filtered.filter((property: any) =>
+        property.title.toLowerCase().includes(filters.search.toLowerCase()) ||
+        property.location.toLowerCase().includes(filters.search.toLowerCase()) ||
+        property.description.toLowerCase().includes(filters.search.toLowerCase())
+      );
     }
-  });
+
+    // İlan türü filtresi
+    if (filters.type) {
+      filtered = filtered.filter((property: any) => property.type === filters.type);
+    }
+
+    // Şehir filtresi
+    if (filters.city) {
+      filtered = filtered.filter((property: any) => property.city === filters.city);
+    }
+
+    // İlçe filtresi
+    if (filters.district) {
+      filtered = filtered.filter((property: any) => property.district === filters.district);
+    }
+
+    // Fiyat aralığı
+    if (filters.minPrice) {
+      filtered = filtered.filter((property: any) => property.price >= parseInt(filters.minPrice));
+    }
+    if (filters.maxPrice) {
+      filtered = filtered.filter((property: any) => property.price <= parseInt(filters.maxPrice));
+    }
+
+    // Oda sayısı
+    if (filters.rooms) {
+      filtered = filtered.filter((property: any) => property.rooms === filters.rooms);
+    }
+
+    // Metrekare aralığı
+    if (filters.minArea) {
+      const minArea = parseInt(filters.minArea);
+      filtered = filtered.filter((property: any) => {
+        const area = parseInt(property.area.replace(/\D/g, ''));
+        return area >= minArea;
+      });
+    }
+    if (filters.maxArea) {
+      const maxArea = parseInt(filters.maxArea);
+      filtered = filtered.filter((property: any) => {
+        const area = parseInt(property.area.replace(/\D/g, ''));
+        return area <= maxArea;
+      });
+    }
+
+    // Diğer filtreler
+    if (filters.heating) {
+      filtered = filtered.filter((property: any) => property.heating === filters.heating);
+    }
+    if (filters.parking) {
+      filtered = filtered.filter((property: any) => property.parking === filters.parking);
+    }
+    if (filters.balcony) {
+      filtered = filtered.filter((property: any) => property.balcony === filters.balcony);
+    }
+    if (filters.furnished) {
+      filtered = filtered.filter((property: any) => property.furnished === filters.furnished);
+    }
+    if (filters.elevator) {
+      filtered = filtered.filter((property: any) => property.elevator === filters.elevator);
+    }
+    if (filters.security) {
+      filtered = filtered.filter((property: any) => property.security === filters.security);
+    }
+    if (filters.inComplex) {
+      filtered = filtered.filter((property: any) => property.inComplex === filters.inComplex);
+    }
+    if (filters.seaView) {
+      filtered = filtered.filter((property: any) => property.seaView === filters.seaView);
+    }
+    if (filters.nearMetro) {
+      filtered = filtered.filter((property: any) => property.nearMetro === filters.nearMetro);
+    }
+    if (filters.garden) {
+      filtered = filtered.filter((property: any) => property.garden === filters.garden);
+    }
+    if (filters.pool) {
+      filtered = filtered.filter((property: any) => property.pool === filters.pool);
+    }
+    if (filters.gym) {
+      filtered = filtered.filter((property: any) => property.gym === filters.gym);
+    }
+    if (filters.petFriendly) {
+      filtered = filtered.filter((property: any) => property.petFriendly === filters.petFriendly);
+    }
+    if (filters.loanEligible) {
+      filtered = filtered.filter((property: any) => property.loanEligible === filters.loanEligible);
+    }
+
+    setFilteredProperties(filtered);
+  }, [filters, properties]);
 
   const clearFilters = () => {
     setFilters({
+      search: '',
+      type: '',
       city: '',
       district: '',
-      propertyType: '',
       minPrice: '',
       maxPrice: '',
       rooms: '',
-      area: '',
-      floor: '',
+      minArea: '',
+      maxArea: '',
       age: '',
       heating: '',
       parking: '',
       balcony: '',
       furnished: '',
-      // Yeni eklenen gelişmiş filtreler
-      buildingAge: '',
       elevator: '',
       security: '',
+      inComplex: '',
       siteInside: '',
       seaView: '',
+      nearMetro: '',
       metroNearby: '',
       garden: '',
       pool: '',
       gym: '',
       petFriendly: '',
-      creditAvailable: ''
+      loanEligible: ''
     });
-    setFilter('all');
   };
+
+  // Sıralama işlemi
+  const sortedProperties = React.useMemo(() => {
+    let sorted = [...filteredProperties];
+    
+    switch (sortBy) {
+      case 'price-low':
+        return sorted.sort((a: any, b: any) => a.price - b.price);
+      case 'price-high':
+        return sorted.sort((a: any, b: any) => b.price - a.price);
+      case 'newest':
+        return sorted.sort((a: any, b: any) => b.id - a.id);
+      case 'oldest':
+        return sorted.sort((a: any, b: any) => a.id - b.id);
+      default:
+        return sorted;
+    }
+  }, [filteredProperties, sortBy]);
 
   return (
     <Container>
@@ -690,21 +842,31 @@ const PropertyList: React.FC = () => {
           <FilterTitle>
             🔍 Gelişmiş Filtreler
           </FilterTitle>
-          <FilterToggle onClick={() => setShowAdvanced(!showAdvanced)}>
-            {showAdvanced ? 'Basit Filtreler' : 'Gelişmiş Filtreler'}
+          <FilterToggle onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}>
+            {showAdvancedFilters ? 'Basit Filtreler' : 'Gelişmiş Filtreler'}
           </FilterToggle>
         </FilterHeader>
 
         <FilterGrid>
           <FilterGroup>
-            <FilterLabel>Durum</FilterLabel>
+            <FilterLabel>Arama</FilterLabel>
+            <FilterInput 
+              type="text"
+              placeholder="Ev, şehir veya ilçe adı ile arayın"
+              value={filters.search}
+              onChange={(e) => setFilters({...filters, search: e.target.value})}
+            />
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>İlan Türü</FilterLabel>
             <FilterSelect 
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
+              value={filters.type}
+              onChange={(e) => setFilters({...filters, type: e.target.value})}
             >
-              <option value="all">Tüm İlanlar ({properties.length})</option>
-              <option value="sale">Satılık ({properties.filter(p => p.type === 'Satılık').length})</option>
-              <option value="rent">Kiralık ({properties.filter(p => p.type === 'Kiralık').length})</option>
+              <option value="">Tüm Türler</option>
+              <option value="Satılık">Satılık</option>
+              <option value="Kiralık">Kiralık</option>
             </FilterSelect>
           </FilterGroup>
 
@@ -724,31 +886,16 @@ const PropertyList: React.FC = () => {
           </FilterGroup>
 
           <FilterGroup>
-            <FilterLabel>Konut Tipi</FilterLabel>
+            <FilterLabel>İlçe</FilterLabel>
             <FilterSelect 
-              value={filters.propertyType}
-              onChange={(e) => setFilters({...filters, propertyType: e.target.value})}
+              value={filters.district}
+              onChange={(e) => setFilters({...filters, district: e.target.value})}
             >
-              <option value="">Tüm Tipler</option>
-              <option value="daire">Daire</option>
-              <option value="villa">Villa</option>
-              <option value="müstakil">Müstakil Ev</option>
-              <option value="rezidans">Rezidans</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Oda Sayısı</FilterLabel>
-            <FilterSelect 
-              value={filters.rooms}
-              onChange={(e) => setFilters({...filters, rooms: e.target.value})}
-            >
-              <option value="">Tüm Odalar</option>
-              <option value="1+1">1+1</option>
-              <option value="2+1">2+1</option>
-              <option value="3+1">3+1</option>
-              <option value="4+1">4+1</option>
-              <option value="5+">5+</option>
+              <option value="">Tüm İller</option>
+              <option value="adana">Adana</option>
+              <option value="izmir">İzmir</option>
+              <option value="bursa">Bursa</option>
+              <option value="antalya">Antalya</option>
             </FilterSelect>
           </FilterGroup>
 
@@ -770,52 +917,233 @@ const PropertyList: React.FC = () => {
               />
             </PriceRangeContainer>
           </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Oda Sayısı</FilterLabel>
+            <FilterSelect 
+              value={filters.rooms}
+              onChange={(e) => setFilters({...filters, rooms: e.target.value})}
+            >
+              <option value="">Tüm Odalar</option>
+              <option value="1+1">1+1</option>
+              <option value="2+1">2+1</option>
+              <option value="3+1">3+1</option>
+              <option value="4+1">4+1</option>
+              <option value="5+">5+</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Metrekare Aralığı</FilterLabel>
+            <PriceRangeContainer>
+              <PriceInput 
+                type="number"
+                placeholder="Min m²"
+                value={filters.minArea}
+                onChange={(e) => setFilters({...filters, minArea: e.target.value})}
+              />
+              <PriceSeparator>-</PriceSeparator>
+              <PriceInput 
+                type="number"
+                placeholder="Max m²"
+                value={filters.maxArea}
+                onChange={(e) => setFilters({...filters, maxArea: e.target.value})}
+              />
+            </PriceRangeContainer>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Isıtma</FilterLabel>
+            <FilterSelect 
+              value={filters.heating}
+              onChange={(e) => setFilters({...filters, heating: e.target.value})}
+            >
+              <option value="">Tüm Isıtma</option>
+              <option value="Merkezi">Merkezi</option>
+              <option value="Kombi">Kombi</option>
+              <option value="Doğalgaz">Doğalgaz</option>
+              <option value="Elektrik">Elektrik</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Otopark</FilterLabel>
+            <FilterSelect 
+              value={filters.parking}
+              onChange={(e) => setFilters({...filters, parking: e.target.value})}
+            >
+              <option value="">Tüm Seçenekler</option>
+              <option value="Var">Var</option>
+              <option value="Yok">Yok</option>
+              <option value="Ücretli">Ücretli</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Balkon</FilterLabel>
+            <FilterSelect 
+              value={filters.balcony}
+              onChange={(e) => setFilters({...filters, balcony: e.target.value})}
+            >
+              <option value="">Tüm Seçenekler</option>
+              <option value="Var">Var</option>
+              <option value="Yok">Yok</option>
+              <option value="Kapalı">Kapalı</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Eşyalı</FilterLabel>
+            <FilterSelect 
+              value={filters.furnished}
+              onChange={(e) => setFilters({...filters, furnished: e.target.value})}
+            >
+              <option value="">Tüm Seçenekler</option>
+              <option value="Evet">Evet</option>
+              <option value="Hayır">Hayır</option>
+              <option value="Yarı">Yarı Eşyalı</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Asansör</FilterLabel>
+            <FilterSelect 
+              value={filters.elevator}
+              onChange={(e) => setFilters({...filters, elevator: e.target.value})}
+            >
+              <option value="">Asansör Seçin</option>
+              <option value="Var">Var</option>
+              <option value="Yok">Yok</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Güvenlik</FilterLabel>
+            <FilterSelect 
+              value={filters.security}
+              onChange={(e) => setFilters({...filters, security: e.target.value})}
+            >
+              <option value="">Güvenlik Seçin</option>
+              <option value="Var">Var</option>
+              <option value="Yok">Yok</option>
+              <option value="24-saat">24 Saat</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Site İçinde</FilterLabel>
+            <FilterSelect 
+              value={filters.inComplex}
+              onChange={(e) => setFilters({...filters, inComplex: e.target.value})}
+            >
+              <option value="">Site Durumu</option>
+              <option value="Evet">Evet</option>
+              <option value="Hayır">Hayır</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Deniz Manzarası</FilterLabel>
+            <FilterSelect 
+              value={filters.seaView}
+              onChange={(e) => setFilters({...filters, seaView: e.target.value})}
+            >
+              <option value="">Manzara Seçin</option>
+              <option value="Evet">Var</option>
+              <option value="Yok">Yok</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Metro Yakını</FilterLabel>
+            <FilterSelect 
+              value={filters.nearMetro}
+              onChange={(e) => setFilters({...filters, nearMetro: e.target.value})}
+            >
+              <option value="">Metro Durumu</option>
+              <option value="Evet">Var</option>
+              <option value="Yok">Yok</option>
+              <option value="Yakın">Yakın</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Bahçe</FilterLabel>
+            <FilterSelect 
+              value={filters.garden}
+              onChange={(e) => setFilters({...filters, garden: e.target.value})}
+            >
+              <option value="">Bahçe Seçin</option>
+              <option value="Var">Var</option>
+              <option value="Yok">Yok</option>
+              <option value="Ortak">Ortak</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Havuz</FilterLabel>
+            <FilterSelect 
+              value={filters.pool}
+              onChange={(e) => setFilters({...filters, pool: e.target.value})}
+            >
+              <option value="">Havuz Seçin</option>
+              <option value="Var">Var</option>
+              <option value="Yok">Yok</option>
+              <option value="Kapalı">Kapalı</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Spor Salonu</FilterLabel>
+            <FilterSelect 
+              value={filters.gym}
+              onChange={(e) => setFilters({...filters, gym: e.target.value})}
+            >
+              <option value="">Spor Salonu</option>
+              <option value="Var">Var</option>
+              <option value="Yok">Yok</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Evcil Hayvan</FilterLabel>
+            <FilterSelect 
+              value={filters.petFriendly}
+              onChange={(e) => setFilters({...filters, petFriendly: e.target.value})}
+            >
+              <option value="">Evcil Hayvan</option>
+              <option value="Evet">Kabul</option>
+              <option value="Hayır">Kabul Etmez</option>
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup>
+            <FilterLabel>Kredi Uygunluğu</FilterLabel>
+            <FilterSelect 
+              value={filters.loanEligible}
+              onChange={(e) => setFilters({...filters, loanEligible: e.target.value})}
+            >
+              <option value="">Kredi Durumu</option>
+              <option value="Evet">Uygun</option>
+              <option value="Hayır">Uygun Değil</option>
+              <option value="Kısmi">Kısmi</option>
+            </FilterSelect>
+          </FilterGroup>
         </FilterGrid>
 
-        <AdvancedFilters isOpen={showAdvanced}>
+        <AdvancedFilters isOpen={showAdvancedFilters}>
           <AdvancedFiltersGrid>
             <FilterGroup>
-              <FilterLabel>Metrekare</FilterLabel>
+              <FilterLabel>Isıtma</FilterLabel>
               <FilterSelect 
-                value={filters.area}
-                onChange={(e) => setFilters({...filters, area: e.target.value})}
+                value={filters.heating}
+                onChange={(e) => setFilters({...filters, heating: e.target.value})}
               >
-                <option value="">Tüm Alanlar</option>
-                <option value="0-50">0-50 m²</option>
-                <option value="50-100">50-100 m²</option>
-                <option value="100-150">100-150 m²</option>
-                <option value="150-200">150-200 m²</option>
-                <option value="200+">200+ m²</option>
-              </FilterSelect>
-            </FilterGroup>
-
-            <FilterGroup>
-              <FilterLabel>Kat</FilterLabel>
-              <FilterSelect 
-                value={filters.floor}
-                onChange={(e) => setFilters({...filters, floor: e.target.value})}
-              >
-                <option value="">Tüm Katlar</option>
-                <option value="zemin">Zemin</option>
-                <option value="1-3">1-3. Kat</option>
-                <option value="4-7">4-7. Kat</option>
-                <option value="8-15">8-15. Kat</option>
-                <option value="15+">15+ Kat</option>
-              </FilterSelect>
-            </FilterGroup>
-
-            <FilterGroup>
-              <FilterLabel>Bina Yaşı</FilterLabel>
-              <FilterSelect 
-                value={filters.age}
-                onChange={(e) => setFilters({...filters, age: e.target.value})}
-              >
-                <option value="">Tüm Yaşlar</option>
-                <option value="0-1">0-1 Yaş</option>
-                <option value="1-5">1-5 Yaş</option>
-                <option value="5-10">5-10 Yaş</option>
-                <option value="10-20">10-20 Yaş</option>
-                <option value="20+">20+ Yaş</option>
+                <option value="">Tüm Isıtma</option>
+                <option value="Merkezi">Merkezi</option>
+                <option value="Kombi">Kombi</option>
+                <option value="Doğalgaz">Doğalgaz</option>
+                <option value="Elektrik">Elektrik</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -826,10 +1154,10 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, heating: e.target.value})}
               >
                 <option value="">Tüm Isıtma</option>
-                <option value="merkezi">Merkezi</option>
-                <option value="kombi">Kombi</option>
-                <option value="dogalgaz">Doğalgaz</option>
-                <option value="elektrik">Elektrik</option>
+                <option value="Merkezi">Merkezi</option>
+                <option value="Kombi">Kombi</option>
+                <option value="Doğalgaz">Doğalgaz</option>
+                <option value="Elektrik">Elektrik</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -840,9 +1168,9 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, parking: e.target.value})}
               >
                 <option value="">Tüm Seçenekler</option>
-                <option value="var">Var</option>
-                <option value="yok">Yok</option>
-                <option value="ücretli">Ücretli</option>
+                <option value="Var">Var</option>
+                <option value="Yok">Yok</option>
+                <option value="Ücretli">Ücretli</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -853,9 +1181,9 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, balcony: e.target.value})}
               >
                 <option value="">Tüm Seçenekler</option>
-                <option value="var">Var</option>
-                <option value="yok">Yok</option>
-                <option value="kapalı">Kapalı</option>
+                <option value="Var">Var</option>
+                <option value="Yok">Yok</option>
+                <option value="Kapalı">Kapalı</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -866,17 +1194,17 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, furnished: e.target.value})}
               >
                 <option value="">Tüm Seçenekler</option>
-                <option value="evet">Evet</option>
-                <option value="hayır">Hayır</option>
-                <option value="yarı">Yarı Eşyalı</option>
+                <option value="Evet">Evet</option>
+                <option value="Hayır">Hayır</option>
+                <option value="Yarı">Yarı Eşyalı</option>
               </FilterSelect>
             </FilterGroup>
 
             <FilterGroup>
               <FilterLabel>Emlak Yaşı</FilterLabel>
               <FilterSelect 
-                value={filters.buildingAge}
-                onChange={(e) => setFilters({...filters, buildingAge: e.target.value})}
+                value={filters.age || ''}
+                onChange={(e) => setFilters({...filters, age: e.target.value})}
               >
                 <option value="">Yaş Seçin</option>
                 <option value="0-1">0-1 Yaş</option>
@@ -894,8 +1222,8 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, elevator: e.target.value})}
               >
                 <option value="">Asansör Seçin</option>
-                <option value="var">Var</option>
-                <option value="yok">Yok</option>
+                <option value="Var">Var</option>
+                <option value="Yok">Yok</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -906,8 +1234,8 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, security: e.target.value})}
               >
                 <option value="">Güvenlik Seçin</option>
-                <option value="var">Var</option>
-                <option value="yok">Yok</option>
+                <option value="Var">Var</option>
+                <option value="Yok">Yok</option>
                 <option value="24-saat">24 Saat</option>
               </FilterSelect>
             </FilterGroup>
@@ -919,8 +1247,8 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, siteInside: e.target.value})}
               >
                 <option value="">Site Durumu</option>
-                <option value="evet">Evet</option>
-                <option value="hayır">Hayır</option>
+                <option value="Evet">Evet</option>
+                <option value="Hayır">Hayır</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -931,8 +1259,8 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, seaView: e.target.value})}
               >
                 <option value="">Manzara Seçin</option>
-                <option value="evet">Var</option>
-                <option value="hayır">Yok</option>
+                <option value="Evet">Var</option>
+                <option value="Yok">Yok</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -943,9 +1271,9 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, metroNearby: e.target.value})}
               >
                 <option value="">Metro Durumu</option>
-                <option value="evet">Var</option>
-                <option value="hayır">Yok</option>
-                <option value="yakın">Yakın</option>
+                <option value="Evet">Var</option>
+                <option value="Yok">Yok</option>
+                <option value="Yakın">Yakın</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -956,9 +1284,9 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, garden: e.target.value})}
               >
                 <option value="">Bahçe Seçin</option>
-                <option value="var">Var</option>
-                <option value="yok">Yok</option>
-                <option value="ortak">Ortak</option>
+                <option value="Var">Var</option>
+                <option value="Yok">Yok</option>
+                <option value="Ortak">Ortak</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -969,9 +1297,9 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, pool: e.target.value})}
               >
                 <option value="">Havuz Seçin</option>
-                <option value="var">Var</option>
-                <option value="yok">Yok</option>
-                <option value="kapalı">Kapalı</option>
+                <option value="Var">Var</option>
+                <option value="Yok">Yok</option>
+                <option value="Kapalı">Kapalı</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -982,8 +1310,8 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, gym: e.target.value})}
               >
                 <option value="">Spor Salonu</option>
-                <option value="var">Var</option>
-                <option value="yok">Yok</option>
+                <option value="Var">Var</option>
+                <option value="Yok">Yok</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -994,21 +1322,21 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, petFriendly: e.target.value})}
               >
                 <option value="">Evcil Hayvan</option>
-                <option value="evet">Kabul</option>
-                <option value="hayır">Kabul Etmez</option>
+                <option value="Evet">Kabul</option>
+                <option value="Hayır">Kabul Etmez</option>
               </FilterSelect>
             </FilterGroup>
 
             <FilterGroup>
               <FilterLabel>Kredi Uygunluğu</FilterLabel>
               <FilterSelect 
-                value={filters.creditAvailable}
-                onChange={(e) => setFilters({...filters, creditAvailable: e.target.value})}
+                value={filters.loanEligible}
+                onChange={(e) => setFilters({...filters, loanEligible: e.target.value})}
               >
                 <option value="">Kredi Durumu</option>
-                <option value="evet">Uygun</option>
-                <option value="hayır">Uygun Değil</option>
-                <option value="kısmi">Kısmi</option>
+                <option value="Evet">Uygun</option>
+                <option value="Hayır">Uygun Değil</option>
+                <option value="Kısmi">Kısmi</option>
               </FilterSelect>
             </FilterGroup>
           </AdvancedFiltersGrid>
@@ -1043,39 +1371,66 @@ const PropertyList: React.FC = () => {
         </NoResults>
       ) : (
         <PropertyGrid>
-          {sortedProperties.map((property) => (
-            <PropertyCard key={property.id} onClick={() => navigate(`/property/${property.id}`)}>
-              <PropertyImage style={{
-                backgroundImage: `url(${property.image})`, 
-                backgroundSize: 'cover', 
-                backgroundPosition: 'center', 
-                color: 'transparent'
-              }}>
-                <span role="img" aria-label="ev">🏠</span>
-              </PropertyImage>
-              <StatusBadge type={property.type === 'Satılık' ? 'sale' : 'rent'}>
-                {property.type}
-              </StatusBadge>
-              <PropertyContent>
-                <PropertyTitle>{property.title}</PropertyTitle>
-                <PropertyLocation>
-                  📍 {property.location}
-                </PropertyLocation>
-                <PropertyPrice>
-                  💰 {typeof property.price === 'number' ? property.price.toLocaleString('tr-TR') + ' TL' : property.price}
-                </PropertyPrice>
-                <PropertyDetails>
-                  <DetailItem>
-                    🛏️ {property.rooms}
-                  </DetailItem>
-                  <DetailItem>
-                    📐 {property.area}
-                  </DetailItem>
-                  <DetailItem>
-                    🏷️ {property.type}
-                  </DetailItem>
-                </PropertyDetails>
-              </PropertyContent>
+          {sortedProperties.map((property: any) => (
+            <PropertyCard key={property.id}>
+              <div onClick={() => navigate(`/property/${property.id}`)}>
+                <PropertyImage style={{
+                  backgroundImage: `url(${property.image})`, 
+                  backgroundSize: 'cover', 
+                  backgroundPosition: 'center', 
+                  color: 'transparent'
+                }}>
+                  <span role="img" aria-label="ev">🏠</span>
+                </PropertyImage>
+                <StatusBadge type={property.type === 'Satılık' ? 'sale' : 'rent'}>
+                  {property.type}
+                </StatusBadge>
+                <PropertyContent>
+                  <PropertyTitle>{property.title}</PropertyTitle>
+                  <PropertyLocation>
+                    📍 {property.location}
+                  </PropertyLocation>
+                  <PropertyPrice>
+                    💰 {typeof property.price === 'number' ? property.price.toLocaleString('tr-TR') + ' TL' : property.price}
+                  </PropertyPrice>
+                  <PropertyDetails>
+                    <DetailItem>
+                      🛏️ {property.rooms}
+                    </DetailItem>
+                    <DetailItem>
+                      📐 {property.area}
+                    </DetailItem>
+                    <DetailItem>
+                      🏷️ {property.type}
+                    </DetailItem>
+                  </PropertyDetails>
+                </PropertyContent>
+              </div>
+              
+              {isAdmin && (
+                <AdminActions>
+                  {showDeleteConfirm === property.id ? (
+                    <>
+                      <DeleteButton onClick={() => handleDeleteProperty(property.id)}>
+                        ✅ Onayla
+                      </DeleteButton>
+                      <DeleteButton 
+                        style={{ background: '#6b7280' }}
+                        onClick={() => setShowDeleteConfirm(null)}
+                      >
+                        ❌ İptal
+                      </DeleteButton>
+                    </>
+                  ) : (
+                    <DeleteButton onClick={(e) => {
+                      e.stopPropagation();
+                      setShowDeleteConfirm(property.id);
+                    }}>
+                      🗑️ Sil
+                    </DeleteButton>
+                  )}
+                </AdminActions>
+              )}
             </PropertyCard>
           ))}
         </PropertyGrid>
