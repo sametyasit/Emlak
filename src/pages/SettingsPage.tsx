@@ -6,34 +6,36 @@ const SettingsContainer = styled.div`
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: #f8fafc;
+  color: #1e293b;
   min-height: 100vh;
 `;
 
 const PageTitle = styled.h1`
-  color: #333;
+  color: #1e293b;
   margin-bottom: 30px;
   font-size: 2rem;
   text-align: center;
+  font-weight: 700;
 `;
 
 const SettingsSection = styled.div`
-  background: var(--card-bg);
+  background: white;
   border-radius: 12px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   padding: 30px;
   margin-bottom: 20px;
-  border: 1px solid var(--border-color);
+  border: 1px solid #e2e8f0;
 `;
 
 const SectionTitle = styled.h2`
-  color: #333;
+  color: #1e293b;
   margin-bottom: 20px;
   font-size: 1.3rem;
   display: flex;
   align-items: center;
   gap: 10px;
+  font-weight: 600;
 `;
 
 const FormGroup = styled.div`
@@ -43,49 +45,56 @@ const FormGroup = styled.div`
 const Label = styled.label`
   display: block;
   margin-bottom: 8px;
-  color: #333;
+  color: #374151;
   font-weight: 500;
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid #e5e7eb;
+  border: 2px solid #e2e8f0;
   border-radius: 8px;
   font-size: 1rem;
   outline: none;
+  transition: all 0.3s ease;
 
   &:focus {
-    border-color: #8B5CF6;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   }
 `;
 
 const Select = styled.select`
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid #e5e7eb;
+  border: 2px solid #e2e8f0;
   border-radius: 8px;
   font-size: 1rem;
   outline: none;
   background: white;
+  transition: all 0.3s ease;
 
   &:focus {
-    border-color: #8B5CF6;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   }
 `;
 
 const TextArea = styled.textarea`
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid #e5e7eb;
+  border: 2px solid #e2e8f0;
   border-radius: 8px;
   font-size: 1rem;
   outline: none;
   resize: vertical;
   min-height: 100px;
+  font-family: inherit;
+  transition: all 0.3s ease;
 
   &:focus {
-    border-color: #8B5CF6;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   }
 `;
 
@@ -94,7 +103,7 @@ const ToggleContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 15px 0;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e2e8f0;
 
   &:last-child {
     border-bottom: none;
@@ -106,14 +115,14 @@ const ToggleLabel = styled.div`
 `;
 
 const ToggleTitle = styled.div`
-  color: #333;
   font-weight: 500;
+  color: #1e293b;
   margin-bottom: 4px;
 `;
 
 const ToggleDescription = styled.div`
-  color: #666;
   font-size: 0.9rem;
+  color: #64748b;
 `;
 
 const ToggleSwitch = styled.label`
@@ -121,6 +130,7 @@ const ToggleSwitch = styled.label`
   display: inline-block;
   width: 50px;
   height: 24px;
+  cursor: pointer;
 `;
 
 const ToggleInput = styled.input`
@@ -129,7 +139,7 @@ const ToggleInput = styled.input`
   height: 0;
 
   &:checked + span {
-    background-color: #8B5CF6;
+    background-color: #10b981;
   }
 
   &:checked + span:before {
@@ -144,8 +154,8 @@ const ToggleSlider = styled.span`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
+  background-color: #cbd5e1;
+  transition: 0.3s;
   border-radius: 24px;
 
   &:before {
@@ -156,15 +166,16 @@ const ToggleSlider = styled.span`
     left: 3px;
     bottom: 3px;
     background-color: white;
-    transition: 0.4s;
+    transition: 0.3s;
     border-radius: 50%;
   }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
-  gap: 15px;
+  gap: 10px;
   margin-top: 30px;
+  flex-wrap: wrap;
 `;
 
 const Button = styled.button<{ variant?: 'primary' | 'secondary' | 'danger' }>`
@@ -172,26 +183,27 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' | 'danger' }>`
   border: none;
   border-radius: 8px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-
+  transition: all 0.3s ease;
   ${props => {
     switch (props.variant) {
       case 'primary':
         return `
-          background: #8B5CF6;
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
           color: white;
           &:hover {
-            background: #7C3AED;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
           }
         `;
       case 'secondary':
         return `
           background: #f3f4f6;
-          color: #333;
+          color: #374151;
           &:hover {
             background: #e5e7eb;
+            transform: translateY(-1px);
           }
         `;
       case 'danger':
@@ -200,14 +212,16 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' | 'danger' }>`
           color: white;
           &:hover {
             background: #dc2626;
+            transform: translateY(-2px);
           }
         `;
       default:
         return `
-          background: #8B5CF6;
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
           color: white;
           &:hover {
-            background: #7C3AED;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
           }
         `;
     }
@@ -225,7 +239,7 @@ const Avatar = styled.div`
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: #8B5CF6;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -242,13 +256,50 @@ const UploadButton = styled.label`
   display: inline-block;
   padding: 8px 16px;
   background: #f3f4f6;
-  color: #333;
+  color: #374151;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
+  transition: all 0.3s ease;
 
   &:hover {
     background: #e5e7eb;
+    transform: translateY(-1px);
+  }
+`;
+
+const SaveButton = styled.button`
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 10px;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+  }
+`;
+
+const DeleteButton = styled.button`
+  background: #ef4444;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
   }
 `;
 
@@ -369,16 +420,11 @@ const SettingsPage: React.FC = () => {
 
         <FormGroup>
           <Label>Şehir</Label>
-          <Select
+          <Input
+            type="text"
             value={profile.city}
             onChange={(e) => handleProfileChange('city', e.target.value)}
-          >
-            <option value="İstanbul">İstanbul</option>
-            <option value="Ankara">Ankara</option>
-            <option value="İzmir">İzmir</option>
-            <option value="Bursa">Bursa</option>
-            <option value="Antalya">Antalya</option>
-          </Select>
+          />
         </FormGroup>
       </SettingsSection>
 
@@ -388,7 +434,7 @@ const SettingsPage: React.FC = () => {
         <ToggleContainer>
           <ToggleLabel>
             <ToggleTitle>E-posta Bildirimleri</ToggleTitle>
-            <ToggleDescription>Yeni ilanlar ve güncellemeler için e-posta alın</ToggleDescription>
+            <ToggleDescription>Önemli güncellemeler için e-posta alın</ToggleDescription>
           </ToggleLabel>
           <ToggleSwitch>
             <ToggleInput
@@ -517,9 +563,9 @@ const SettingsPage: React.FC = () => {
       </SettingsSection>
 
       <ButtonGroup>
-        <Button onClick={handleSave}>Kaydet</Button>
+        <SaveButton onClick={handleSave}>Kaydet</SaveButton>
         <Button variant="secondary">İptal</Button>
-        <Button variant="danger" onClick={handleDeleteAccount}>Hesabı Sil</Button>
+        <DeleteButton onClick={handleDeleteAccount}>Hesabı Sil</DeleteButton>
       </ButtonGroup>
     </SettingsContainer>
   );
