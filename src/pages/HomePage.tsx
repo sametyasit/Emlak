@@ -116,12 +116,12 @@ const SearchSection = styled.div`
 
 const SearchForm = styled.form`
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.2rem;
   align-items: end;
   
   @media (max-width: 1024px) {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
   
   @media (max-width: 768px) {
@@ -217,7 +217,7 @@ const SearchButton = styled.button`
   letter-spacing: 0.5px;
   position: relative;
   overflow: hidden;
-  grid-column: span 1;
+  grid-column: span 4;
   
   &::before {
     content: '';
@@ -449,6 +449,250 @@ const CTAButton = styled(Link)`
   }
 `;
 
+const ResultsSection = styled.section`
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  min-height: 60vh;
+`;
+
+const ResultsContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+`;
+
+const ResultsHeader = styled.div`
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: ${fadeInUp} 0.8s ease-out;
+`;
+
+const ResultsTitle = styled.h2`
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  
+  span {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+`;
+
+const ResultsSubtitle = styled.p`
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+`;
+
+const ResultsInfo = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  animation: ${slideIn} 0.6s ease-out;
+`;
+
+const ResultsCount = styled.p`
+  font-size: 1rem;
+  color: #6b7280;
+  font-weight: 500;
+`;
+
+const SortSelect = styled.select`
+  padding: 0.5rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: #ffffff;
+  color: #374151;
+  outline: none;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    border-color: #10b981;
+  }
+`;
+
+const PropertyGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  position: relative;
+  z-index: 1;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+`;
+
+const PropertyCard = styled.div`
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  position: relative;
+  backdrop-filter: blur(10px);
+  animation: ${fadeInUp} 0.8s ease-out;
+  cursor: pointer;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+    z-index: 1;
+  }
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 32px rgba(16, 185, 129, 0.15);
+    background: rgba(255, 255, 255, 1);
+    border-color: #10b981;
+    
+    &::before {
+      transform: scaleX(1);
+    }
+  }
+`;
+
+const PropertyImage = styled.div`
+  height: 200px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, transparent 50%);
+  }
+`;
+
+const PropertyContent = styled.div`
+  padding: 1.5rem;
+  position: relative;
+  z-index: 1;
+`;
+
+const PropertyTitle = styled.h3`
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.6rem;
+  line-height: 1.3;
+`;
+
+const PropertyLocation = styled.p`
+  color: #6b7280;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+`;
+
+const PropertyPrice = styled.div`
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #10b981;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+`;
+
+const PropertyDetails = styled.div`
+  display: flex;
+  justify-content: space-between;
+  color: #6b7280;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding-top: 0.8rem;
+  border-top: 1px solid #e5e7eb;
+`;
+
+const DetailItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+`;
+
+const StatusBadge = styled.span<{ type: 'sale' | 'rent' }>`
+  background: ${props => props.type === 'sale' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #f59e0b, #d97706)'};
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 16px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+`;
+
+const NoResults = styled.div`
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #6b7280;
+  
+  h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+    color: #1e293b;
+  }
+  
+  p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+`;
+
+const ClearFiltersButton = styled.button`
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 1rem;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+  }
+`;
+
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [searchData, setSearchData] = useState({
@@ -459,16 +703,15 @@ const HomePage: React.FC = () => {
     propertyType: '',
     minPrice: '',
     maxPrice: '',
-    rooms: '',
-    floor: '',
-    age: '',
-    heating: '',
-    parking: ''
+    rooms: ''
   });
 
   const [availableDistricts, setAvailableDistricts] = useState<Array<{id: number, name: string, neighborhoods: Array<{id: number, name: string}>}>>([]);
   const [availableNeighborhoods, setAvailableNeighborhoods] = useState<Array<{id: number, name: string}>>([]);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [showResults, setShowResults] = useState(false);
+  const [filteredProperties, setFilteredProperties] = useState(allProperties);
+  const [sortBy, setSortBy] = useState('newest');
 
   // İl seçildiğinde ilçeleri güncelle
   useEffect(() => {
@@ -530,7 +773,66 @@ const HomePage: React.FC = () => {
       return;
     }
     
-    navigate('/properties');
+    // Filtreleme işlemi
+    let filtered = allProperties;
+    
+    if (searchData.city) {
+      filtered = filtered.filter(property => 
+        property.location.toLowerCase().includes(searchData.city.toLowerCase())
+      );
+    }
+    
+    if (searchData.district) {
+      filtered = filtered.filter(property => 
+        property.location.toLowerCase().includes(searchData.district.toLowerCase())
+      );
+    }
+    
+    if (searchData.neighborhood) {
+      filtered = filtered.filter(property => 
+        property.location.toLowerCase().includes(searchData.neighborhood.toLowerCase())
+      );
+    }
+    
+    if (searchData.type) {
+      filtered = filtered.filter(property => 
+        property.type === searchData.type
+      );
+    }
+    
+    if (searchData.propertyType) {
+      filtered = filtered.filter(property => 
+        property.type.toLowerCase().includes(searchData.propertyType.toLowerCase())
+      );
+    }
+    
+    if (searchData.minPrice) {
+      filtered = filtered.filter(property => 
+        property.price >= parseInt(searchData.minPrice)
+      );
+    }
+    
+    if (searchData.maxPrice) {
+      filtered = filtered.filter(property => 
+        property.price <= parseInt(searchData.maxPrice)
+      );
+    }
+    
+    if (searchData.rooms) {
+      filtered = filtered.filter(property => 
+        property.rooms === searchData.rooms
+      );
+    }
+    
+    setFilteredProperties(filtered);
+    setShowResults(true);
+    
+    // Sonuçlara scroll
+    setTimeout(() => {
+      document.getElementById('results-section')?.scrollIntoView({ 
+        behavior: 'smooth' 
+      });
+    }, 100);
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -539,6 +841,36 @@ const HomePage: React.FC = () => {
       [field]: value
     }));
   };
+
+  const clearFilters = () => {
+    setSearchData({
+      city: '',
+      district: '',
+      neighborhood: '',
+      type: '',
+      propertyType: '',
+      minPrice: '',
+      maxPrice: '',
+      rooms: ''
+    });
+    setFilteredProperties(allProperties);
+    setShowResults(false);
+  };
+
+  const sortedProperties = [...filteredProperties].sort((a, b) => {
+    switch (sortBy) {
+      case 'price-low':
+        return a.price - b.price;
+      case 'price-high':
+        return b.price - a.price;
+      case 'newest':
+        return b.id - a.id;
+      case 'oldest':
+        return a.id - b.id;
+      default:
+        return 0;
+    }
+  });
 
   return (
     <>
@@ -663,49 +995,6 @@ const HomePage: React.FC = () => {
                 {errors.maxPrice && <small style={{ color: '#ef4444', fontSize: '0.75rem' }}>{errors.maxPrice}</small>}
               </SearchGroup>
               
-              <SearchGroup>
-                <SearchLabel>Kat</SearchLabel>
-                <SearchSelect 
-                  value={searchData.floor}
-                  onChange={(e) => handleInputChange('floor', e.target.value)}
-                >
-                  <option value="">Kat Seçin</option>
-                  <option value="ground">Zemin</option>
-                  <option value="1">1. Kat</option>
-                  <option value="2">2. Kat</option>
-                  <option value="3">3. Kat</option>
-                  <option value="4+">4+ Kat</option>
-                </SearchSelect>
-              </SearchGroup>
-              
-              <SearchGroup>
-                <SearchLabel>Bina Yaşı</SearchLabel>
-                <SearchSelect 
-                  value={searchData.age}
-                  onChange={(e) => handleInputChange('age', e.target.value)}
-                >
-                  <option value="">Yaş Seçin</option>
-                  <option value="0-1">0-1 Yaş</option>
-                  <option value="1-5">1-5 Yaş</option>
-                  <option value="5-10">5-10 Yaş</option>
-                  <option value="10+">10+ Yaş</option>
-                </SearchSelect>
-              </SearchGroup>
-              
-              <SearchGroup>
-                <SearchLabel>Isıtma</SearchLabel>
-                <SearchSelect 
-                  value={searchData.heating}
-                  onChange={(e) => handleInputChange('heating', e.target.value)}
-                >
-                  <option value="">Isıtma Seçin</option>
-                  <option value="central">Merkezi</option>
-                  <option value="individual">Bireysel</option>
-                  <option value="natural-gas">Doğalgaz</option>
-                  <option value="electric">Elektrik</option>
-                </SearchSelect>
-              </SearchGroup>
-              
               <SearchButton type="submit" disabled={Object.keys(errors).length > 0}>
                 🔍 Ara
               </SearchButton>
@@ -713,6 +1002,83 @@ const HomePage: React.FC = () => {
           </SearchSection>
         </HeroContent>
       </HeroSection>
+
+      {showResults && (
+        <ResultsSection id="results-section">
+          <ResultsContainer>
+            <ResultsHeader>
+              <ResultsTitle>
+                Arama <span>Sonuçları</span>
+              </ResultsTitle>
+              <ResultsSubtitle>
+                Filtrelerinize uygun {filteredProperties.length} ilan bulundu
+              </ResultsSubtitle>
+            </ResultsHeader>
+
+            <ResultsInfo>
+              <ResultsCount>
+                {filteredProperties.length} ilan bulundu
+              </ResultsCount>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <SortSelect value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                  <option value="newest">En Yeni</option>
+                  <option value="oldest">En Eski</option>
+                  <option value="price-low">Fiyat (Düşük-Yüksek)</option>
+                  <option value="price-high">Fiyat (Yüksek-Düşük)</option>
+                </SortSelect>
+                <ClearFiltersButton onClick={clearFilters}>
+                  🗑️ Filtreleri Temizle
+                </ClearFiltersButton>
+              </div>
+            </ResultsInfo>
+
+            {sortedProperties.length === 0 ? (
+              <NoResults>
+                <h3>😔 Aradığınız kriterlere uygun ilan bulunamadı</h3>
+                <p>Filtrelerinizi değiştirerek daha fazla sonuç görebilirsiniz.</p>
+              </NoResults>
+            ) : (
+              <PropertyGrid>
+                {sortedProperties.map((property) => (
+                  <PropertyCard key={property.id} onClick={() => navigate(`/property/${property.id}`)}>
+                    <PropertyImage style={{
+                      backgroundImage: `url(${property.image})`, 
+                      backgroundSize: 'cover', 
+                      backgroundPosition: 'center', 
+                      color: 'transparent'
+                    }}>
+                      <span role="img" aria-label="ev">🏠</span>
+                    </PropertyImage>
+                    <StatusBadge type={property.type === 'Satılık' ? 'sale' : 'rent'}>
+                      {property.type}
+                    </StatusBadge>
+                    <PropertyContent>
+                      <PropertyTitle>{property.title}</PropertyTitle>
+                      <PropertyLocation>
+                        📍 {property.location}
+                      </PropertyLocation>
+                      <PropertyPrice>
+                        💰 {typeof property.price === 'number' ? property.price.toLocaleString('tr-TR') + ' TL' : property.price}
+                      </PropertyPrice>
+                      <PropertyDetails>
+                        <DetailItem>
+                          🛏️ {property.rooms}
+                        </DetailItem>
+                        <DetailItem>
+                          📐 {property.area}
+                        </DetailItem>
+                        <DetailItem>
+                          🏷️ {property.type}
+                        </DetailItem>
+                      </PropertyDetails>
+                    </PropertyContent>
+                  </PropertyCard>
+                ))}
+              </PropertyGrid>
+            )}
+          </ResultsContainer>
+        </ResultsSection>
+      )}
 
       <FeaturesSection>
         <FeaturesContainer>
@@ -749,10 +1115,10 @@ const HomePage: React.FC = () => {
             </FeatureCard>
             
             <FeatureCard>
-              <FeatureIcon>📱</FeatureIcon>
-              <FeatureTitle>Mobil Uygulama</FeatureTitle>
+              <FeatureIcon>🛎️</FeatureIcon>
+              <FeatureTitle>7/24 Destek</FeatureTitle>
               <FeatureDescription>
-                Mobil uygulamamız ile istediğiniz yerden ilanları görüntüleyin ve takip edin.
+                Müşteri hizmetlerimiz 7/24 hizmetinizde. Sorularınız için her zaman yanınızdayız.
               </FeatureDescription>
             </FeatureCard>
             
