@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useAuth } from '../contexts/AuthContext';
 
 const Container = styled.div`
   max-width: 1000px;
@@ -8,12 +9,13 @@ const Container = styled.div`
 `;
 
 const PageHeader = styled.div`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   padding: 2rem;
   border-radius: 16px;
   margin-bottom: 2rem;
   text-align: center;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
 `;
 
 const PageTitle = styled.h1`
@@ -78,6 +80,37 @@ const SettingDescription = styled.p`
   margin-bottom: 1rem;
 `;
 
+const Input = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+`;
+
+const Select = styled.select`
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+`;
+
 const ToggleSwitch = styled.label`
   position: relative;
   display: inline-block;
@@ -98,7 +131,7 @@ const ToggleSwitch = styled.label`
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: .4s;
+    transition: 0.4s;
     border-radius: 24px;
     
     &:before {
@@ -109,13 +142,13 @@ const ToggleSwitch = styled.label`
       left: 3px;
       bottom: 3px;
       background-color: white;
-      transition: .4s;
+      transition: 0.4s;
       border-radius: 50%;
     }
   }
   
   input:checked + span {
-    background-color: #667eea;
+    background-color: #10b981;
   }
   
   input:checked + span:before {
@@ -123,70 +156,45 @@ const ToggleSwitch = styled.label`
   }
 `;
 
-const Select = styled.select`
-  padding: 0.75rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 1rem;
-  background: white;
-  width: 100%;
-  
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-  }
-`;
-
-const Input = styled.input`
-  padding: 0.75rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 1rem;
-  width: 100%;
-  
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-  }
-`;
-
 const ButtonGroup = styled.div`
   display: flex;
   gap: 1rem;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 2rem;
 `;
 
-const Button = styled.button`
-  padding: 0.75rem 1.5rem;
+const SaveButton = styled.button`
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 1rem 2rem;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   
   &:hover {
     transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
   }
 `;
 
-const SaveButton = styled(Button)`
-  background: #667eea;
-  color: white;
-  
-  &:hover {
-    background: #5a67d8;
-  }
-`;
-
-const ResetButton = styled(Button)`
+const ResetButton = styled.button`
   background: #f8fafc;
-  color: #1e293b;
+  color: #64748b;
+  padding: 1rem 2rem;
   border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
   
   &:hover {
     background: #e2e8f0;
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
   }
 `;
 
@@ -200,50 +208,56 @@ const SuccessMessage = styled.div`
   font-weight: 500;
 `;
 
+const AccessDeniedMessage = styled.div`
+  background: #fef3f2;
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 500;
+`;
+
 const SystemSettingsPage: React.FC = () => {
+  const { user } = useAuth();
   const [showSuccess, setShowSuccess] = useState(false);
-  const [settings, setSettings] = useState({
-    // Genel Ayarlar
-    siteName: 'Emlak Platformu',
-    siteDescription: 'Hayalinizdeki evi bulun',
-    maintenanceMode: false,
-    registrationEnabled: true,
-    
-    // E-posta Ayarları
-    smtpHost: 'smtp.gmail.com',
-    smtpPort: '587',
-    smtpUser: 'noreply@emlak.com',
-    smtpPassword: '',
+  
+  // Kullanıcı ayarları (tüm adminler erişebilir)
+  const [userSettings, setUserSettings] = useState({
     emailNotifications: true,
-    
-    // Güvenlik Ayarları
-    sessionTimeout: '30',
-    maxLoginAttempts: '5',
-    passwordMinLength: '8',
-    twoFactorAuth: false,
-    
-    // Bildirim Ayarları
     pushNotifications: true,
-    emailAlerts: true,
-    smsNotifications: false,
-    
-    // Performans Ayarları
-    cacheEnabled: true,
-    imageCompression: true,
-    cdnEnabled: false
+    language: 'tr',
+    theme: 'light',
+    timezone: 'Europe/Istanbul'
   });
 
-  const handleSettingChange = (key: string, value: string | boolean) => {
-    setSettings(prev => ({
+  const handleUserSettingChange = (key: string, value: string | boolean) => {
+    setUserSettings((prev: any) => ({
       ...prev,
       [key]: value
     }));
+    
+    // Dil değişikliğini anında uygula
+    if (key === 'language') {
+      document.documentElement.lang = value as string;
+      // LocalStorage'a kaydet
+      localStorage.setItem('userLanguage', value as string);
+    }
+    
+    // Tema değişikliğini anında uygula
+    if (key === 'theme') {
+      document.documentElement.setAttribute('data-theme', value as string);
+      // LocalStorage'a kaydet
+      localStorage.setItem('userTheme', value as string);
+    }
   };
 
-  const handleSave = () => {
+  const handleSaveUserSettings = () => {
+    // LocalStorage'a kaydet
+    localStorage.setItem('userSettings', JSON.stringify(userSettings));
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
-    console.log('Ayarlar kaydedildi:', settings);
+    console.log('Kullanıcı ayarları kaydedildi:', userSettings);
   };
 
   const handleReset = () => {
@@ -256,8 +270,8 @@ const SystemSettingsPage: React.FC = () => {
   return (
     <Container>
       <PageHeader>
-        <PageTitle>⚙️ Sistem Ayarları</PageTitle>
-        <PageSubtitle>Platform ayarlarını yönetin</PageSubtitle>
+        <PageTitle>⚙️ Kullanıcı Ayarları</PageTitle>
+        <PageSubtitle>Kendi ayarlarınızı yönetin</PageSubtitle>
       </PageHeader>
 
       {showSuccess && (
@@ -268,272 +282,83 @@ const SystemSettingsPage: React.FC = () => {
 
       <SettingsGrid>
         <SettingsCard>
-          <CardTitle>🌐 Genel Ayarlar</CardTitle>
+          <CardTitle>👤 Kullanıcı Ayarları</CardTitle>
           
-          <SettingItem>
-            <SettingLabel>
-              Site Adı
-            </SettingLabel>
-            <SettingDescription>
-              Platformun görünen adı
-            </SettingDescription>
-            <Input
-              type="text"
-              value={settings.siteName}
-              onChange={(e) => handleSettingChange('siteName', e.target.value)}
-            />
-          </SettingItem>
-
-          <SettingItem>
-            <SettingLabel>
-              Site Açıklaması
-            </SettingLabel>
-            <SettingDescription>
-              Platformun kısa açıklaması
-            </SettingDescription>
-            <Input
-              type="text"
-              value={settings.siteDescription}
-              onChange={(e) => handleSettingChange('siteDescription', e.target.value)}
-            />
-          </SettingItem>
-
-          <SettingItem>
-            <SettingLabel>
-              Bakım Modu
-              <ToggleSwitch>
-                <input
-                  type="checkbox"
-                  checked={settings.maintenanceMode}
-                  onChange={(e) => handleSettingChange('maintenanceMode', e.target.checked)}
-                />
-                <span></span>
-              </ToggleSwitch>
-            </SettingLabel>
-            <SettingDescription>
-              Bakım modu aktifken sadece adminler erişebilir
-            </SettingDescription>
-          </SettingItem>
-
-          <SettingItem>
-            <SettingLabel>
-              Kayıt Olma
-              <ToggleSwitch>
-                <input
-                  type="checkbox"
-                  checked={settings.registrationEnabled}
-                  onChange={(e) => handleSettingChange('registrationEnabled', e.target.checked)}
-                />
-                <span></span>
-              </ToggleSwitch>
-            </SettingLabel>
-            <SettingDescription>
-              Yeni kullanıcı kayıtlarına izin ver
-            </SettingDescription>
-          </SettingItem>
-        </SettingsCard>
-
-        <SettingsCard>
-          <CardTitle>📧 E-posta Ayarları</CardTitle>
-          
-          <SettingItem>
-            <SettingLabel>SMTP Sunucu</SettingLabel>
-            <Input
-              type="text"
-              value={settings.smtpHost}
-              onChange={(e) => handleSettingChange('smtpHost', e.target.value)}
-            />
-          </SettingItem>
-
-          <SettingItem>
-            <SettingLabel>SMTP Port</SettingLabel>
-            <Input
-              type="text"
-              value={settings.smtpPort}
-              onChange={(e) => handleSettingChange('smtpPort', e.target.value)}
-            />
-          </SettingItem>
-
-          <SettingItem>
-            <SettingLabel>E-posta Kullanıcı</SettingLabel>
-            <Input
-              type="email"
-              value={settings.smtpUser}
-              onChange={(e) => handleSettingChange('smtpUser', e.target.value)}
-            />
-          </SettingItem>
-
           <SettingItem>
             <SettingLabel>
               E-posta Bildirimleri
-              <ToggleSwitch>
-                <input
-                  type="checkbox"
-                  checked={settings.emailNotifications}
-                  onChange={(e) => handleSettingChange('emailNotifications', e.target.checked)}
-                />
-                <span></span>
-              </ToggleSwitch>
             </SettingLabel>
-          </SettingItem>
-        </SettingsCard>
-
-        <SettingsCard>
-          <CardTitle>🔒 Güvenlik Ayarları</CardTitle>
-          
-          <SettingItem>
-            <SettingLabel>Oturum Süresi (dakika)</SettingLabel>
-            <Select
-              value={settings.sessionTimeout}
-              onChange={(e) => handleSettingChange('sessionTimeout', e.target.value)}
-            >
-              <option value="15">15 dakika</option>
-              <option value="30">30 dakika</option>
-              <option value="60">1 saat</option>
-              <option value="120">2 saat</option>
-            </Select>
+            <SettingDescription>
+              E-posta ile bildirim al
+            </SettingDescription>
+            <ToggleSwitch>
+              <input
+                type="checkbox"
+                checked={userSettings.emailNotifications}
+                onChange={(e) => handleUserSettingChange('emailNotifications', e.target.checked)}
+              />
+              <span></span>
+            </ToggleSwitch>
           </SettingItem>
 
           <SettingItem>
-            <SettingLabel>Maksimum Giriş Denemesi</SettingLabel>
-            <Select
-              value={settings.maxLoginAttempts}
-              onChange={(e) => handleSettingChange('maxLoginAttempts', e.target.value)}
-            >
-              <option value="3">3 deneme</option>
-              <option value="5">5 deneme</option>
-              <option value="10">10 deneme</option>
-            </Select>
+            <SettingLabel>
+              Push Bildirimleri
+            </SettingLabel>
+            <SettingDescription>
+              Tarayıcı push bildirimlerini etkinleştir
+            </SettingDescription>
+            <ToggleSwitch>
+              <input
+                type="checkbox"
+                checked={userSettings.pushNotifications}
+                onChange={(e) => handleUserSettingChange('pushNotifications', e.target.checked)}
+              />
+              <span></span>
+            </ToggleSwitch>
           </SettingItem>
 
           <SettingItem>
-            <SettingLabel>Şifre Minimum Uzunluk</SettingLabel>
+            <SettingLabel>
+              Dil
+            </SettingLabel>
+            <SettingDescription>
+              Platform dili (değişiklik anında uygulanır)
+            </SettingDescription>
             <Select
-              value={settings.passwordMinLength}
-              onChange={(e) => handleSettingChange('passwordMinLength', e.target.value)}
+              value={userSettings.language}
+              onChange={(e) => handleUserSettingChange('language', e.target.value)}
             >
-              <option value="6">6 karakter</option>
-              <option value="8">8 karakter</option>
-              <option value="10">10 karakter</option>
-              <option value="12">12 karakter</option>
+              <option value="tr">Türkçe</option>
+              <option value="en">English</option>
             </Select>
           </SettingItem>
 
           <SettingItem>
             <SettingLabel>
-              İki Faktörlü Doğrulama
-              <ToggleSwitch>
-                <input
-                  type="checkbox"
-                  checked={settings.twoFactorAuth}
-                  onChange={(e) => handleSettingChange('twoFactorAuth', e.target.checked)}
-                />
-                <span></span>
-              </ToggleSwitch>
+              Tema
             </SettingLabel>
-          </SettingItem>
-        </SettingsCard>
-
-        <SettingsCard>
-          <CardTitle>🔔 Bildirim Ayarları</CardTitle>
-          
-          <SettingItem>
-            <SettingLabel>
-              Push Bildirimleri
-              <ToggleSwitch>
-                <input
-                  type="checkbox"
-                  checked={settings.pushNotifications}
-                  onChange={(e) => handleSettingChange('pushNotifications', e.target.checked)}
-                />
-                <span></span>
-              </ToggleSwitch>
-            </SettingLabel>
-          </SettingItem>
-
-          <SettingItem>
-            <SettingLabel>
-              E-posta Uyarıları
-              <ToggleSwitch>
-                <input
-                  type="checkbox"
-                  checked={settings.emailAlerts}
-                  onChange={(e) => handleSettingChange('emailAlerts', e.target.checked)}
-                />
-                <span></span>
-              </ToggleSwitch>
-            </SettingLabel>
-          </SettingItem>
-
-          <SettingItem>
-            <SettingLabel>
-              SMS Bildirimleri
-              <ToggleSwitch>
-                <input
-                  type="checkbox"
-                  checked={settings.smsNotifications}
-                  onChange={(e) => handleSettingChange('smsNotifications', e.target.checked)}
-                />
-                <span></span>
-              </ToggleSwitch>
-            </SettingLabel>
-          </SettingItem>
-        </SettingsCard>
-
-        <SettingsCard>
-          <CardTitle>⚡ Performans Ayarları</CardTitle>
-          
-          <SettingItem>
-            <SettingLabel>
-              Önbellek
-              <ToggleSwitch>
-                <input
-                  type="checkbox"
-                  checked={settings.cacheEnabled}
-                  onChange={(e) => handleSettingChange('cacheEnabled', e.target.checked)}
-                />
-                <span></span>
-              </ToggleSwitch>
-            </SettingLabel>
-          </SettingItem>
-
-          <SettingItem>
-            <SettingLabel>
-              Resim Sıkıştırma
-              <ToggleSwitch>
-                <input
-                  type="checkbox"
-                  checked={settings.imageCompression}
-                  onChange={(e) => handleSettingChange('imageCompression', e.target.value)}
-                />
-                <span></span>
-              </ToggleSwitch>
-            </SettingLabel>
-          </SettingItem>
-
-          <SettingItem>
-            <SettingLabel>
-              CDN Kullanımı
-              <ToggleSwitch>
-                <input
-                  type="checkbox"
-                  checked={settings.cdnEnabled}
-                  onChange={(e) => handleSettingChange('cdnEnabled', e.target.checked)}
-                />
-                <span></span>
-              </ToggleSwitch>
-            </SettingLabel>
+            <SettingDescription>
+              Platform teması (değişiklik anında uygulanır)
+            </SettingDescription>
+            <Select
+              value={userSettings.theme}
+              onChange={(e) => handleUserSettingChange('theme', e.target.value)}
+            >
+              <option value="light">Açık</option>
+              <option value="dark">Koyu</option>
+            </Select>
           </SettingItem>
         </SettingsCard>
       </SettingsGrid>
 
       <ButtonGroup>
+        <SaveButton onClick={handleSaveUserSettings}>
+          💾 Ayarları Kaydet
+        </SaveButton>
         <ResetButton onClick={handleReset}>
           🔄 Sıfırla
         </ResetButton>
-        <SaveButton onClick={handleSave}>
-          💾 Kaydet
-        </SaveButton>
       </ButtonGroup>
     </Container>
   );
