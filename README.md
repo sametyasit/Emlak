@@ -1,168 +1,186 @@
-# 🏠 Emlak Web Sitesi
+# 🏠 Emlak Sitesi
 
-Modern ve kullanıcı dostu emlak web sitesi. React.js, TypeScript, Styled Components ve Chart.js kullanılarak geliştirilmiştir.
+Modern ve kullanıcı dostu emlak sitesi. React frontend ve Node.js backend ile geliştirilmiştir.
 
-## ✨ Özellikler
+## 🚀 Özellikler
 
-### 🎨 Kullanıcı Arayüzü
-- **Modern Tasarım**: Gradient renkler ve modern UI/UX prensipleri
-- **Responsive Tasarım**: Tüm cihazlarda mükemmel görünüm
-- **Animasyonlar**: Smooth hover efektleri ve geçişler
-- **Sticky Header**: Kolay navigasyon için sabit header
+### Frontend (React + TypeScript)
+- ✅ Modern ve responsive tasarım
+- ✅ Yeşil tema
+- ✅ Gelişmiş filtreleme sistemi
+- ✅ Resim galerisi ve zoom özelliği
+- ✅ Admin paneli
+- ✅ Kullanıcı yönetimi
+- ✅ Mesajlaşma sistemi
+- ✅ Bildirim sistemi
+- ✅ Favori ekleme/çıkarma
 
-### 🔐 Kimlik Doğrulama
-- **Kullanıcı Girişi**: Normal kullanıcılar için giriş sistemi
-- **Admin Girişi**: Yöneticiler için özel panel
-- **Korumalı Rotalar**: Yetki kontrolü ile sayfa erişimi
-- **Oturum Yönetimi**: LocalStorage ile oturum saklama
+### Backend (Node.js + SQLite)
+- ✅ RESTful API
+- ✅ JWT authentication
+- ✅ SQLite veritabanı
+- ✅ Resim yükleme
+- ✅ Dosya yönetimi
+- ✅ Güvenlik önlemleri
 
-### 📊 Dashboard'lar
-- **Kullanıcı Dashboard**: Favoriler, randevular, mesajlar
-- **Admin Dashboard**: İstatistikler, grafikler, yönetim araçları
-- **Chart.js Entegrasyonu**: Görsel veri analizi
+## 📋 Gereksinimler
 
-### 🏠 Emlak Özellikleri
-- **Emlak Listesi**: Grid layout ile emlak kartları
-- **Detay Sayfaları**: Kapsamlı emlak bilgileri
-- **Arama Sistemi**: Konum ve fiyat bazlı arama
-- **Filtreleme**: Çoklu kriter ile filtreleme
-
-## 🚀 Kurulum
-
-### Gereksinimler
-- Node.js (v14 veya üzeri)
+- Node.js (v16 veya üzeri)
 - npm veya yarn
 
-### Adımlar
+## 🛠️ Kurulum
 
-1. **Projeyi klonlayın**
-```bash
-git clone <repository-url>
-cd Emlak
-```
+### 1. Backend Kurulumu
 
-2. **Bağımlılıkları yükleyin**
 ```bash
+# Backend klasörüne git
+cd backend
+
+# Bağımlılıkları yükle
 npm install
+
+# Veritabanını başlat
+npm run init-db
+
+# Geliştirme sunucusunu başlat
+npm run dev
 ```
 
-3. **Geliştirme sunucusunu başlatın**
+Backend sunucusu `http://localhost:5000` adresinde çalışacak.
+
+### 2. Frontend Kurulumu
+
 ```bash
+# Ana proje klasörüne git
+cd ..
+
+# Bağımlılıkları yükle
+npm install
+
+# Geliştirme sunucusunu başlat
 npm start
 ```
 
-4. **Tarayıcıda açın**
+Frontend uygulaması `http://localhost:3000` adresinde çalışacak.
+
+## 🗄️ Veritabanı
+
+### Varsayılan Kullanıcılar
+
+**Admin Kullanıcısı:**
+- Email: `admin@emlak.com`
+- Şifre: `admin123`
+
+### Veritabanı Şeması
+
+- **users**: Kullanıcı bilgileri
+- **properties**: Emlak ilanları
+- **property_images**: Emlak resimleri
+- **favorites**: Favori emlaklar
+- **messages**: Kullanıcı mesajları
+- **notifications**: Bildirimler
+- **appointments**: Randevular
+- **user_settings**: Kullanıcı ayarları
+
+## 📡 API Endpoints
+
+### Auth
+- `POST /api/auth/login` - Giriş yap
+- `POST /api/auth/register` - Kayıt ol
+- `GET /api/auth/me` - Kullanıcı bilgilerini getir
+
+### Properties
+- `GET /api/properties` - Tüm emlakları getir
+- `GET /api/properties/:id` - Emlak detayı getir
+- `POST /api/properties` - Yeni emlak ekle
+- `PUT /api/properties/:id` - Emlak güncelle
+- `DELETE /api/properties/:id` - Emlak sil
+
+### Users
+- `GET /api/users` - Tüm kullanıcıları getir
+- `GET /api/users/:id` - Kullanıcı detayı getir
+- `PUT /api/users/:id` - Kullanıcı güncelle
+- `PATCH /api/users/:id/status` - Kullanıcı durumunu değiştir
+
+### Messages
+- `GET /api/messages/conversations/:userId` - Konuşmaları getir
+- `GET /api/messages/:userId/:otherUserId` - Mesajları getir
+- `POST /api/messages` - Mesaj gönder
+
+### Notifications
+- `GET /api/notifications/:userId` - Bildirimleri getir
+- `POST /api/notifications` - Bildirim oluştur
+- `PATCH /api/notifications/:id/read` - Bildirimi okundu işaretle
+
+## 🎨 Tema
+
+Proje yeşil tema kullanmaktadır:
+- Ana renk: `#10b981` (Emerald-500)
+- Koyu yeşil: `#059669` (Emerald-600)
+- Açık yeşil: `#34d399` (Emerald-400)
+
+## 🔧 Geliştirme
+
+### Backend Geliştirme
+```bash
+cd backend
+npm run dev  # Nodemon ile otomatik yeniden başlatma
 ```
-http://localhost:3000
+
+### Frontend Geliştirme
+```bash
+npm start    # React development server
+npm run build # Production build
 ```
 
 ## 📁 Proje Yapısı
 
 ```
-src/
-├── components/          # Yeniden kullanılabilir bileşenler
-│   ├── Header.tsx      # Ana navigasyon
-│   ├── Footer.tsx      # Site footer'ı
-│   └── ProtectedRoute.tsx # Korumalı rotalar
-├── pages/              # Sayfa bileşenleri
-│   ├── HomePage.tsx    # Ana sayfa
-│   ├── LoginPage.tsx   # Giriş sayfası
-│   ├── PropertyList.tsx # Emlak listesi
-│   ├── PropertyDetail.tsx # Emlak detayı
-│   ├── UserDashboard.tsx # Kullanıcı paneli
-│   └── AdminDashboard.tsx # Admin paneli
-├── contexts/           # React Context'ler
-│   └── AuthContext.tsx # Kimlik doğrulama context'i
-├── styles/             # Global stiller
-│   └── GlobalStyles.ts # Global CSS
-└── types/              # TypeScript tip tanımları
+Emlak/
+├── backend/                 # Backend API
+│   ├── database/           # Veritabanı dosyaları
+│   ├── routes/             # API route'ları
+│   ├── uploads/            # Yüklenen dosyalar
+│   ├── package.json
+│   └── server.js
+├── src/                    # Frontend React uygulaması
+│   ├── components/         # React bileşenleri
+│   ├── pages/             # Sayfa bileşenleri
+│   ├── contexts/          # React context'leri
+│   ├── services/          # API servisleri
+│   ├── styles/            # Stil dosyaları
+│   └── types/             # TypeScript tipleri
+├── public/                # Statik dosyalar
+└── package.json
 ```
 
-## 🔑 Demo Hesap Bilgileri
+## 🚀 Deployment
 
-### Admin Hesabı
-- **E-posta**: admin@emlak.com
-- **Şifre**: admin123
+### Backend Deployment
+```bash
+cd backend
+npm install --production
+npm start
+```
 
-### Kullanıcı Hesabı
-- **E-posta**: user@emlak.com
-- **Şifre**: user123
-
-## 🛠️ Kullanılan Teknolojiler
-
-- **React.js**: Kullanıcı arayüzü framework'ü
-- **TypeScript**: Tip güvenliği
-- **React Router**: Sayfa yönlendirme
-- **Styled Components**: CSS-in-JS styling
-- **Chart.js**: Veri görselleştirme
-- **Webpack**: Modül bundler
-
-## 🎯 Özellikler Detayı
-
-### Ana Sayfa
-- Hero section ile etkileyici giriş
-- Arama formu
-- Özellik kartları
-- İstatistik bölümü
-
-### Emlak Listesi
-- Grid layout ile emlak kartları
-- Hover efektleri
-- Responsive tasarım
-- Filtreleme seçenekleri
-
-### Dashboard'lar
-- **Kullanıcı**: Favoriler, randevular, mesajlar
-- **Admin**: İstatistikler, grafikler, yönetim araçları
-
-### Kimlik Doğrulama
-- Form validasyonu
-- Hata mesajları
-- Başarılı giriş yönlendirmesi
-- Oturum yönetimi
-
-## 🔧 Geliştirme
-
-### Yeni Sayfa Ekleme
-1. `src/pages/` klasörüne yeni sayfa bileşeni ekleyin
-2. `src/App.tsx` dosyasına route ekleyin
-3. Gerekirse header'a navigasyon linki ekleyin
-
-### Yeni Bileşen Ekleme
-1. `src/components/` klasörüne bileşeni ekleyin
-2. TypeScript interface'lerini tanımlayın
-3. Styled Components ile stillendirin
-
-### Stil Değişiklikleri
-- Global stiller: `src/styles/GlobalStyles.ts`
-- Bileşen stilleri: Her bileşenin içinde Styled Components
-- Renk paleti: Gradient ve solid renkler
-
-## 📱 Responsive Tasarım
-
-- **Desktop**: 1200px+ genişlik
-- **Tablet**: 768px - 1199px genişlik
-- **Mobile**: 767px ve altı genişlik
-
-## 🚀 Production Build
-
+### Frontend Deployment
 ```bash
 npm run build
+# build/ klasörünü web sunucusuna yükle
 ```
 
-Build dosyaları `dist/` klasöründe oluşturulacaktır.
+## 🔒 Güvenlik
 
-## 🔮 Gelecek Özellikler
+- JWT token authentication
+- Password hashing (bcrypt)
+- Input validation
+- SQL injection koruması
+- CORS yapılandırması
+- Helmet güvenlik middleware'i
 
-- [ ] Gerçek API entegrasyonu
-- [ ] Harita entegrasyonu
-- [ ] Gelişmiş filtreleme
-- [ ] Favori sistemi
-- [ ] Mesajlaşma sistemi
-- [ ] Bildirim sistemi
-- [ ] Çoklu dil desteği
-- [ ] Dark mode
-- [ ] PWA desteği
+## 📝 Lisans
+
+MIT License
 
 ## 🤝 Katkıda Bulunma
 
@@ -172,16 +190,6 @@ Build dosyaları `dist/` klasöründe oluşturulacaktır.
 4. Push yapın (`git push origin feature/amazing-feature`)
 5. Pull Request oluşturun
 
-## 📄 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır.
-
 ## 📞 İletişim
 
-- **E-posta**: info@emlak.com
-- **Telefon**: +90 (212) 555 0123
-- **Adres**: İstanbul, Türkiye
-
----
-
-**Not**: Bu proje demo amaçlı geliştirilmiştir. Gerçek kullanım için backend API entegrasyonu gereklidir. 
+Proje ile ilgili sorularınız için issue açabilirsiniz. 

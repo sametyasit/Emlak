@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { useAuth } from '../contexts/AuthContext';
+import { authAPI } from '../services/api';
 
 const fadeInUp = keyframes`
   from {
@@ -345,17 +346,24 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const success = await login(email, password);
-      if (success) {
-        setSuccess('Giriş başarılı! Yönlendiriliyorsunuz...');
-        setTimeout(() => {
-          navigate('/');
-        }, 1500);
-      } else {
-        setError('E-posta veya şifre hatalı!');
-      }
-    } catch (err) {
-      setError('Giriş yapılırken bir hata oluştu.');
+      const response = await authAPI.login(email, password);
+      
+      // Token'ı localStorage'a kaydet
+      localStorage.setItem('token', response.token);
+      
+      // Kullanıcı bilgilerini context'e kaydet
+      login(response.user, response.token);
+      
+      setSuccess('Giriş başarılı! Yönlendiriliyorsunuz...');
+      setTimeout(() => {
+        if (response.user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
+      }, 1500);
+    } catch (error: any) {
+      setError(error.message || 'E-posta veya şifre hatalı!');
     } finally {
       setIsLoading(false);
     }
@@ -390,25 +398,27 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      // Burada gerçek kayıt API'si çağrılacak
-      // reCAPTCHA token'ı da backend'e gönderilecek
-      console.log('reCAPTCHA Token:', recaptchaToken);
+      const userData = {
+        name: `${registerData.firstName} ${registerData.lastName}`,
+        email: registerData.email,
+        password: registerData.password,
+        phone: registerData.phone
+      };
+
+      const response = await authAPI.register(userData);
       
-      setSuccess('Hesap başarıyla oluşturuldu! Giriş yapabilirsiniz.');
+      // Token'ı localStorage'a kaydet
+      localStorage.setItem('token', response.token);
+      
+      // Kullanıcı bilgilerini context'e kaydet
+      login(response.user, response.token);
+      
+      setSuccess('Hesap başarıyla oluşturuldu! Yönlendiriliyorsunuz...');
       setTimeout(() => {
-        setActiveTab('login');
-        setRegisterData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-          phone: ''
-        });
-        resetRecaptcha();
+        navigate('/dashboard');
       }, 2000);
-    } catch (err) {
-      setError('Kayıt olurken bir hata oluştu.');
+    } catch (error: any) {
+      setError(error.message || 'Kayıt olurken bir hata oluştu.');
       resetRecaptcha();
     } finally {
       setIsLoading(false);

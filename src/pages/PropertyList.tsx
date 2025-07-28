@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { allProperties } from '../data/properties';
 import { useAuth } from '../contexts/AuthContext';
+import { propertiesAPI } from '../services/api';
 
 const fadeInUp = keyframes`
   from {
@@ -498,22 +498,54 @@ const PropertyList: React.FC = () => {
     loanEligible: ''
   });
 
-  const getProperties = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const fetchProperties = async () => {
     try {
-      const storedProperties = localStorage.getItem('properties');
-      if (storedProperties) {
-        return JSON.parse(storedProperties);
-      }
-    } catch (error) {
-      console.error('Properties yüklenirken hata:', error);
+      setLoading(true);
+      setError('');
+      
+      const apiFilters = {
+        search: filters.search || '',
+        type: filters.type || '',
+        city: filters.city || '',
+        district: filters.district || '',
+        minPrice: filters.minPrice || '',
+        maxPrice: filters.maxPrice || '',
+        rooms: filters.rooms || '',
+        minArea: filters.minArea || '',
+        maxArea: filters.maxArea || '',
+        age: filters.age || '',
+        heating: filters.heating || '',
+        parking: filters.parking || '',
+        balcony: filters.balcony || '',
+        furnished: filters.furnished || '',
+        elevator: filters.elevator || '',
+        security: filters.security || '',
+        inComplex: filters.inComplex || '',
+        seaView: filters.seaView || '',
+        nearMetro: filters.nearMetro || '',
+        garden: filters.garden || '',
+        pool: filters.pool || '',
+        gym: filters.gym || '',
+        petFriendly: filters.petFriendly || '',
+        loanEligible: filters.loanEligible || ''
+      };
+
+      const response = await propertiesAPI.getAll(apiFilters);
+      setProperties(response.properties);
+      setFilteredProperties(response.properties);
+    } catch (error: any) {
+      setError(error.message || 'Emlak listesi yüklenirken hata oluştu');
+      console.error('Properties fetch error:', error);
+    } finally {
+      setLoading(false);
     }
-    return allProperties;
   };
 
   useEffect(() => {
-    const props = getProperties();
-    setProperties(props);
-    setFilteredProperties(props);
+    fetchProperties();
   }, []);
 
   useEffect(() => {
@@ -636,26 +668,23 @@ const PropertyList: React.FC = () => {
     setFilteredProperties(filtered);
      }, [properties, filters]);
 
-  const handleDeleteProperty = (propertyId: number) => {
+  const handleDeleteProperty = async (propertyId: number) => {
     if (showDeleteConfirm === propertyId) {
-      // Silme işlemi
-      const updatedProperties = properties.filter((p: any) => p.id !== propertyId);
-      setProperties(updatedProperties);
-      setFilteredProperties(updatedProperties);
-      
-      // LocalStorage'ı güncelle
       try {
-        const storedProperties = localStorage.getItem('properties');
-        if (storedProperties) {
-          const parsed = JSON.parse(storedProperties);
-          const filtered = parsed.filter((p: any) => p.id !== propertyId);
-          localStorage.setItem('properties', JSON.stringify(filtered));
-        }
-      } catch (error) {
+        // API'den sil
+        await propertiesAPI.delete(propertyId);
+        
+        // State'den sil
+        const updatedProperties = properties.filter((p: any) => p.id !== propertyId);
+        setProperties(updatedProperties);
+        setFilteredProperties(updatedProperties);
+        
+        setShowDeleteConfirm(null);
+        alert('Emlak başarıyla silindi!');
+      } catch (error: any) {
         console.error('Property silinirken hata:', error);
+        alert(error.message || 'Emlak silinirken bir hata oluştu!');
       }
-      
-      setShowDeleteConfirm(null);
     } else {
       setShowDeleteConfirm(propertyId);
     }
@@ -1054,7 +1083,7 @@ const PropertyList: React.FC = () => {
       <ResultsSection>
         <ResultsHeader>
           <ResultsCount>
-            {sortedProperties.length} ilan bulundu
+            {loading ? 'Yükleniyor...' : `${sortedProperties.length} ilan bulundu`}
           </ResultsCount>
           <SortSelect value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
             <option value="newest">En Yeni</option>
@@ -1064,7 +1093,29 @@ const PropertyList: React.FC = () => {
           </SortSelect>
         </ResultsHeader>
 
-        {sortedProperties.length > 0 ? (
+        {error && (
+          <div style={{ 
+            background: '#fee2e2', 
+            color: '#dc2626', 
+            padding: '1rem', 
+            borderRadius: '8px', 
+            marginBottom: '1rem',
+            textAlign: 'center'
+          }}>
+            {error}
+          </div>
+        )}
+
+        {loading ? (
+          <div style={{ 
+            textAlign: 'center', 
+            padding: '3rem',
+            color: '#64748b'
+          }}>
+            <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+            <div>Emlak listesi yükleniyor...</div>
+          </div>
+        ) : sortedProperties.length > 0 ? (
           <PropertiesGrid>
             {sortedProperties.map((property: any) => (
               <PropertyCard key={property.id} onClick={() => navigate(`/property/${property.id}`)}>
