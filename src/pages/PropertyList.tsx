@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { allProperties } from '../data/properties';
@@ -103,102 +103,60 @@ const Title = styled.h1`
 `;
 
 const Subtitle = styled.p`
-  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-size: 1.2rem;
   color: #64748b;
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
-  font-weight: 400;
 `;
 
 const FilterSection = styled.div`
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  padding: 2.5rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
   margin-bottom: 3rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.1);
   position: relative;
   z-index: 1;
-  backdrop-filter: blur(10px);
-  
-  @media (max-width: 768px) {
-    padding: 1.5rem;
-    margin: 0 10px 2rem 10px;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 1rem;
-    margin: 0 5px 1.5rem 5px;
-  }
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-    border-radius: 20px 20px 0 0;
-  }
+  animation: ${fadeInUp} 0.8s ease-out 0.2s both;
+  border: 1px solid #e2e8f0;
 `;
 
 const FilterHeader = styled.div`
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
   flex-wrap: wrap;
   gap: 1rem;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-  }
 `;
 
-const FilterTitle = styled.h3`
-  font-size: 1.4rem;
-  font-weight: 600;
+const FilterTitle = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 700;
   color: #1e293b;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  margin: 0;
 `;
 
 const FilterToggle = styled.button`
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border: none;
-  padding: 0.8rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-  }
+  font-size: 0.95rem;
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-    
-    &::before {
-      left: 100%;
-    }
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+  }
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 1rem;
   }
 `;
 
@@ -206,16 +164,17 @@ const FilterGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 2rem;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  @media (max-width: 480px) {
-    gap: 0.8rem;
-  }
+  margin-bottom: 1.5rem;
+`;
+
+const AdvancedFiltersGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f1f5f9;
+  animation: ${slideIn} 0.5s ease-out;
 `;
 
 const FilterGroup = styled.div`
@@ -225,45 +184,21 @@ const FilterGroup = styled.div`
 `;
 
 const FilterLabel = styled.label`
-  font-size: 0.9rem;
   font-weight: 600;
   color: #374151;
-  margin-bottom: 0.3rem;
-`;
-
-const FilterSelect = styled.select`
-  padding: 0.8rem 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
   font-size: 0.95rem;
-  background: #ffffff;
-  color: #374151;
-  outline: none;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  
-  &:focus {
-    border-color: #10b981;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-  }
-  
-  option {
-    font-weight: 500;
-  }
 `;
 
 const FilterInput = styled.input`
-  padding: 0.8rem 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  background: #ffffff;
-  color: #374151;
-  outline: none;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
   transition: all 0.3s ease;
-  font-weight: 500;
+  background: white;
   
   &:focus {
+    outline: none;
     border-color: #10b981;
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   }
@@ -271,104 +206,145 @@ const FilterInput = styled.input`
   &::placeholder {
     color: #9ca3af;
   }
+`;
+
+const FilterSelect = styled.select`
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
   
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  
-  &[type=number] {
-    -moz-appearance: textfield;
+  &:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   }
 `;
 
 const PriceRangeContainer = styled.div`
   display: flex;
-  gap: 1rem;
   align-items: center;
-  
-  @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+  gap: 0.5rem;
 `;
 
-const PriceInput = styled(FilterInput)`
+const PriceInput = styled.input`
   flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  
+  &:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+  
+  &::placeholder {
+    color: #9ca3af;
+  }
 `;
 
 const PriceSeparator = styled.span`
-  color: #6b7280;
+  color: #64748b;
   font-weight: 600;
+  padding: 0 0.5rem;
 `;
 
-const AdvancedFilters = styled.div<{ isOpen: boolean }>`
-  max-height: ${props => props.isOpen ? '500px' : '0'};
-  overflow: hidden;
-  transition: max-height 0.4s ease;
-  border-top: 1px solid #e5e7eb;
-  padding-top: 2rem;
-  margin-top: 2rem;
-`;
-
-const AdvancedFiltersGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-  }
-  
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-    gap: 0.8rem;
-  }
-`;
-
-const FilterButton = styled.button<{ active?: boolean }>`
-  background: ${props => props.active ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : '#ffffff'};
-  color: ${props => props.active ? 'white' : '#374151'};
-  border: 2px solid ${props => props.active ? '#10b981' : '#e5e7eb'};
-  padding: 0.8rem 1.5rem;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 500;
+const ClearFiltersButton = styled.button`
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-top: 1rem;
   
   &:hover {
-    background: ${props => props.active ? 'linear-gradient(135deg, #059669 0%, #047857 100%)' : '#f9fafb'};
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+    background: #e5e7eb;
+    transform: translateY(-1px);
   }
 `;
 
-const FilterActions = styled.div`
+const ResultsSection = styled.div`
+  position: relative;
+  z-index: 1;
+  animation: ${fadeInUp} 0.8s ease-out 0.4s both;
+`;
+
+const ResultsHeader = styled.div`
   display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 2rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 0.8rem;
-  }
+  gap: 1rem;
 `;
 
-const ActionButton = styled.button<{ variant?: 'primary' | 'secondary' }>`
-  background: ${props => props.variant === 'primary' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'transparent'};
-  color: ${props => props.variant === 'primary' ? 'white' : '#374151'};
-  border: 2px solid ${props => props.variant === 'primary' ? '#10b981' : '#e5e7eb'};
-  padding: 0.8rem 1.5rem;
-  border-radius: 12px;
-  font-size: 0.95rem;
+const ResultsCount = styled.div`
+  font-size: 1.1rem;
+  color: #64748b;
   font-weight: 500;
+`;
+
+const SortSelect = styled.select`
+  padding: 0.5rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: white;
   cursor: pointer;
   transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+`;
+
+const PropertiesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+`;
+
+const PropertyCard = styled.div`
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  position: relative;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  }
+`;
+
+const PropertyImage = styled.div`
+  height: 200px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: #94a3b8;
   position: relative;
   overflow: hidden;
   
@@ -379,157 +355,27 @@ const ActionButton = styled.button<{ variant?: 'primary' | 'secondary' }>`
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-  }
-  
-  &:hover {
-    background: ${props => props.variant === 'primary' ? 'linear-gradient(135deg, #059669 0%, #047857 100%)' : '#f9fafb'};
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
-    
-    &::before {
-      left: 100%;
-    }
-  }
-`;
-
-const ResultsInfo = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid #e5e7eb;
-  animation: ${slideIn} 0.6s ease-out;
-`;
-
-const ResultsCount = styled.p`
-  font-size: 1rem;
-  color: #6b7280;
-  font-weight: 500;
-`;
-
-const SortSelect = styled.select`
-  padding: 0.5rem 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  background: #ffffff;
-  color: #374151;
-  outline: none;
-  transition: all 0.3s ease;
-  
-  &:focus {
-    border-color: #10b981;
-  }
-`;
-
-const PropertyGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 2.5rem;
-  position: relative;
-  z-index: 1;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-`;
-
-const PropertyCard = styled.div`
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(16, 185, 129, 0.1);
-  position: relative;
-  backdrop-filter: blur(10px);
-  animation: ${fadeInUp} 0.8s ease-out;
-  cursor: pointer;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-    z-index: 1;
-  }
-  
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
-    background: rgba(255, 255, 255, 1);
-    border-color: #10b981;
-    
-    &::before {
-      transform: scaleX(1);
-    }
-  }
-`;
-
-const PropertyImage = styled.div`
-  height: 240px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 3rem;
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, transparent 50%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: ${shimmer} 2s infinite;
   }
 `;
 
 const PropertyContent = styled.div`
-  padding: 2rem;
-  position: relative;
-  z-index: 1;
+  padding: 1.5rem;
 `;
 
 const PropertyTitle = styled.h3`
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #1e293b;
-  margin-bottom: 0.8rem;
-  line-height: 1.3;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
 `;
 
 const PropertyLocation = styled.p`
-  color: #6b7280;
-  margin-bottom: 1.2rem;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const PropertyPrice = styled.div`
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #10b981;
-  margin-bottom: 1.2rem;
+  color: #64748b;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -538,98 +384,91 @@ const PropertyPrice = styled.div`
 const PropertyDetails = styled.div`
   display: flex;
   justify-content: space-between;
-  color: #6b7280;
-  font-size: 0.95rem;
-  font-weight: 500;
-  padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 `;
 
-const DetailItem = styled.div`
+const PropertyInfo = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.5rem;
+  color: #64748b;
+  font-size: 0.9rem;
 `;
 
-const StatusBadge = styled.span<{ type: 'sale' | 'rent' }>`
-  background: ${props => props.type === 'sale' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #f59e0b, #d97706)'};
+const PropertyPrice = styled.div`
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #10b981;
+`;
+
+const PropertyType = styled.span`
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
-  padding: 0.4rem 1rem;
+  padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
+`;
+
+const AdminActions = styled.div`
   position: absolute;
   top: 1rem;
   right: 1rem;
-  z-index: 2;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-`;
-
-const NoResults = styled.div`
-  text-align: center;
-  padding: 4rem 2rem;
-  color: #6b7280;
-  
-  h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #1e293b;
-  }
-  
-  p {
-    font-size: 1rem;
-    line-height: 1.6;
-  }
+  display: flex;
+  gap: 0.5rem;
 `;
 
 const DeleteButton = styled.button`
   background: #ef4444;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  padding: 0.5rem;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 0.9rem;
   transition: all 0.3s ease;
-  margin-left: 0.5rem;
   
   &:hover {
     background: #dc2626;
-    transform: translateY(-1px);
+    transform: scale(1.05);
   }
 `;
 
-const AdminActions = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #64748b;
+`;
+
+const EmptyIcon = styled.div`
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+`;
+
+const EmptyText = styled.h3`
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #374151;
+`;
+
+const EmptySubtext = styled.p`
+  font-size: 1.1rem;
+  opacity: 0.7;
 `;
 
 const PropertyList: React.FC = () => {
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
-  
-  // LocalStorage'dan verileri oku, yoksa varsayılan verileri kullan
-  const getProperties = () => {
-    const storedProperties = localStorage.getItem('properties');
-    if (storedProperties) {
-      return JSON.parse(storedProperties);
-    }
-    return allProperties;
-  };
-
-  const [properties, setProperties] = useState(getProperties());
-  const [filteredProperties, setFilteredProperties] = useState(properties);
-  const [loading, setLoading] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState<any>(null);
-  const [showFilters, setShowFilters] = useState(false);
+  const [properties, setProperties] = useState<any[]>([]);
+  const [filteredProperties, setFilteredProperties] = useState<any[]>([]);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [showPropertyModal, setShowPropertyModal] = useState(false);
   const [sortBy, setSortBy] = useState('newest');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | null>(null);
-  
-  // Filtreler
+
   const [filters, setFilters] = useState({
     search: '',
     type: '',
@@ -659,32 +498,37 @@ const PropertyList: React.FC = () => {
     loanEligible: ''
   });
 
-  // Sayfa yüklendiğinde localStorage'dan verileri güncelle
-  React.useEffect(() => {
-    const updatedProperties = getProperties();
-    setProperties(updatedProperties);
-    setFilteredProperties(updatedProperties);
-  }, []);
-
-  // İlan silme fonksiyonu
-  const handleDeleteProperty = (propertyId: number) => {
-    const updatedProperties = properties.filter((property: any) => property.id !== propertyId);
-    setProperties(updatedProperties);
-    setFilteredProperties(updatedProperties);
-    localStorage.setItem('properties', JSON.stringify(updatedProperties));
-    setShowDeleteConfirm(null);
+  const getProperties = () => {
+    try {
+      const storedProperties = localStorage.getItem('properties');
+      if (storedProperties) {
+        return JSON.parse(storedProperties);
+      }
+    } catch (error) {
+      console.error('Properties yüklenirken hata:', error);
+    }
+    return allProperties;
   };
 
-  // Filtreler değiştiğinde özellikleri filtrele
-  React.useEffect(() => {
-    let filtered = properties;
+  useEffect(() => {
+    const props = getProperties();
+    setProperties(props);
+    setFilteredProperties(props);
+  }, []);
+
+  useEffect(() => {
+    let filtered = [...properties];
 
     // Arama filtresi
     if (filters.search) {
+      const searchTerm = filters.search.toLowerCase();
       filtered = filtered.filter((property: any) =>
-        property.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-        property.location.toLowerCase().includes(filters.search.toLowerCase()) ||
-        property.description.toLowerCase().includes(filters.search.toLowerCase())
+        property.title?.toLowerCase().includes(searchTerm) ||
+        property.location?.toLowerCase().includes(searchTerm) ||
+        property.city?.toLowerCase().includes(searchTerm) ||
+        property.district?.toLowerCase().includes(searchTerm) ||
+        property.price?.toString().includes(searchTerm) ||
+        property.rooms?.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -695,15 +539,19 @@ const PropertyList: React.FC = () => {
 
     // Şehir filtresi
     if (filters.city) {
-      filtered = filtered.filter((property: any) => property.city === filters.city);
+      filtered = filtered.filter((property: any) => 
+        property.city?.toLowerCase() === filters.city.toLowerCase()
+      );
     }
 
     // İlçe filtresi
     if (filters.district) {
-      filtered = filtered.filter((property: any) => property.district === filters.district);
+      filtered = filtered.filter((property: any) => 
+        property.district?.toLowerCase() === filters.district.toLowerCase()
+      );
     }
 
-    // Fiyat aralığı
+    // Fiyat filtresi
     if (filters.minPrice) {
       filtered = filtered.filter((property: any) => property.price >= parseInt(filters.minPrice));
     }
@@ -711,73 +559,107 @@ const PropertyList: React.FC = () => {
       filtered = filtered.filter((property: any) => property.price <= parseInt(filters.maxPrice));
     }
 
-    // Oda sayısı
+    // Oda sayısı filtresi
     if (filters.rooms) {
       filtered = filtered.filter((property: any) => property.rooms === filters.rooms);
     }
 
-    // Metrekare aralığı
+    // Metrekare filtresi
     if (filters.minArea) {
-      const minArea = parseInt(filters.minArea);
-      filtered = filtered.filter((property: any) => {
-        const area = parseInt(property.area.replace(/\D/g, ''));
-        return area >= minArea;
-      });
+      filtered = filtered.filter((property: any) => property.area >= parseInt(filters.minArea));
     }
     if (filters.maxArea) {
-      const maxArea = parseInt(filters.maxArea);
-      filtered = filtered.filter((property: any) => {
-        const area = parseInt(property.area.replace(/\D/g, ''));
-        return area <= maxArea;
-      });
+      filtered = filtered.filter((property: any) => property.area <= parseInt(filters.maxArea));
     }
 
-    // Diğer filtreler
+    // Gelişmiş filtreler
+    if (filters.age) {
+      filtered = filtered.filter((property: any) => property.buildingAge === filters.age);
+    }
+
     if (filters.heating) {
       filtered = filtered.filter((property: any) => property.heating === filters.heating);
     }
+
     if (filters.parking) {
       filtered = filtered.filter((property: any) => property.parking === filters.parking);
     }
+
     if (filters.balcony) {
       filtered = filtered.filter((property: any) => property.balcony === filters.balcony);
     }
+
     if (filters.furnished) {
       filtered = filtered.filter((property: any) => property.furnished === filters.furnished);
     }
+
     if (filters.elevator) {
       filtered = filtered.filter((property: any) => property.elevator === filters.elevator);
     }
+
     if (filters.security) {
       filtered = filtered.filter((property: any) => property.security === filters.security);
     }
+
     if (filters.inComplex) {
       filtered = filtered.filter((property: any) => property.inComplex === filters.inComplex);
     }
+
     if (filters.seaView) {
       filtered = filtered.filter((property: any) => property.seaView === filters.seaView);
     }
+
     if (filters.nearMetro) {
       filtered = filtered.filter((property: any) => property.nearMetro === filters.nearMetro);
     }
+
     if (filters.garden) {
       filtered = filtered.filter((property: any) => property.garden === filters.garden);
     }
+
     if (filters.pool) {
       filtered = filtered.filter((property: any) => property.pool === filters.pool);
     }
+
     if (filters.gym) {
       filtered = filtered.filter((property: any) => property.gym === filters.gym);
     }
+
     if (filters.petFriendly) {
       filtered = filtered.filter((property: any) => property.petFriendly === filters.petFriendly);
     }
+
     if (filters.loanEligible) {
       filtered = filtered.filter((property: any) => property.loanEligible === filters.loanEligible);
     }
 
     setFilteredProperties(filtered);
-  }, [filters, properties]);
+     }, [properties, filters]);
+
+  const handleDeleteProperty = (propertyId: number) => {
+    if (showDeleteConfirm === propertyId) {
+      // Silme işlemi
+      const updatedProperties = properties.filter((p: any) => p.id !== propertyId);
+      setProperties(updatedProperties);
+      setFilteredProperties(updatedProperties);
+      
+      // LocalStorage'ı güncelle
+      try {
+        const storedProperties = localStorage.getItem('properties');
+        if (storedProperties) {
+          const parsed = JSON.parse(storedProperties);
+          const filtered = parsed.filter((p: any) => p.id !== propertyId);
+          localStorage.setItem('properties', JSON.stringify(filtered));
+        }
+      } catch (error) {
+        console.error('Property silinirken hata:', error);
+      }
+      
+      setShowDeleteConfirm(null);
+    } else {
+      setShowDeleteConfirm(propertyId);
+    }
+  };
 
   const clearFilters = () => {
     setFilters({
@@ -828,6 +710,19 @@ const PropertyList: React.FC = () => {
     }
   }, [filteredProperties, sortBy]);
 
+  const getTypeComponent = (type: string) => {
+    switch (type) {
+      case 'Satılık':
+        return <PropertyType>Satılık</PropertyType>;
+      case 'Kiralık':
+        return <PropertyType>Kiralık</PropertyType>;
+      case 'Günlük Kiralık':
+        return <PropertyType>Günlük Kiralık</PropertyType>;
+      default:
+        return <PropertyType>Proje</PropertyType>;
+    }
+  };
+
   return (
     <Container>
       <HeaderSection>
@@ -840,13 +735,14 @@ const PropertyList: React.FC = () => {
       <FilterSection>
         <FilterHeader>
           <FilterTitle>
-            🔍 Gelişmiş Filtreler
+            🔍 Filtreler
           </FilterTitle>
           <FilterToggle onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}>
             {showAdvancedFilters ? 'Basit Filtreler' : 'Gelişmiş Filtreler'}
           </FilterToggle>
         </FilterHeader>
 
+        {/* Klasik Filtreler - Her zaman görünür */}
         <FilterGrid>
           <FilterGroup>
             <FilterLabel>Arama</FilterLabel>
@@ -891,259 +787,86 @@ const PropertyList: React.FC = () => {
               value={filters.district}
               onChange={(e) => setFilters({...filters, district: e.target.value})}
             >
-              <option value="">Tüm İller</option>
-              <option value="adana">Adana</option>
-              <option value="izmir">İzmir</option>
-              <option value="bursa">Bursa</option>
-              <option value="antalya">Antalya</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Fiyat Aralığı</FilterLabel>
-            <PriceRangeContainer>
-              <PriceInput 
-                type="number"
-                placeholder="Min TL"
-                value={filters.minPrice}
-                onChange={(e) => setFilters({...filters, minPrice: e.target.value})}
-              />
-              <PriceSeparator>-</PriceSeparator>
-              <PriceInput 
-                type="number"
-                placeholder="Max TL"
-                value={filters.maxPrice}
-                onChange={(e) => setFilters({...filters, maxPrice: e.target.value})}
-              />
-            </PriceRangeContainer>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Oda Sayısı</FilterLabel>
-            <FilterSelect 
-              value={filters.rooms}
-              onChange={(e) => setFilters({...filters, rooms: e.target.value})}
-            >
-              <option value="">Tüm Odalar</option>
-              <option value="1+1">1+1</option>
-              <option value="2+1">2+1</option>
-              <option value="3+1">3+1</option>
-              <option value="4+1">4+1</option>
-              <option value="5+">5+</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Metrekare Aralığı</FilterLabel>
-            <PriceRangeContainer>
-              <PriceInput 
-                type="number"
-                placeholder="Min m²"
-                value={filters.minArea}
-                onChange={(e) => setFilters({...filters, minArea: e.target.value})}
-              />
-              <PriceSeparator>-</PriceSeparator>
-              <PriceInput 
-                type="number"
-                placeholder="Max m²"
-                value={filters.maxArea}
-                onChange={(e) => setFilters({...filters, maxArea: e.target.value})}
-              />
-            </PriceRangeContainer>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Isıtma</FilterLabel>
-            <FilterSelect 
-              value={filters.heating}
-              onChange={(e) => setFilters({...filters, heating: e.target.value})}
-            >
-              <option value="">Tüm Isıtma</option>
-              <option value="Merkezi">Merkezi</option>
-              <option value="Kombi">Kombi</option>
-              <option value="Doğalgaz">Doğalgaz</option>
-              <option value="Elektrik">Elektrik</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Otopark</FilterLabel>
-            <FilterSelect 
-              value={filters.parking}
-              onChange={(e) => setFilters({...filters, parking: e.target.value})}
-            >
-              <option value="">Tüm Seçenekler</option>
-              <option value="Var">Var</option>
-              <option value="Yok">Yok</option>
-              <option value="Ücretli">Ücretli</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Balkon</FilterLabel>
-            <FilterSelect 
-              value={filters.balcony}
-              onChange={(e) => setFilters({...filters, balcony: e.target.value})}
-            >
-              <option value="">Tüm Seçenekler</option>
-              <option value="Var">Var</option>
-              <option value="Yok">Yok</option>
-              <option value="Kapalı">Kapalı</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Eşyalı</FilterLabel>
-            <FilterSelect 
-              value={filters.furnished}
-              onChange={(e) => setFilters({...filters, furnished: e.target.value})}
-            >
-              <option value="">Tüm Seçenekler</option>
-              <option value="Evet">Evet</option>
-              <option value="Hayır">Hayır</option>
-              <option value="Yarı">Yarı Eşyalı</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Asansör</FilterLabel>
-            <FilterSelect 
-              value={filters.elevator}
-              onChange={(e) => setFilters({...filters, elevator: e.target.value})}
-            >
-              <option value="">Asansör Seçin</option>
-              <option value="Var">Var</option>
-              <option value="Yok">Yok</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Güvenlik</FilterLabel>
-            <FilterSelect 
-              value={filters.security}
-              onChange={(e) => setFilters({...filters, security: e.target.value})}
-            >
-              <option value="">Güvenlik Seçin</option>
-              <option value="Var">Var</option>
-              <option value="Yok">Yok</option>
-              <option value="24-saat">24 Saat</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Site İçinde</FilterLabel>
-            <FilterSelect 
-              value={filters.inComplex}
-              onChange={(e) => setFilters({...filters, inComplex: e.target.value})}
-            >
-              <option value="">Site Durumu</option>
-              <option value="Evet">Evet</option>
-              <option value="Hayır">Hayır</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Deniz Manzarası</FilterLabel>
-            <FilterSelect 
-              value={filters.seaView}
-              onChange={(e) => setFilters({...filters, seaView: e.target.value})}
-            >
-              <option value="">Manzara Seçin</option>
-              <option value="Evet">Var</option>
-              <option value="Yok">Yok</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Metro Yakını</FilterLabel>
-            <FilterSelect 
-              value={filters.nearMetro}
-              onChange={(e) => setFilters({...filters, nearMetro: e.target.value})}
-            >
-              <option value="">Metro Durumu</option>
-              <option value="Evet">Var</option>
-              <option value="Yok">Yok</option>
-              <option value="Yakın">Yakın</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Bahçe</FilterLabel>
-            <FilterSelect 
-              value={filters.garden}
-              onChange={(e) => setFilters({...filters, garden: e.target.value})}
-            >
-              <option value="">Bahçe Seçin</option>
-              <option value="Var">Var</option>
-              <option value="Yok">Yok</option>
-              <option value="Ortak">Ortak</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Havuz</FilterLabel>
-            <FilterSelect 
-              value={filters.pool}
-              onChange={(e) => setFilters({...filters, pool: e.target.value})}
-            >
-              <option value="">Havuz Seçin</option>
-              <option value="Var">Var</option>
-              <option value="Yok">Yok</option>
-              <option value="Kapalı">Kapalı</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Spor Salonu</FilterLabel>
-            <FilterSelect 
-              value={filters.gym}
-              onChange={(e) => setFilters({...filters, gym: e.target.value})}
-            >
-              <option value="">Spor Salonu</option>
-              <option value="Var">Var</option>
-              <option value="Yok">Yok</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Evcil Hayvan</FilterLabel>
-            <FilterSelect 
-              value={filters.petFriendly}
-              onChange={(e) => setFilters({...filters, petFriendly: e.target.value})}
-            >
-              <option value="">Evcil Hayvan</option>
-              <option value="Evet">Kabul</option>
-              <option value="Hayır">Kabul Etmez</option>
-            </FilterSelect>
-          </FilterGroup>
-
-          <FilterGroup>
-            <FilterLabel>Kredi Uygunluğu</FilterLabel>
-            <FilterSelect 
-              value={filters.loanEligible}
-              onChange={(e) => setFilters({...filters, loanEligible: e.target.value})}
-            >
-              <option value="">Kredi Durumu</option>
-              <option value="Evet">Uygun</option>
-              <option value="Hayır">Uygun Değil</option>
-              <option value="Kısmi">Kısmi</option>
+              <option value="">Tüm İlçeler</option>
+              <option value="kadikoy">Kadıköy</option>
+              <option value="besiktas">Beşiktaş</option>
+              <option value="sisli">Şişli</option>
+              <option value="uskudar">Üsküdar</option>
+              <option value="fatih">Fatih</option>
             </FilterSelect>
           </FilterGroup>
         </FilterGrid>
 
-        <AdvancedFilters isOpen={showAdvancedFilters}>
+        {/* Gelişmiş Filtreler - Butona basınca açılır */}
+        {showAdvancedFilters && (
           <AdvancedFiltersGrid>
             <FilterGroup>
-              <FilterLabel>Isıtma</FilterLabel>
+              <FilterLabel>Fiyat Aralığı</FilterLabel>
+              <PriceRangeContainer>
+                <PriceInput 
+                  type="number"
+                  placeholder="Min TL"
+                  value={filters.minPrice}
+                  onChange={(e) => setFilters({...filters, minPrice: e.target.value})}
+                />
+                <PriceSeparator>-</PriceSeparator>
+                <PriceInput 
+                  type="number"
+                  placeholder="Max TL"
+                  value={filters.maxPrice}
+                  onChange={(e) => setFilters({...filters, maxPrice: e.target.value})}
+                />
+              </PriceRangeContainer>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Oda Sayısı</FilterLabel>
               <FilterSelect 
-                value={filters.heating}
-                onChange={(e) => setFilters({...filters, heating: e.target.value})}
+                value={filters.rooms}
+                onChange={(e) => setFilters({...filters, rooms: e.target.value})}
               >
-                <option value="">Tüm Isıtma</option>
-                <option value="Merkezi">Merkezi</option>
-                <option value="Kombi">Kombi</option>
-                <option value="Doğalgaz">Doğalgaz</option>
-                <option value="Elektrik">Elektrik</option>
+                <option value="">Tüm Odalar</option>
+                <option value="1+0">1+0</option>
+                <option value="1+1">1+1</option>
+                <option value="2+1">2+1</option>
+                <option value="3+1">3+1</option>
+                <option value="4+1">4+1</option>
+                <option value="5+">5+</option>
+              </FilterSelect>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Metrekare Aralığı</FilterLabel>
+              <PriceRangeContainer>
+                <PriceInput 
+                  type="number"
+                  placeholder="Min m²"
+                  value={filters.minArea}
+                  onChange={(e) => setFilters({...filters, minArea: e.target.value})}
+                />
+                <PriceSeparator>-</PriceSeparator>
+                <PriceInput 
+                  type="number"
+                  placeholder="Max m²"
+                  value={filters.maxArea}
+                  onChange={(e) => setFilters({...filters, maxArea: e.target.value})}
+                />
+              </PriceRangeContainer>
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Bina Yaşı</FilterLabel>
+              <FilterSelect 
+                value={filters.age}
+                onChange={(e) => setFilters({...filters, age: e.target.value})}
+              >
+                <option value="">Tüm Yaşlar</option>
+                <option value="0">Sıfır Bina</option>
+                <option value="1">1 Yaşında</option>
+                <option value="2-5">2-5 Yaşında</option>
+                <option value="6-10">6-10 Yaşında</option>
+                <option value="11-20">11-20 Yaşında</option>
+                <option value="20+">20+ Yaşında</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -1201,21 +924,6 @@ const PropertyList: React.FC = () => {
             </FilterGroup>
 
             <FilterGroup>
-              <FilterLabel>Emlak Yaşı</FilterLabel>
-              <FilterSelect 
-                value={filters.age || ''}
-                onChange={(e) => setFilters({...filters, age: e.target.value})}
-              >
-                <option value="">Yaş Seçin</option>
-                <option value="0-1">0-1 Yaş</option>
-                <option value="1-5">1-5 Yaş</option>
-                <option value="5-10">5-10 Yaş</option>
-                <option value="10-20">10-20 Yaş</option>
-                <option value="20+">20+ Yaş</option>
-              </FilterSelect>
-            </FilterGroup>
-
-            <FilterGroup>
               <FilterLabel>Asansör</FilterLabel>
               <FilterSelect 
                 value={filters.elevator}
@@ -1236,15 +944,14 @@ const PropertyList: React.FC = () => {
                 <option value="">Güvenlik Seçin</option>
                 <option value="Var">Var</option>
                 <option value="Yok">Yok</option>
-                <option value="24-saat">24 Saat</option>
               </FilterSelect>
             </FilterGroup>
 
             <FilterGroup>
               <FilterLabel>Site İçinde</FilterLabel>
               <FilterSelect 
-                value={filters.siteInside}
-                onChange={(e) => setFilters({...filters, siteInside: e.target.value})}
+                value={filters.inComplex}
+                onChange={(e) => setFilters({...filters, inComplex: e.target.value})}
               >
                 <option value="">Site Durumu</option>
                 <option value="Evet">Evet</option>
@@ -1259,21 +966,20 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, seaView: e.target.value})}
               >
                 <option value="">Manzara Seçin</option>
-                <option value="Evet">Var</option>
-                <option value="Yok">Yok</option>
+                <option value="Evet">Evet</option>
+                <option value="Hayır">Hayır</option>
               </FilterSelect>
             </FilterGroup>
 
             <FilterGroup>
               <FilterLabel>Metro Yakını</FilterLabel>
               <FilterSelect 
-                value={filters.metroNearby}
-                onChange={(e) => setFilters({...filters, metroNearby: e.target.value})}
+                value={filters.nearMetro}
+                onChange={(e) => setFilters({...filters, nearMetro: e.target.value})}
               >
                 <option value="">Metro Durumu</option>
-                <option value="Evet">Var</option>
-                <option value="Yok">Yok</option>
-                <option value="Yakın">Yakın</option>
+                <option value="Evet">Evet</option>
+                <option value="Hayır">Hayır</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -1284,9 +990,8 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, garden: e.target.value})}
               >
                 <option value="">Bahçe Seçin</option>
-                <option value="Var">Var</option>
-                <option value="Yok">Yok</option>
-                <option value="Ortak">Ortak</option>
+                <option value="Evet">Evet</option>
+                <option value="Hayır">Hayır</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -1297,9 +1002,8 @@ const PropertyList: React.FC = () => {
                 onChange={(e) => setFilters({...filters, pool: e.target.value})}
               >
                 <option value="">Havuz Seçin</option>
-                <option value="Var">Var</option>
-                <option value="Yok">Yok</option>
-                <option value="Kapalı">Kapalı</option>
+                <option value="Evet">Evet</option>
+                <option value="Hayır">Hayır</option>
               </FilterSelect>
             </FilterGroup>
 
@@ -1340,101 +1044,72 @@ const PropertyList: React.FC = () => {
               </FilterSelect>
             </FilterGroup>
           </AdvancedFiltersGrid>
-        </AdvancedFilters>
+        )}
 
-        <FilterActions>
-          <ActionButton variant="primary" onClick={() => {}}>
-            🔍 Filtrele ({filteredProperties.length} sonuç)
-          </ActionButton>
-          <ActionButton variant="secondary" onClick={clearFilters}>
-            🗑️ Filtreleri Temizle
-          </ActionButton>
-        </FilterActions>
+        <ClearFiltersButton onClick={clearFilters}>
+          🗑️ Filtreleri Temizle
+        </ClearFiltersButton>
       </FilterSection>
 
-      <ResultsInfo>
-        <ResultsCount>
-          {filteredProperties.length} ilan bulundu
-        </ResultsCount>
-        <SortSelect value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-          <option value="newest">En Yeni</option>
-          <option value="oldest">En Eski</option>
-          <option value="price-low">Fiyat (Düşük-Yüksek)</option>
-          <option value="price-high">Fiyat (Yüksek-Düşük)</option>
-        </SortSelect>
-      </ResultsInfo>
+      <ResultsSection>
+        <ResultsHeader>
+          <ResultsCount>
+            {sortedProperties.length} ilan bulundu
+          </ResultsCount>
+          <SortSelect value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <option value="newest">En Yeni</option>
+            <option value="oldest">En Eski</option>
+            <option value="price-low">Fiyat (Düşük-Yüksek)</option>
+            <option value="price-high">Fiyat (Yüksek-Düşük)</option>
+          </SortSelect>
+        </ResultsHeader>
 
-      {sortedProperties.length === 0 ? (
-        <NoResults>
-          <h3>😔 Aradığınız kriterlere uygun ilan bulunamadı</h3>
-          <p>Filtrelerinizi değiştirerek daha fazla sonuç görebilirsiniz.</p>
-        </NoResults>
-      ) : (
-        <PropertyGrid>
-          {sortedProperties.map((property: any) => (
-            <PropertyCard key={property.id}>
-              <div onClick={() => navigate(`/property/${property.id}`)}>
-                <PropertyImage style={{
-                  backgroundImage: `url(${property.image})`, 
-                  backgroundSize: 'cover', 
-                  backgroundPosition: 'center', 
-                  color: 'transparent'
-                }}>
-                  <span role="img" aria-label="ev">🏠</span>
-                </PropertyImage>
-                <StatusBadge type={property.type === 'Satılık' ? 'sale' : 'rent'}>
-                  {property.type}
-                </StatusBadge>
+        {sortedProperties.length > 0 ? (
+          <PropertiesGrid>
+            {sortedProperties.map((property: any) => (
+              <PropertyCard key={property.id} onClick={() => navigate(`/property/${property.id}`)}>
+                {isAdmin && (
+                  <AdminActions>
+                    <DeleteButton 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteProperty(property.id);
+                      }}
+                    >
+                      {showDeleteConfirm === property.id ? 'Onayla' : 'Sil'}
+                    </DeleteButton>
+                  </AdminActions>
+                )}
+                
+                <PropertyImage>🏠</PropertyImage>
                 <PropertyContent>
                   <PropertyTitle>{property.title}</PropertyTitle>
                   <PropertyLocation>
-                    📍 {property.location}
+                    📍 {property.location}, {property.city}
                   </PropertyLocation>
-                  <PropertyPrice>
-                    💰 {typeof property.price === 'number' ? property.price.toLocaleString('tr-TR') + ' TL' : property.price}
-                  </PropertyPrice>
                   <PropertyDetails>
-                    <DetailItem>
-                      🛏️ {property.rooms}
-                    </DetailItem>
-                    <DetailItem>
-                      📐 {property.area}
-                    </DetailItem>
-                    <DetailItem>
-                      🏷️ {property.type}
-                    </DetailItem>
+                    <PropertyInfo>
+                      🏠 {property.rooms} • 📏 {property.area}m²
+                    </PropertyInfo>
+                    {getTypeComponent(property.type)}
                   </PropertyDetails>
+                  <PropertyPrice>
+                    {property.price ? `${property.price.toLocaleString('tr-TR')} TL` : 'Fiyat belirtilmemiş'}
+                  </PropertyPrice>
                 </PropertyContent>
-              </div>
-              
-              {isAdmin && (
-                <AdminActions>
-                  {showDeleteConfirm === property.id ? (
-                    <>
-                      <DeleteButton onClick={() => handleDeleteProperty(property.id)}>
-                        ✅ Onayla
-                      </DeleteButton>
-                      <DeleteButton 
-                        style={{ background: '#6b7280' }}
-                        onClick={() => setShowDeleteConfirm(null)}
-                      >
-                        ❌ İptal
-                      </DeleteButton>
-                    </>
-                  ) : (
-                    <DeleteButton onClick={(e) => {
-                      e.stopPropagation();
-                      setShowDeleteConfirm(property.id);
-                    }}>
-                      🗑️ Sil
-                    </DeleteButton>
-                  )}
-                </AdminActions>
-              )}
-            </PropertyCard>
-          ))}
-        </PropertyGrid>
-      )}
+              </PropertyCard>
+            ))}
+          </PropertiesGrid>
+        ) : (
+          <EmptyState>
+            <EmptyIcon>🔍</EmptyIcon>
+            <EmptyText>İlan bulunamadı</EmptyText>
+            <EmptySubtext>
+              Arama kriterlerinizi değiştirerek tekrar deneyin
+            </EmptySubtext>
+          </EmptyState>
+        )}
+      </ResultsSection>
     </Container>
   );
 };
