@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { allProperties } from '../data/properties';
 import { useAuth } from '../contexts/AuthContext';
-import { propertiesAPI } from '../services/api';
 
 const fadeInUp = keyframes`
   from {
@@ -348,6 +348,23 @@ const PropertyImage = styled.div`
   position: relative;
   overflow: hidden;
   
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .fallback-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 3rem;
+    color: #94a3b8;
+  }
+  
   &::before {
     content: '';
     position: absolute;
@@ -498,54 +515,22 @@ const PropertyList: React.FC = () => {
     loanEligible: ''
   });
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  const fetchProperties = async () => {
+  const getProperties = () => {
     try {
-      setLoading(true);
-      setError('');
-      
-      const apiFilters = {
-        search: filters.search || '',
-        type: filters.type || '',
-        city: filters.city || '',
-        district: filters.district || '',
-        minPrice: filters.minPrice || '',
-        maxPrice: filters.maxPrice || '',
-        rooms: filters.rooms || '',
-        minArea: filters.minArea || '',
-        maxArea: filters.maxArea || '',
-        age: filters.age || '',
-        heating: filters.heating || '',
-        parking: filters.parking || '',
-        balcony: filters.balcony || '',
-        furnished: filters.furnished || '',
-        elevator: filters.elevator || '',
-        security: filters.security || '',
-        inComplex: filters.inComplex || '',
-        seaView: filters.seaView || '',
-        nearMetro: filters.nearMetro || '',
-        garden: filters.garden || '',
-        pool: filters.pool || '',
-        gym: filters.gym || '',
-        petFriendly: filters.petFriendly || '',
-        loanEligible: filters.loanEligible || ''
-      };
-
-      const response = await propertiesAPI.getAll(apiFilters);
-      setProperties(response.properties);
-      setFilteredProperties(response.properties);
-    } catch (error: any) {
-      setError(error.message || 'Emlak listesi yüklenirken hata oluştu');
-      console.error('Properties fetch error:', error);
-    } finally {
-      setLoading(false);
+      const storedProperties = localStorage.getItem('properties');
+      if (storedProperties) {
+        return JSON.parse(storedProperties);
+      }
+    } catch (error) {
+      console.error('Properties yüklenirken hata:', error);
     }
+    return allProperties;
   };
 
   useEffect(() => {
-    fetchProperties();
+    const props = getProperties();
+    setProperties(props);
+    setFilteredProperties(props);
   }, []);
 
   useEffect(() => {
@@ -668,23 +653,26 @@ const PropertyList: React.FC = () => {
     setFilteredProperties(filtered);
      }, [properties, filters]);
 
-  const handleDeleteProperty = async (propertyId: number) => {
+  const handleDeleteProperty = (propertyId: number) => {
     if (showDeleteConfirm === propertyId) {
+      // Silme işlemi
+      const updatedProperties = properties.filter((p: any) => p.id !== propertyId);
+      setProperties(updatedProperties);
+      setFilteredProperties(updatedProperties);
+      
+      // LocalStorage'ı güncelle
       try {
-        // API'den sil
-        await propertiesAPI.delete(propertyId);
-        
-        // State'den sil
-        const updatedProperties = properties.filter((p: any) => p.id !== propertyId);
-        setProperties(updatedProperties);
-        setFilteredProperties(updatedProperties);
-        
-        setShowDeleteConfirm(null);
-        alert('Emlak başarıyla silindi!');
-      } catch (error: any) {
+        const storedProperties = localStorage.getItem('properties');
+        if (storedProperties) {
+          const parsed = JSON.parse(storedProperties);
+          const filtered = parsed.filter((p: any) => p.id !== propertyId);
+          localStorage.setItem('properties', JSON.stringify(filtered));
+        }
+      } catch (error) {
         console.error('Property silinirken hata:', error);
-        alert(error.message || 'Emlak silinirken bir hata oluştu!');
       }
+      
+      setShowDeleteConfirm(null);
     } else {
       setShowDeleteConfirm(propertyId);
     }
@@ -1083,7 +1071,7 @@ const PropertyList: React.FC = () => {
       <ResultsSection>
         <ResultsHeader>
           <ResultsCount>
-            {loading ? 'Yükleniyor...' : `${sortedProperties.length} ilan bulundu`}
+            {sortedProperties.length} ilan bulundu
           </ResultsCount>
           <SortSelect value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
             <option value="newest">En Yeni</option>
@@ -1093,29 +1081,7 @@ const PropertyList: React.FC = () => {
           </SortSelect>
         </ResultsHeader>
 
-        {error && (
-          <div style={{ 
-            background: '#fee2e2', 
-            color: '#dc2626', 
-            padding: '1rem', 
-            borderRadius: '8px', 
-            marginBottom: '1rem',
-            textAlign: 'center'
-          }}>
-            {error}
-          </div>
-        )}
-
-        {loading ? (
-          <div style={{ 
-            textAlign: 'center', 
-            padding: '3rem',
-            color: '#64748b'
-          }}>
-            <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
-            <div>Emlak listesi yükleniyor...</div>
-          </div>
-        ) : sortedProperties.length > 0 ? (
+        {sortedProperties.length > 0 ? (
           <PropertiesGrid>
             {sortedProperties.map((property: any) => (
               <PropertyCard key={property.id} onClick={() => navigate(`/property/${property.id}`)}>
@@ -1132,7 +1098,26 @@ const PropertyList: React.FC = () => {
                   </AdminActions>
                 )}
                 
-                <PropertyImage>🏠</PropertyImage>
+                <PropertyImage>
+                  {property.image ? (
+                    <img 
+                      src={property.image} 
+                      alt={property.title}
+                      onError={(e) => {
+                        const target = e.currentTarget as HTMLElement;
+                        target.style.display = 'none';
+                        const fallback = target.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div className="fallback-image" style={{ display: property.image ? 'none' : 'flex' }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🏠</div>
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{property.title}</div>
+                    </div>
+                  </div>
+                </PropertyImage>
                 <PropertyContent>
                   <PropertyTitle>{property.title}</PropertyTitle>
                   <PropertyLocation>

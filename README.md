@@ -1,116 +1,87 @@
-# 🏠 Emlak Sitesi
+# 🏠 Emlak Web Sitesi
 
-Modern ve kullanıcı dostu emlak sitesi. React frontend ve Node.js backend ile geliştirilmiştir.
+Modern ve kullanıcı dostu emlak web sitesi. React.js, TypeScript, Styled Components ve Chart.js kullanılarak geliştirilmiştir.
 
-## 🚀 Özellikler
+## ✨ Özellikler
 
-### Frontend (React + TypeScript)
-- ✅ Modern ve responsive tasarım
-- ✅ Yeşil tema
-- ✅ Gelişmiş filtreleme sistemi
-- ✅ Resim galerisi ve zoom özelliği
-- ✅ Admin paneli
-- ✅ Kullanıcı yönetimi
-- ✅ Mesajlaşma sistemi
-- ✅ Bildirim sistemi
-- ✅ Favori ekleme/çıkarma
+### 🎨 Kullanıcı Arayüzü
+- **Modern Tasarım**: Gradient renkler ve modern UI/UX prensipleri
+- **Responsive Tasarım**: Tüm cihazlarda mükemmel görünüm
+- **Animasyonlar**: Smooth hover efektleri ve geçişler
+- **Sticky Header**: Kolay navigasyon için sabit header
 
-### Backend (Node.js + SQLite)
-- ✅ RESTful API
-- ✅ JWT authentication
-- ✅ SQLite veritabanı
-- ✅ Resim yükleme
-- ✅ Dosya yönetimi
-- ✅ Güvenlik önlemleri
+### 🔐 Kimlik Doğrulama
+- **Kullanıcı Girişi**: Normal kullanıcılar için giriş sistemi
+- **Admin Girişi**: Yöneticiler için özel panel
+- **Korumalı Rotalar**: Yetki kontrolü ile sayfa erişimi
+- **Oturum Yönetimi**: LocalStorage ile oturum saklama
+
+### 📊 Dashboard'lar
+- **Kullanıcı Dashboard**: Favoriler, randevular, mesajlar
+- **Admin Dashboard**: İstatistikler, grafikler, yönetim araçları
+- **Chart.js Entegrasyonu**: Görsel veri analizi
+
+### 🏠 Emlak Özellikleri
+- **Emlak Listesi**: Grid layout ile emlak kartları
+- **Detay Sayfaları**: Kapsamlı emlak bilgileri
+- **Arama Sistemi**: Konum ve fiyat bazlı arama
+- **Filtreleme**: Çoklu kriter ile filtreleme
 
 ## 📋 Gereksinimler
 
 - Node.js (v16 veya üzeri)
 - npm veya yarn
 
-## 🛠️ Kurulum
+## 🚀 Kurulum
 
-### 1. Backend Kurulumu
+### Gereksinimler
+- Node.js (v14 veya üzeri)
+- npm veya yarn
 
+### Adımlar
+
+1. **Projeyi klonlayın**
 ```bash
-# Backend klasörüne git
-cd backend
-
-# Bağımlılıkları yükle
-npm install
-
-# Veritabanını başlat
-npm run init-db
-
-# Geliştirme sunucusunu başlat
-npm run dev
+git clone <repository-url>
+cd Emlak
 ```
 
-Backend sunucusu `http://localhost:5000` adresinde çalışacak.
-
-### 2. Frontend Kurulumu
-
+2. **Bağımlılıkları yükleyin**
 ```bash
-# Ana proje klasörüne git
-cd ..
-
-# Bağımlılıkları yükle
 npm install
+```
 
-# Geliştirme sunucusunu başlat
+3. **Geliştirme sunucusunu başlatın**
+```bash
 npm start
 ```
 
-Frontend uygulaması `http://localhost:3000` adresinde çalışacak.
+4. **Tarayıcıda açın**
+```
+http://localhost:3000
+```
 
-## 🗄️ Veritabanı
+## 🔐 Giriş Bilgileri
 
-### Varsayılan Kullanıcılar
+### Admin Girişi
+- **Email**: `admin@emlak.com`
+- **Şifre**: `admin123`
 
-**Admin Kullanıcısı:**
-- Email: `admin@emlak.com`
-- Şifre: `admin123`
+### Test Kullanıcısı
+- **Email**: `user@emlak.com`
+- **Şifre**: `user123`
 
-### Veritabanı Şeması
+## 📁 Proje Yapısı
 
-- **users**: Kullanıcı bilgileri
-- **properties**: Emlak ilanları
-- **property_images**: Emlak resimleri
-- **favorites**: Favori emlaklar
-- **messages**: Kullanıcı mesajları
-- **notifications**: Bildirimler
-- **appointments**: Randevular
-- **user_settings**: Kullanıcı ayarları
-
-## 📡 API Endpoints
-
-### Auth
-- `POST /api/auth/login` - Giriş yap
-- `POST /api/auth/register` - Kayıt ol
-- `GET /api/auth/me` - Kullanıcı bilgilerini getir
-
-### Properties
-- `GET /api/properties` - Tüm emlakları getir
-- `GET /api/properties/:id` - Emlak detayı getir
-- `POST /api/properties` - Yeni emlak ekle
-- `PUT /api/properties/:id` - Emlak güncelle
-- `DELETE /api/properties/:id` - Emlak sil
-
-### Users
-- `GET /api/users` - Tüm kullanıcıları getir
-- `GET /api/users/:id` - Kullanıcı detayı getir
-- `PUT /api/users/:id` - Kullanıcı güncelle
-- `PATCH /api/users/:id/status` - Kullanıcı durumunu değiştir
-
-### Messages
-- `GET /api/messages/conversations/:userId` - Konuşmaları getir
-- `GET /api/messages/:userId/:otherUserId` - Mesajları getir
-- `POST /api/messages` - Mesaj gönder
-
-### Notifications
-- `GET /api/notifications/:userId` - Bildirimleri getir
-- `POST /api/notifications` - Bildirim oluştur
-- `PATCH /api/notifications/:id/read` - Bildirimi okundu işaretle
+```
+src/
+├── components/          # Yeniden kullanılabilir bileşenler
+├── contexts/           # React Context'leri
+├── data/              # Statik veriler
+├── pages/             # Sayfa bileşenleri
+├── styles/            # Global stiller
+└── types/             # TypeScript tip tanımları
+```
 
 ## 🎨 Tema
 
@@ -121,47 +92,13 @@ Proje yeşil tema kullanmaktadır:
 
 ## 🔧 Geliştirme
 
-### Backend Geliştirme
-```bash
-cd backend
-npm run dev  # Nodemon ile otomatik yeniden başlatma
-```
-
 ### Frontend Geliştirme
 ```bash
 npm start    # React development server
 npm run build # Production build
 ```
 
-## 📁 Proje Yapısı
-
-```
-Emlak/
-├── backend/                 # Backend API
-│   ├── database/           # Veritabanı dosyaları
-│   ├── routes/             # API route'ları
-│   ├── uploads/            # Yüklenen dosyalar
-│   ├── package.json
-│   └── server.js
-├── src/                    # Frontend React uygulaması
-│   ├── components/         # React bileşenleri
-│   ├── pages/             # Sayfa bileşenleri
-│   ├── contexts/          # React context'leri
-│   ├── services/          # API servisleri
-│   ├── styles/            # Stil dosyaları
-│   └── types/             # TypeScript tipleri
-├── public/                # Statik dosyalar
-└── package.json
-```
-
 ## 🚀 Deployment
-
-### Backend Deployment
-```bash
-cd backend
-npm install --production
-npm start
-```
 
 ### Frontend Deployment
 ```bash
@@ -171,12 +108,10 @@ npm run build
 
 ## 🔒 Güvenlik
 
-- JWT token authentication
-- Password hashing (bcrypt)
+- LocalStorage ile oturum yönetimi
+- Protected routes ile sayfa erişim kontrolü
 - Input validation
-- SQL injection koruması
-- CORS yapılandırması
-- Helmet güvenlik middleware'i
+- XSS koruması
 
 ## 📝 Lisans
 
